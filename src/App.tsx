@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import ProjectDetail from './pages/ProjectDetail';
 import AIRiskAnalysis from './pages/AIRiskAnalysis';
+import AIAnalyticsModules from './pages/AIAnalyticsModules';
 import AnomalyDetection from './pages/AnomalyDetection';
 import FundMonitoring from './pages/FundMonitoring';
 import MPAnalytics from './pages/MPAnalytics';
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/projects" element={<Projects />} />
           <Route path="/projects/:id" element={<ProjectDetail />} />
+          <Route path="/ai-analytics" element={<AIAnalyticsModules />} />
           <Route path="/ai-risk" element={<AIRiskAnalysis />} />
           <Route path="/anomalies" element={<AnomalyDetection />} />
           <Route path="/fund-monitoring" element={<FundMonitoring />} />

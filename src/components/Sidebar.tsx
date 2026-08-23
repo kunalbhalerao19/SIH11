@@ -2,12 +2,13 @@ import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, FolderOpen, Brain, AlertTriangle, DollarSign,
   Users, Map, Bell, FileText, Database, Settings, ChevronRight,
-  Activity, BarChart3, ShieldAlert, Globe
+  Activity, BarChart3, ShieldAlert, Globe, Layers
 } from 'lucide-react';
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/projects', label: 'Projects', icon: FolderOpen },
+  { path: '/ai-analytics', label: 'AI Analytics Modules', icon: Layers },
   { path: '/ai-risk', label: 'AI Risk Analysis', icon: Brain },
   { path: '/anomalies', label: 'Anomaly Detection', icon: AlertTriangle },
   { path: '/fund-monitoring', label: 'Fund Monitoring', icon: DollarSign },
@@ -17,7 +18,7 @@ const navItems = [
   { path: '/alerts', label: 'Alerts', icon: Bell },
   { path: '/reports', label: 'Reports', icon: FileText },
   { path: '/data-explorer', label: 'Data Explorer', icon: Database },
-  { path: '/ai-model', label: 'AI Model', icon: Activity },
+  { path: '/ai-model', label: 'AI Model Pipeline', icon: Activity },
   { path: '/citizen', label: 'Citizen Portal', icon: Globe },
   { path: '/settings', label: 'Settings', icon: Settings },
 ];

@@ -154,3 +154,122 @@ export interface SectorSpend {
   count: number;
   avg_risk: number;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MULTI-MODAL AI / ANALYTICS MODULE TYPES (MPLADS AI SENTINEL WORKFLOW)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type AIModuleId =
+  | 'financial'
+  | 'photo'
+  | 'geospatial'
+  | 'vendor'
+  | 'document'
+  | 'progress';
+
+export interface AIModuleScore {
+  moduleId: AIModuleId;
+  name: string;
+  score: number; // 0 - 100
+  riskLevel: RiskLevel;
+  confidence: number; // 0 - 100
+  weight: number; // percentage (e.g. 20%)
+  status: 'Clean' | 'Flagged' | 'Severe Anomaly';
+  keyFindings: string[];
+  metrics: Record<string, string | number>;
+}
+
+export interface MultiModalEvidence {
+  projectId: string;
+  workName: string;
+  compositeScore: number; // 0 - 100
+  riskLevel: RiskLevel;
+  confidence: number;
+  moduleScores: {
+    financial: AIModuleScore;
+    photo: AIModuleScore;
+    geospatial: AIModuleScore;
+    vendor: AIModuleScore;
+    document: AIModuleScore;
+    progress: AIModuleScore;
+  };
+  crossSchemeAlert?: CrossSchemeDuplication;
+  inspectionPriorityRank: number;
+  recommendedAction: string;
+  explanationWaterfall: { factor: string; impact: number; description: string }[];
+}
+
+export interface PhotoEvidenceItem {
+  id: string;
+  projectId: string;
+  stage: 'Before Work' | 'In Progress' | 'Completed';
+  imageUrl: string;
+  uploadedAt: string;
+  exifGps: { lat: number; lng: number };
+  projectGps: { lat: number; lng: number };
+  distanceMeters: number;
+  gpsMatch: boolean;
+  pHashSimilarity: number; // 0-100 (high means duplicate of another project)
+  duplicateOfProjectId?: string;
+  aiEstimatedProgress: number; // 0-100
+  claimedProgress: number;
+  isManipulated: boolean;
+}
+
+export interface CrossSchemeDuplication {
+  mpladsProjectId: string;
+  mpladsWorkName: string;
+  mpladsCost: number;
+  mpladsGps: { lat: number; lng: number };
+  overlappingScheme: 'PMGSY' | 'Jal Jeevan Mission' | 'AMRUT' | 'Samagra Shiksha' | 'Smart Cities Mission';
+  schemeProjectId: string;
+  schemeWorkName: string;
+  schemeCost: number;
+  schemeGps: { lat: number; lng: number };
+  distanceMeters: number;
+  titleSimilarityPct: number;
+  potentialDuplicationRisk: 'HIGH' | 'CRITICAL';
+  estimatedDoubleFundingLakhs: number;
+}
+
+export interface VendorAnalyticsItem {
+  vendorId: string;
+  vendorName: string;
+  state: string;
+  activeProjectsCount: number;
+  totalWonAmountLakhs: number;
+  concentrationIndexHHI: number; // 0 - 10,000
+  priceDeviationFromDSR: number; // percentage variance from PWD schedule of rates
+  winRatePct: number;
+  suspectedCartelPartners: string[];
+  riskCategory: 'Low Risk' | 'Monopoly Concern' | 'Bid Collusion Suspected' | 'Severe Risk';
+}
+
+export interface DocumentVerificationItem {
+  documentId: string;
+  projectId: string;
+  docType: 'Detailed Project Report' | 'Sanction Order' | 'Utilization Certificate' | 'Contractor Invoice' | 'Inspection Report';
+  extractedAmountLakhs: number;
+  sanctionedAmountLakhs: number;
+  discrepancyLakhs: number;
+  ocrConfidence: number;
+  dateConsistencyCheck: boolean;
+  missingMandatoryFields: string[];
+  authenticityStatus: 'Verified' | 'Flagged Discrepancy' | 'Missing Annexures';
+}
+
+export interface InspectionPriorityItem {
+  rank: number;
+  projectId: string;
+  workName: string;
+  state: string;
+  constituency: string;
+  mpName: string;
+  compositeScore: number;
+  riskLevel: RiskLevel;
+  primaryFlagModule: AIModuleId;
+  estimatedFinancialRiskLakhs: number;
+  daysFlagged: number;
+  status: 'Pending Assignment' | 'Inspection Scheduled' | 'Report Submitted' | 'Action Enforced';
+  assignedInspector?: string;
+}

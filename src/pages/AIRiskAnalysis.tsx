@@ -1,16 +1,19 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { PROJECTS } from '../data/demoData';
 import type { Project } from '../types';
 import { PageHeader, SectionCard, Table, ActionButton, StatusBadge, Pagination } from '../components/ui';
 import { RiskBadge, RiskScoreBar } from '../components/RiskBadge';
 import { getRiskColor, getRiskBgColor, getScoreColor } from '../lib/riskEngine';
+import { calculateMultiModalEvidence } from '../lib/aiModulesEngine';
 import { formatCrore, formatDate, formatPct } from '../lib/utils';
 import {
   Brain, AlertTriangle, Clock, DollarSign, ChevronRight,
-  Activity, Info, TrendingUp, BarChart3
+  Activity, Info, TrendingUp, BarChart3, Layers, ExternalLink, Sparkles
 } from 'lucide-react';
 
 export default function AIRiskAnalysis() {
+  const navigate = useNavigate();
   const highRiskProjects = [...PROJECTS]
     .filter(p => p.risk_level === 'HIGH' || p.risk_level === 'CRITICAL')
     .sort((a, b) => b.risk_score - a.risk_score);
@@ -22,6 +25,10 @@ export default function AIRiskAnalysis() {
   const project = PROJECTS.find(p => p.project_id === selectedId) || highRiskProjects[0];
 
   const fundUtil = project ? (project.expenditure / Math.max(project.fund_released, 1)) * 100 : 0;
+
+  const multiModal = useMemo(() => {
+    return project ? calculateMultiModalEvidence(project) : null;
+  }, [project]);
 
   const similarProjects = PROJECTS
     .filter(p => p.sector === project?.sector && p.project_id !== project?.project_id)
@@ -58,7 +65,21 @@ export default function AIRiskAnalysis() {
       </div>
 
       {/* Project Selector */}
-      <SectionCard title="Select Project for Analysis">
+      <SectionCard
+        title="Select Project for Analysis"
+        actions={
+          <button
+            onClick={() => navigate('/ai-analytics')}
+            style={{
+              background: '#003580', color: 'white', border: 'none',
+              padding: '6px 12px', borderRadius: 4, fontSize: 11.5, fontWeight: 700,
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
+            }}
+          >
+            <Layers size={13} /> Open AI Analytics Lab <ExternalLink size={11} />
+          </button>
+        }
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', whiteSpace: 'nowrap' }}>Project:</label>
           <select
@@ -84,6 +105,33 @@ export default function AIRiskAnalysis() {
             {project.risk_level} — {project.risk_score}/100
           </span>
         </div>
+
+        {/* 6 Sub-Module Risk Scores Row */}
+        {multiModal && (
+          <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid #e5e7eb' }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#475569', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+              <Sparkles size={12} color="#003580" />
+              Multi-Modal AI Engines Breakdown (6 Domain Sub-Scores):
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8 }}>
+              {[
+                { label: 'Financial Risk', score: multiModal.moduleScores.financial.score, color: '#1e40af' },
+                { label: 'Photo/Vision Risk', score: multiModal.moduleScores.photo.score, color: '#0891b2' },
+                { label: 'Geographic Risk', score: multiModal.moduleScores.geospatial.score, color: '#059669' },
+                { label: 'Vendor Risk', score: multiModal.moduleScores.vendor.score, color: '#7c3aed' },
+                { label: 'Document Risk', score: multiModal.moduleScores.document.score, color: '#d97706' },
+                { label: 'Progress Risk', score: multiModal.moduleScores.progress.score, color: '#dc2626' },
+              ].map(sub => (
+                <div key={sub.label} style={{ background: '#f8fafc', padding: '8px', borderRadius: 4, border: '1px solid #e2e8f0', textAlign: 'center' }}>
+                  <div style={{ fontSize: 10, color: '#64748b', fontWeight: 600 }}>{sub.label}</div>
+                  <div style={{ fontSize: 16, fontWeight: 800, color: sub.score >= 75 ? '#dc2626' : sub.score >= 50 ? '#ea580c' : '#166534', marginTop: 2 }}>
+                    {sub.score}/100
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </SectionCard>
 
       {/* Main Analysis Area */}
