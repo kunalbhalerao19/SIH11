@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { PROJECTS, STATES } from '../data/demoData';
 import { StatusBadge } from '../components/ui';
 import { Search, Flag, MapPin, User, CheckCircle, AlertTriangle, Eye } from 'lucide-react';
@@ -132,8 +132,8 @@ export default function CitizenPortal() {
                 </thead>
                 <tbody>
                   {results.map(p => (
-                    <>
-                      <tr key={p.project_id} style={{ borderBottom: '1px solid #e5e7eb' }}>
+                    <React.Fragment key={p.project_id}>
+                      <tr style={{ borderBottom: '1px solid #e5e7eb' }}>
                         <td style={{ padding: '9px 12px', fontWeight: 600, color: '#111827' }}>{p.work_name.slice(0, 42)}</td>
                         <td style={{ padding: '9px 12px', fontSize: 12, color: '#6b7280' }}>
                           <div>{p.state}</div>
@@ -178,7 +178,7 @@ export default function CitizenPortal() {
                           </td>
                         </tr>
                       )}
-                    </>
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
