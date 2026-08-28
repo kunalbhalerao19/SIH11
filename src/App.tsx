@@ -9,6 +9,7 @@ import NotFound from './pages/NotFound';
 import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import ProjectDetail from './pages/ProjectDetail';
+import SectorAnalytics from './pages/SectorAnalytics';
 import AIRiskAnalysis from './pages/AIRiskAnalysis';
 import AIAnalyticsModules from './pages/AIAnalyticsModules';
 import AnomalyDetection from './pages/AnomalyDetection';
@@ -16,6 +17,8 @@ import FundMonitoring from './pages/FundMonitoring';
 import MPAnalytics from './pages/MPAnalytics';
 import StateAnalytics from './pages/StateAnalytics';
 import MapView from './pages/MapView';
+import DataSources from './pages/DataSources';
+import DataQuality from './pages/DataQuality';
 import Alerts from './pages/Alerts';
 import Reports from './pages/Reports';
 import DataExplorer from './pages/DataExplorer';
@@ -41,6 +44,7 @@ export default function App() {
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/projects" element={<Projects />} />
                 <Route path="/projects/:id" element={<ProjectDetail />} />
+                <Route path="/sector-analytics" element={<SectorAnalytics />} />
                 <Route path="/ai-analytics" element={<AIAnalyticsModules />} />
                 <Route path="/ai-risk" element={<AIRiskAnalysis />} />
                 <Route path="/anomalies" element={<AnomalyDetection />} />
@@ -48,6 +52,8 @@ export default function App() {
                 <Route path="/mp-analytics" element={<MPAnalytics />} />
                 <Route path="/state-analytics" element={<StateAnalytics />} />
                 <Route path="/map" element={<MapView />} />
+                <Route path="/data-sources" element={<DataSources />} />
+                <Route path="/data-quality" element={<DataQuality />} />
                 <Route path="/alerts" element={<Alerts />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/data-explorer" element={<DataExplorer />} />

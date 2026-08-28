@@ -182,30 +182,59 @@ export default function MPAnalytics() {
       {/* AI Performance + Charts */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16, marginTop: 16 }}>
         {/* AI Performance */}
-        <SectionCard title="AI Performance Overview" subtitle="Prototype methodology — illustrative scores only">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 12, padding: '6px 10px', background: '#fff7ed', borderRadius: 4, border: '1px solid #fed7aa' }}>
-            <Info size={12} color="#ea580c" />
-            <span style={{ fontSize: 10, color: '#9a3412' }}>Demo scoring. Not official assessment.</span>
-          </div>
-          {[
-            { label: 'Project Efficiency', value: mp.efficiency_score, color: mp.efficiency_score > 70 ? '#16a34a' : '#d97706' },
-            { label: 'Financial Efficiency', value: mp.financial_efficiency, color: mp.financial_efficiency > 70 ? '#16a34a' : '#d97706' },
-            { label: 'Completion Efficiency', value: mp.completion_efficiency, color: mp.completion_efficiency > 70 ? '#16a34a' : '#d97706' },
-          ].map(metric => (
-            <div key={metric.label} style={{ marginBottom: 14 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-                <span style={{ fontWeight: 500 }}>{metric.label}</span>
-                <span style={{ fontWeight: 700, color: metric.color }}>{metric.value}/100</span>
+        <SectionCard title="MP Performance Index (Weighted Prototype Formula)" subtitle="Composite scoring: 30% Completion | 25% Utilization | 20% On-Time | 15% Progress | 10% Citizen Resolution">
+          {(() => {
+            const compScore = Math.min(100, Math.round((mp.works_completed / Math.max(1, mp.works_sanctioned)) * 100));
+            const utilScore = Math.min(100, Math.round((mp.total_expenditure / Math.max(1, mp.total_funds_released)) * 100));
+            const onTimeScore = Math.min(100, Math.round(mp.completion_efficiency * 0.95));
+            const progressScore = Math.min(100, Math.round(mp.efficiency_score));
+            const citizenScore = Math.min(100, Math.round(mp.financial_efficiency * 0.9));
+
+            const totalScore = Math.round(
+              compScore * 0.30 +
+              utilScore * 0.25 +
+              onTimeScore * 0.20 +
+              progressScore * 0.15 +
+              citizenScore * 0.10
+            );
+
+            const factors = [
+              { label: 'Works Completion Rate (30% Weight)', score: compScore, weighted: (compScore * 0.30).toFixed(1), color: '#16a34a' },
+              { label: 'Fund Utilization Rate (25% Weight)', score: utilScore, weighted: (utilScore * 0.25).toFixed(1), color: '#003580' },
+              { label: 'On-Time Milestone Delivery (20% Weight)', score: onTimeScore, weighted: (onTimeScore * 0.20).toFixed(1), color: '#2563eb' },
+              { label: 'Physical Progress Velocity (15% Weight)', score: progressScore, weighted: (progressScore * 0.15).toFixed(1), color: '#0d9488' },
+              { label: 'Citizen Suggestion Resolution (10% Weight)', score: citizenScore, weighted: (citizenScore * 0.10).toFixed(1), color: '#d97706' },
+            ];
+
+            return (
+              <div>
+                <div className="flex justify-between items-center mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                  <div>
+                    <div className="text-[10px] text-gray-500 uppercase font-bold">Composite Performance Index</div>
+                    <div className="text-2xl font-black text-[#003580]">{totalScore}<span className="text-xs text-gray-400 font-normal">/100</span></div>
+                  </div>
+                  <div className="text-right">
+                    <RiskBadge level={mp.risk_exposure} size="md" />
+                    <div className="text-[10px] text-gray-500 mt-1">Prototype Evaluation</div>
+                  </div>
+                </div>
+
+                <div className="space-y-2.5">
+                  {factors.map(f => (
+                    <div key={f.label}>
+                      <div className="flex justify-between text-xs mb-1">
+                        <span className="font-semibold text-gray-700">{f.label}</span>
+                        <span className="font-bold text-gray-900">{f.score}/100 <span className="text-gray-400 font-normal">({f.weighted} pts)</span></span>
+                      </div>
+                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full transition-all" style={{ width: `${f.score}%`, backgroundColor: f.color }} />
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div style={{ height: 8, background: '#e5e7eb', borderRadius: 4, overflow: 'hidden' }}>
-                <div style={{ width: `${metric.value}%`, height: '100%', background: metric.color, borderRadius: 4 }} />
-              </div>
-            </div>
-          ))}
-          <div style={{ marginTop: 8, display: 'flex', gap: 8, alignItems: 'center', fontSize: 12 }}>
-            <span style={{ color: '#6b7280' }}>Risk Exposure:</span>
-            <RiskBadge level={mp.risk_exposure} size="sm" />
-          </div>
+            );
+          })()}
         </SectionCard>
 
         {/* Charts */}

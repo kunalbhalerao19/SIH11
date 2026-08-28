@@ -65,6 +65,12 @@ export interface Project {
   delay_days: number;
   similar_project_avg_cost: number;
   risk_factors: RiskFactor[];
+  // Source Tracking Metadata
+  source_report?: string;
+  source_url?: string;
+  source_file?: string;
+  data_version?: string;
+  last_updated?: string;
 }
 
 export interface RiskFactor {

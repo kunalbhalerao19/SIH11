@@ -2,7 +2,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, FolderOpen, Brain, AlertTriangle, DollarSign,
   Users, Map, Bell, FileText, Database, Settings, ChevronRight,
-  Activity, BarChart3, ShieldAlert, Globe, Layers, UserCheck
+  Activity, BarChart3, ShieldAlert, Globe, Layers, UserCheck, PieChart, ShieldCheck
 } from 'lucide-react';
 import { useAuth, type UserRole } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
@@ -17,6 +17,7 @@ interface NavItemDef {
 const ALL_NAV_ITEMS: NavItemDef[] = [
   { path: '/dashboard', translationKey: 'nav.dashboard', icon: LayoutDashboard, allowedRoles: ['officer', 'collector', 'citizen'] },
   { path: '/projects', translationKey: 'nav.projects', icon: FolderOpen, allowedRoles: ['officer', 'collector', 'citizen'] },
+  { path: '/sector-analytics', translationKey: 'nav.sectorAnalytics', icon: PieChart, allowedRoles: ['officer', 'collector', 'citizen'] },
   { path: '/ai-analytics', translationKey: 'nav.aiAnalytics', icon: Layers, allowedRoles: ['officer'] },
   { path: '/ai-risk', translationKey: 'nav.aiRisk', icon: Brain, allowedRoles: ['officer', 'collector'] },
   { path: '/anomalies', translationKey: 'nav.anomalies', icon: AlertTriangle, allowedRoles: ['officer', 'collector'] },
@@ -24,6 +25,8 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
   { path: '/mp-analytics', translationKey: 'nav.mpAnalytics', icon: Users, allowedRoles: ['officer', 'collector'] },
   { path: '/state-analytics', translationKey: 'nav.stateAnalytics', icon: BarChart3, allowedRoles: ['officer', 'collector'] },
   { path: '/map', translationKey: 'nav.mapView', icon: Map, allowedRoles: ['officer', 'collector', 'citizen'] },
+  { path: '/data-sources', translationKey: 'nav.dataSources', icon: Database, allowedRoles: ['officer', 'collector', 'citizen'] },
+  { path: '/data-quality', translationKey: 'nav.dataQuality', icon: ShieldCheck, allowedRoles: ['officer', 'collector'] },
   { path: '/alerts', translationKey: 'nav.alerts', icon: Bell, allowedRoles: ['officer', 'collector'] },
   { path: '/reports', translationKey: 'nav.reports', icon: FileText, allowedRoles: ['officer', 'collector', 'citizen'] },
   { path: '/data-explorer', translationKey: 'nav.dataExplorer', icon: Database, allowedRoles: ['officer', 'collector', 'citizen'] },

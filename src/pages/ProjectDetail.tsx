@@ -60,9 +60,12 @@ export default function ProjectDetail() {
             <h1 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#111827', lineHeight: 1.3 }}>
               {project.work_name}
             </h1>
-            <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+            <div style={{ display: 'flex', gap: 8, marginTop: 8, alignItems: 'center', flexWrap: 'wrap' }}>
               <StatusBadge status={project.work_status} />
               <RiskBadge level={project.risk_level} score={project.risk_score} />
+              <span className="bg-amber-100 text-amber-900 border border-amber-300 px-2 py-0.5 rounded text-[10px] font-bold">
+                {project.source_report || 'DEMO DATA - NOT OFFICIAL MPLADS DATA'}
+              </span>
             </div>
           </div>
           <div style={{ display: 'flex', gap: 8 }}>
