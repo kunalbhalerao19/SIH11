@@ -1,13 +1,15 @@
 {
   "name": "mplads-ai-insight",
-  "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "AI-Powered System to Detect Anomalies, Fraud, and Inefficiencies in MPLAD Scheme Implementation - SIH 2026 Problem Statement 26102",
+  "author": "Kunal Bhalerao & Team Sentinel (SIH 2026)",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "oxlint"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
