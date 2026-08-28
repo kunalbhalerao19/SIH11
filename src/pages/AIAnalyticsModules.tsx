@@ -13,6 +13,8 @@ import { PROJECTS, STATES } from '../data/demoData';
 import { PageHeader, SectionCard, KpiCard, ActionButton, StatusBadge } from '../components/ui';
 import { RiskBadge, RiskScoreBar } from '../components/RiskBadge';
 import { getRiskColor, getRiskBgColor, getScoreColor } from '../lib/riskEngine';
+import { generateInspectionDocketPDF } from '../lib/exportUtils';
+import { useToast } from '../context/ToastContext';
 import type { AIModuleId, RiskLevel, Project } from '../types';
 import {
   Brain, Camera, MapPin, Users, FileText, Clock,
@@ -28,6 +30,7 @@ import {
 
 export default function AIAnalyticsModules() {
   const navigate = useNavigate();
+  const { success } = useToast();
   const [activeModule, setActiveModule] = useState<AIModuleId>('financial');
   const [selectedProjectId, setSelectedProjectId] = useState<string>(PROJECTS[0]?.project_id || 'MPL-2026-00451');
   const [customWeights, setCustomWeights] = useState<Record<AIModuleId, number>>({
@@ -697,12 +700,16 @@ export default function AIAnalyticsModules() {
               </button>
               <button
                 onClick={() => {
-                  alert(`Official Inspection Docket for ${selectedInspection.projectId} generated and dispatched to ${selectedInspection.assignedInspector || 'District Collector Office'}.`);
+                  generateInspectionDocketPDF(selectedInspection, selectedProject);
+                  success(
+                    'Inspection Docket Generated',
+                    `Official PDF downloaded and dispatched to ${selectedInspection.assignedInspector || 'District Collector Office'}.`
+                  );
                   setShowInspectionModal(false);
                 }}
                 style={{ background: '#003580', color: 'white', border: 'none', padding: '8px 16px', borderRadius: 4, fontSize: 12, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
               >
-                <Download size={14} /> Download & Assign Docket
+                <Download size={14} /> Download Official PDF Docket
               </button>
             </div>
           </div>

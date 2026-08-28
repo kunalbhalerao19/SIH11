@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext';
 import {
   Brain,
   DollarSign,
@@ -10,10 +11,12 @@ import {
   Users,
   ShieldAlert,
   AlertTriangle,
+  Globe,
 } from 'lucide-react';
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
+  const { language, setLanguage, t } = useLanguage();
 
   return (
     <div style={{ fontFamily: 'Segoe UI, Arial, sans-serif', color: '#111', background: '#fff' }}>
@@ -71,6 +74,25 @@ const Landing: React.FC = () => {
 
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           <button
+            onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
+            style={{
+              background: 'rgba(255,255,255,0.12)',
+              border: '1px solid rgba(255,255,255,0.3)',
+              color: '#fff',
+              borderRadius: '4px',
+              padding: '6px 12px',
+              fontSize: '0.8rem',
+              cursor: 'pointer',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+            }}
+          >
+            <Globe size={13} />
+            <span>{language === 'en' ? '🇮🇳 हिंदी' : '🇬🇧 English'}</span>
+          </button>
+          <button
             onClick={() => navigate('/login')}
             style={{
               background: 'transparent',
@@ -83,7 +105,7 @@ const Landing: React.FC = () => {
               fontWeight: 500,
             }}
           >
-            Login
+            {t('nav.login')}
           </button>
           <button
             onClick={() => navigate('/dashboard')}
@@ -99,7 +121,7 @@ const Landing: React.FC = () => {
               boxShadow: '0 2px 6px rgba(255,107,0,0.4)',
             }}
           >
-            Dashboard
+            {t('nav.dashboard')}
           </button>
         </div>
       </header>

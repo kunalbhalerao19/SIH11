@@ -1,9 +1,9 @@
-// AnomalyDetection.tsx — MPLADS AI Insight
-// Demo environment. Data shown for demonstration purposes.
-
 import { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ANOMALIES } from '../data/demoData';
-import type { AnomalyType, AlertSeverity, InvestigationStatus } from '../types';
+import type { AnomalyType, AlertSeverity, InvestigationStatus, Anomaly } from '../types';
+import { useToast } from '../context/ToastContext';
+import { generateAnomaliesPDF, exportToCSV } from '../lib/exportUtils';
 import {
   PageHeader,
   SectionCard,
@@ -14,7 +14,7 @@ import {
   Pagination,
   KpiCard,
 } from '../components/ui';
-import { AlertTriangle, Search, Filter, Download, Eye } from 'lucide-react';
+import { AlertTriangle, Search, Filter, Download, Eye, FileText } from 'lucide-react';
 import {
   PieChart,
   Pie,
@@ -175,6 +175,10 @@ function BarTooltip({ active, payload, label }: any) {
 // ── Main Page ─────────────────────────────────────────────────────────────────
 
 export default function AnomalyDetection() {
+  const navigate = useNavigate();
+  const { success, info } = useToast();
+
+  const [anomalyList, setAnomalyList] = useState<Anomaly[]>(ANOMALIES);
   const [filterSeverity, setFilterSeverity] = useState('');
   const [filterType, setFilterType] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
@@ -182,7 +186,7 @@ export default function AnomalyDetection() {
   const [page, setPage] = useState(1);
 
   const filtered = useMemo(() => {
-    return ANOMALIES.filter((a) => {
+    return anomalyList.filter((a) => {
       if (filterSeverity && a.severity !== filterSeverity) return false;
       if (filterType && a.anomaly_type !== filterType) return false;
       if (filterStatus && a.status !== filterStatus) return false;
@@ -193,9 +197,30 @@ export default function AnomalyDetection() {
       if (sevDiff !== 0) return sevDiff;
       return b.ai_confidence - a.ai_confidence;
     });
-  }, [filterSeverity, filterType, filterStatus, filterState]);
+  }, [anomalyList, filterSeverity, filterType, filterStatus, filterState]);
 
   const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE);
+
+  const handleMarkReviewed = (anomalyId: string) => {
+    setAnomalyList(prev =>
+      prev.map(a => (a.anomaly_id === anomalyId ? { ...a, status: 'Under Review' as InvestigationStatus } : a))
+    );
+    success('Anomaly Status Updated', `Marked ${anomalyId} as Under Review`);
+  };
+
+  const handleAssign = (anomalyId: string) => {
+    info('Officer Assigned', `Vigilance inspection officer assigned to ${anomalyId}`);
+  };
+
+  const handleExportCSV = () => {
+    exportToCSV(filtered, `MPLADS_Anomalies_${new Date().toISOString().slice(0, 10)}.csv`);
+    success('CSV Export Completed', `Downloaded ${filtered.length} anomaly records as CSV`);
+  };
+
+  const handleExportPDF = () => {
+    generateAnomaliesPDF(filtered);
+    success('PDF Report Generated', `Downloaded official anomaly audit PDF`);
+  };
 
   function handleFilter(setter: (v: string) => void) {
     return (v: string) => {
@@ -443,7 +468,12 @@ export default function AnomalyDetection() {
             <ActionButton
               label="Export CSV"
               variant="ghost"
-              onClick={() => alert('Export not available in demo environment.')}
+              onClick={handleExportCSV}
+            />
+            <ActionButton
+              label="Export PDF"
+              variant="secondary"
+              onClick={handleExportPDF}
             />
           </div>
         }
@@ -588,32 +618,20 @@ export default function AnomalyDetection() {
                     <ActionButton
                       label="View Project"
                       variant="secondary"
-                      onClick={() =>
-                        alert(
-                          `Project: ${anomaly.project_id}\nAnomaly: ${anomaly.anomaly_id}\n\nThis would open the project detail view.`
-                        )
-                      }
+                      onClick={() => navigate(`/projects/${anomaly.project_id}`)}
                     />
                     {anomaly.status === 'Open' && (
                       <ActionButton
                         label="Mark Reviewed"
                         variant="primary"
-                        onClick={() =>
-                          alert(
-                            `Marking ${anomaly.anomaly_id} as Under Review.\n(Disabled in demo environment.)`
-                          )
-                        }
+                        onClick={() => handleMarkReviewed(anomaly.anomaly_id)}
                       />
                     )}
                     {(anomaly.status === 'Open' || anomaly.status === 'Under Review') && (
                       <ActionButton
                         label="Assign"
                         variant="ghost"
-                        onClick={() =>
-                          alert(
-                            `Assign officer to ${anomaly.anomaly_id}.\n(Disabled in demo environment.)`
-                          )
-                        }
+                        onClick={() => handleAssign(anomaly.anomaly_id)}
                       />
                     )}
                   </div>

@@ -1,6 +1,11 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import { LanguageProvider } from './context/LanguageContext';
+import { ToastProvider } from './context/ToastContext';
 import { Layout } from './components/Layout';
 import Landing from './pages/Landing';
+import Login from './pages/Login';
+import NotFound from './pages/NotFound';
 import Dashboard from './pages/Dashboard';
 import Projects from './pages/Projects';
 import ProjectDetail from './pages/ProjectDetail';
@@ -21,34 +26,41 @@ import './index.css';
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        {/* Public landing page (no sidebar) */}
-        <Route path="/" element={<Landing />} />
-        <Route path="/citizen" element={<CitizenPortal />} />
+    <AuthProvider>
+      <LanguageProvider>
+        <ToastProvider>
+          <BrowserRouter>
+            <Routes>
+              {/* Public routes (no sidebar) */}
+              <Route path="/" element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/citizen" element={<CitizenPortal />} />
 
-        {/* Dashboard routes with sidebar layout */}
-        <Route element={<Layout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/projects/:id" element={<ProjectDetail />} />
-          <Route path="/ai-analytics" element={<AIAnalyticsModules />} />
-          <Route path="/ai-risk" element={<AIRiskAnalysis />} />
-          <Route path="/anomalies" element={<AnomalyDetection />} />
-          <Route path="/fund-monitoring" element={<FundMonitoring />} />
-          <Route path="/mp-analytics" element={<MPAnalytics />} />
-          <Route path="/state-analytics" element={<StateAnalytics />} />
-          <Route path="/map" element={<MapView />} />
-          <Route path="/alerts" element={<Alerts />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/data-explorer" element={<DataExplorer />} />
-          <Route path="/ai-model" element={<AIModel />} />
-          <Route path="/settings" element={<Settings />} />
-        </Route>
+              {/* Dashboard routes with sidebar layout */}
+              <Route element={<Layout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/projects" element={<Projects />} />
+                <Route path="/projects/:id" element={<ProjectDetail />} />
+                <Route path="/ai-analytics" element={<AIAnalyticsModules />} />
+                <Route path="/ai-risk" element={<AIRiskAnalysis />} />
+                <Route path="/anomalies" element={<AnomalyDetection />} />
+                <Route path="/fund-monitoring" element={<FundMonitoring />} />
+                <Route path="/mp-analytics" element={<MPAnalytics />} />
+                <Route path="/state-analytics" element={<StateAnalytics />} />
+                <Route path="/map" element={<MapView />} />
+                <Route path="/alerts" element={<Alerts />} />
+                <Route path="/reports" element={<Reports />} />
+                <Route path="/data-explorer" element={<DataExplorer />} />
+                <Route path="/ai-model" element={<AIModel />} />
+                <Route path="/settings" element={<Settings />} />
+              </Route>
 
-        {/* Catch-all redirect to dashboard */}
-        <Route path="*" element={<Navigate to="/dashboard" replace />} />
-      </Routes>
-    </BrowserRouter>
+              {/* 404 Catch-All */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </ToastProvider>
+      </LanguageProvider>
+    </AuthProvider>
   );
 }

@@ -1,18 +1,23 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { PROJECTS } from '../data/demoData';
 import { SectionCard, StatusBadge, ActionButton } from '../components/ui';
 import { RiskBadge } from '../components/RiskBadge';
 import { getRiskColor, getRiskBgColor, getScoreColor } from '../lib/riskEngine';
 import { formatDate } from '../lib/utils';
+import { EvidenceUploadModal, type EvidenceAnalysisResult } from '../components/EvidenceUploadModal';
 import {
   ArrowLeft, AlertTriangle, Clock, DollarSign, Brain,
-  FileText, Camera, MapPin, User, Building, CheckCircle
+  FileText, Camera, MapPin, User, Building, CheckCircle, Upload, Sparkles, CheckCircle2
 } from 'lucide-react';
 
 export default function ProjectDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const project = PROJECTS.find(p => p.project_id === id);
+
+  const [isEvidenceModalOpen, setIsEvidenceModalOpen] = useState(false);
+  const [uploadedEvidence, setUploadedEvidence] = useState<EvidenceAnalysisResult | null>(null);
 
   if (!project) {
     return (
@@ -315,23 +320,77 @@ export default function ProjectDetail() {
             ))}
           </SectionCard>
 
-          {/* Project Images */}
-          <SectionCard title="Project Images">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 8 }}>
-              {[1, 2, 3, 4].map(i => (
-                <div key={i} style={{
-                  height: 80, background: '#f9fafb', borderRadius: 6,
-                  border: '1px dashed #d1d5db', display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', justifyContent: 'center', gap: 4,
-                }}>
-                  <Camera size={18} color="#d1d5db" />
-                  <span style={{ fontSize: 10, color: '#9ca3af' }}>No image uploaded</span>
+          {/* Project Evidence Photos */}
+          <SectionCard
+            title="Site Evidence Photographs"
+            subtitle="AI EXIF Geotag & Perceptual Hash Verification"
+            actions={
+              <button
+                onClick={() => setIsEvidenceModalOpen(true)}
+                className="px-3 py-1.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded flex items-center gap-1.5 cursor-pointer shadow-sm transition-all"
+              >
+                <Upload size={12} />
+                <span>Upload Evidence Photo</span>
+              </button>
+            }
+          >
+            {uploadedEvidence ? (
+              <div className="space-y-3">
+                <div className="flex gap-3 p-3 bg-blue-50/60 rounded-lg border border-blue-200 text-xs">
+                  <img
+                    src={uploadedEvidence.imagePreviewUrl}
+                    alt="Verified Evidence"
+                    className="w-20 h-20 object-cover rounded border border-gray-300 shrink-0"
+                  />
+                  <div className="flex-1 space-y-1">
+                    <div className="font-bold text-gray-900 flex items-center gap-1.5">
+                      <CheckCircle2 size={14} className="text-emerald-600" />
+                      <span>{uploadedEvidence.fileName}</span>
+                    </div>
+                    <div className="text-[11px] text-gray-600">
+                      Geotag Distance: <strong className={uploadedEvidence.isGpsMismatch ? 'text-red-600' : 'text-emerald-700'}>{uploadedEvidence.distanceMeters}m</strong>
+                    </div>
+                    <div className="text-[11px] text-gray-600">
+                      pHash Match: <strong>{uploadedEvidence.duplicateMatch.similarityPct}%</strong>
+                    </div>
+                    <div className="text-[10px] text-gray-500">
+                      Sensor: {uploadedEvidence.exifData.cameraModel} • {uploadedEvidence.exifData.dateTime}
+                    </div>
+                  </div>
                 </div>
-              ))}
-            </div>
+
+                <div className="flex justify-between items-center text-[11px] px-2 py-1 bg-gray-100 rounded text-gray-700">
+                  <span>Photo Risk Score: <strong>{uploadedEvidence.computedPhotoRiskScore}/100</strong></span>
+                  <span className="font-bold text-[#003580]">Composite: {uploadedEvidence.computedCompositeRiskScore}/100</span>
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                {[1, 2].map(i => (
+                  <div
+                    key={i}
+                    onClick={() => setIsEvidenceModalOpen(true)}
+                    className="h-20 bg-gray-50 hover:bg-blue-50/50 rounded-lg border border-dashed border-gray-300 hover:border-[#003580] flex flex-col items-center justify-center gap-1 cursor-pointer transition-all text-gray-400 hover:text-[#003580]"
+                  >
+                    <Camera size={16} />
+                    <span className="text-[10px] font-medium">+ Click to Upload Evidence</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </SectionCard>
         </div>
       </div>
+
+      {/* Evidence Upload Modal */}
+      {project && (
+        <EvidenceUploadModal
+          project={project}
+          isOpen={isEvidenceModalOpen}
+          onClose={() => setIsEvidenceModalOpen(false)}
+          onEvidenceProcessed={result => setUploadedEvidence(result)}
+        />
+      )}
     </div>
   );
 }
