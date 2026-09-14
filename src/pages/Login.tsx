@@ -5,39 +5,19 @@ import { useLanguage } from '../context/LanguageContext';
 import { useToast } from '../context/ToastContext';
 import {
   Shield, UserCheck, Building2, Users, ArrowRight, Lock, CheckCircle2,
-  Globe, KeyRound, Smartphone, RefreshCw, Cpu, Database, Eye, EyeOff,
-  AlertTriangle, Check, Award, MapPin, Sparkles, HelpCircle
+  Globe, Check, Award, Sparkles
 } from 'lucide-react';
-
-type AuthTab = 'roles' | 'sso' | 'dsc';
 
 export default function Login() {
   const navigate = useNavigate();
   const { loginAs, user } = useAuth();
   const { language, setLanguage, t } = useLanguage();
-  const { success, error } = useToast();
+  const { success } = useToast();
 
-  const [activeTab, setActiveTab] = useState<AuthTab>('roles');
   const [selectedRole, setSelectedRole] = useState<UserRole>('officer');
-  const [customName, setCustomName] = useState('');
-  const [customJurisdiction, setCustomJurisdiction] = useState('');
+  const [customName, setCustomName] = useState('Dr. Rajesh Verma, IAS');
+  const [customJurisdiction, setCustomJurisdiction] = useState('MoSPI HQ, New Delhi');
   const [isAuthenticating, setIsAuthenticating] = useState(false);
-
-  // SSO form states
-  const [govEmail, setGovEmail] = useState('rajesh.verma@gov.in');
-  const [password, setPassword] = useState('••••••••••••');
-  const [showPassword, setShowPassword] = useState(false);
-  const [captchaInput, setCaptchaInput] = useState('');
-  const [captchaCode, setCaptchaCode] = useState('7K9P2');
-
-  const refreshCaptcha = () => {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    let code = '';
-    for (let i = 0; i < 5; i++) {
-      code += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    setCaptchaCode(code);
-  };
 
   const handleRoleSelect = (role: UserRole, presetName?: string, presetJurisdiction?: string) => {
     setSelectedRole(role);
@@ -64,17 +44,7 @@ export default function Login() {
       } else {
         navigate('/dashboard');
       }
-    }, 600);
-  };
-
-  const handleSsoLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (captchaInput.toUpperCase() !== captchaCode.toUpperCase()) {
-      error('Invalid CAPTCHA', 'Please enter the characters shown in the security image.');
-      refreshCaptcha();
-      return;
-    }
-    executeLogin('officer', 'Dr. Rajesh Verma, IAS', 'MoSPI HQ, New Delhi');
+    }, 450);
   };
 
   return (
@@ -87,7 +57,7 @@ export default function Login() {
           </div>
           <div>
             <div className="text-xs font-bold tracking-wider text-white">भारत सरकार • GOVERNMENT OF INDIA</div>
-            <div className="text-[11px] text-white/80 font-medium">Ministry of Statistics & Programme Implementation (MoSPI)</div>
+            <div className="text-[11px] text-white/80 font-medium">Ministry of Statistics &amp; Programme Implementation (MoSPI)</div>
           </div>
         </div>
 
@@ -195,16 +165,16 @@ export default function Login() {
 
           {/* RIGHT AUTH TERMINAL (7 Cols) */}
           <div className="lg:col-span-7 bg-white p-6 sm:p-8 flex flex-col justify-between">
-            <div>
+            <div className="space-y-5">
               {/* Header inside Form */}
-              <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+              <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">
                 <div>
                   <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <Lock className="w-4 h-4 text-[#003580]" />
                     <span>Sentinel Access Gateway</span>
                   </h2>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    Select your operational mode or authenticate via Government SSO
+                    Select your administrative role to access authorized vigilance tools
                   </p>
                 </div>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-[#003580] border border-blue-200">
@@ -212,321 +182,161 @@ export default function Login() {
                 </span>
               </div>
 
-              {/* Mode Switcher Tabs */}
-              <div className="flex gap-1.5 p-1 bg-slate-100 rounded-lg my-5 border border-slate-200">
-                <button
-                  onClick={() => setActiveTab('roles')}
-                  className={`flex-1 py-1.5 px-2 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    activeTab === 'roles'
-                      ? 'bg-white text-[#003580] shadow-sm border border-gray-200'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  <UserCheck className="w-3.5 h-3.5" />
-                  <span>Interactive Role Portal</span>
-                </button>
+              {/* Role Selection Cards */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                    1. Select Administrative Role:
+                  </label>
+                  <span className="text-[11px] text-[#003580] font-medium">Click to select role</span>
+                </div>
 
-                <button
-                  onClick={() => setActiveTab('sso')}
-                  className={`flex-1 py-1.5 px-2 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    activeTab === 'sso'
-                      ? 'bg-white text-[#003580] shadow-sm border border-gray-200'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  <KeyRound className="w-3.5 h-3.5" />
-                  <span>Gov SSO (e-Pramaan)</span>
-                </button>
-
-                <button
-                  onClick={() => setActiveTab('dsc')}
-                  className={`flex-1 py-1.5 px-2 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
-                    activeTab === 'dsc'
-                      ? 'bg-white text-[#003580] shadow-sm border border-gray-200'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  <Smartphone className="w-3.5 h-3.5" />
-                  <span>Digital Token / DSC</span>
-                </button>
-              </div>
-
-              {/* TAB 1: INTERACTIVE ROLES (SIH DEMO MODE) */}
-              {activeTab === 'roles' && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                      Select Authorization Level:
-                    </label>
-                    <span className="text-[11px] text-[#003580] font-medium">Click to select role</span>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {/* Role 1: Ministry Officer */}
-                    <div
-                      onClick={() => handleRoleSelect('officer', 'Dr. Rajesh Verma, IAS', 'MoSPI HQ, New Delhi')}
-                      className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
-                        selectedRole === 'officer'
-                          ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
-                          : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-slate-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-[#003580]">
-                          <Shield className="w-4 h-4" />
-                        </div>
-                        {selectedRole === 'officer' ? (
-                          <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
-                        ) : (
-                          <span className="w-4 h-4 rounded-full border border-gray-300"></span>
-                        )}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Role 1: Ministry Officer */}
+                  <div
+                    onClick={() => handleRoleSelect('officer', 'Dr. Rajesh Verma, IAS', 'MoSPI HQ, New Delhi')}
+                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                      selectedRole === 'officer'
+                        ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
+                        : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-[#003580]">
+                        <Shield className="w-4 h-4" />
                       </div>
-                      <div className="font-bold text-xs text-gray-900">Ministry Officer</div>
-                      <div className="text-[11px] text-gray-500 mt-0.5">MoSPI National Wing</div>
-                      <div className="mt-2.5 text-[10px] text-blue-900 bg-blue-100 px-2 py-0.5 rounded font-semibold inline-block">
-                        Full Access (15+ Pages)
-                      </div>
+                      {selectedRole === 'officer' ? (
+                        <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
+                      ) : (
+                        <span className="w-4 h-4 rounded-full border border-gray-300"></span>
+                      )}
                     </div>
-
-                    {/* Role 2: District Collector */}
-                    <div
-                      onClick={() => handleRoleSelect('collector', 'Smt. Neha Sharma, IAS', 'District Magistrate, Pune')}
-                      className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
-                        selectedRole === 'collector'
-                          ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
-                          : 'border-gray-200 bg-white hover:border-amber-300 hover:bg-slate-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-800">
-                          <Building2 className="w-4 h-4" />
-                        </div>
-                        {selectedRole === 'collector' ? (
-                          <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
-                        ) : (
-                          <span className="w-4 h-4 rounded-full border border-gray-300"></span>
-                        )}
-                      </div>
-                      <div className="font-bold text-xs text-gray-900">District Collector</div>
-                      <div className="text-[11px] text-gray-500 mt-0.5">District / DRDA Nodal</div>
-                      <div className="mt-2.5 text-[10px] text-amber-900 bg-amber-100 px-2 py-0.5 rounded font-semibold inline-block">
-                        Field Audit &amp; Dockets
-                      </div>
-                    </div>
-
-                    {/* Role 3: Citizen Auditor */}
-                    <div
-                      onClick={() => handleRoleSelect('citizen', 'Rahul G. (Citizen Auditor)', 'Pune Constituency')}
-                      className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
-                        selectedRole === 'citizen'
-                          ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
-                          : 'border-gray-200 bg-white hover:border-emerald-300 hover:bg-slate-50'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-800">
-                          <Users className="w-4 h-4" />
-                        </div>
-                        {selectedRole === 'citizen' ? (
-                          <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
-                        ) : (
-                          <span className="w-4 h-4 rounded-full border border-gray-300"></span>
-                        )}
-                      </div>
-                      <div className="font-bold text-xs text-gray-900">Citizen Auditor</div>
-                      <div className="text-[11px] text-gray-500 mt-0.5">Public Social Audit</div>
-                      <div className="mt-2.5 text-[10px] text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded font-semibold inline-block">
-                        QR Portal &amp; Grievance
-                      </div>
+                    <div className="font-bold text-xs text-gray-900">Ministry Officer</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">MoSPI National Wing</div>
+                    <div className="mt-2.5 text-[10px] text-blue-900 bg-blue-100 px-2 py-0.5 rounded font-semibold inline-block">
+                      Full Access (15+ Pages)
                     </div>
                   </div>
 
-                  {/* Quick Profile Persona Details */}
-                  <div className="p-3.5 bg-slate-50 rounded-xl border border-gray-200 text-xs space-y-2.5">
-                    <div className="font-semibold text-gray-800 flex items-center justify-between">
-                      <span>Active Credentials &amp; Jurisdiction:</span>
-                      <span className="text-[10px] text-gray-500 font-normal">Auto-filled for role</span>
+                  {/* Role 2: District Collector */}
+                  <div
+                    onClick={() => handleRoleSelect('collector', 'Smt. Neha Sharma, IAS', 'District Magistrate, Pune')}
+                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                      selectedRole === 'collector'
+                        ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
+                        : 'border-gray-200 bg-white hover:border-amber-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-800">
+                        <Building2 className="w-4 h-4" />
+                      </div>
+                      {selectedRole === 'collector' ? (
+                        <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
+                      ) : (
+                        <span className="w-4 h-4 rounded-full border border-gray-300"></span>
+                      )}
                     </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                      <div>
-                        <label className="block text-[10px] text-gray-500 font-bold uppercase mb-1">Authenticated Name</label>
-                        <input
-                          type="text"
-                          value={customName}
-                          onChange={e => setCustomName(e.target.value)}
-                          placeholder="e.g. Dr. Rajesh Verma, IAS"
-                          className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580]"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-[10px] text-gray-500 font-bold uppercase mb-1">Administrative Jurisdiction</label>
-                        <input
-                          type="text"
-                          value={customJurisdiction}
-                          onChange={e => setCustomJurisdiction(e.target.value)}
-                          placeholder="e.g. MoSPI HQ / Pune District"
-                          className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580]"
-                        />
-                      </div>
+                    <div className="font-bold text-xs text-gray-900">District Collector</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">District / DRDA Nodal</div>
+                    <div className="mt-2.5 text-[10px] text-amber-900 bg-amber-100 px-2 py-0.5 rounded font-semibold inline-block">
+                      Field Audit &amp; Dockets
                     </div>
                   </div>
 
-                  {/* Capability Checklist preview */}
-                  <div className="flex items-center gap-3 text-[11px] text-gray-600 bg-blue-50/50 p-2.5 rounded-lg border border-blue-100">
-                    <Award className="w-4 h-4 text-[#003580] shrink-0" />
-                    <span>
-                      {selectedRole === 'officer' && 'Full permissions: AI Model Pipeline, Sector Analytics, Data Quality Monitor, ML Inference.'}
-                      {selectedRole === 'collector' && 'Field permissions: Field Inspection PDF Docket Generator, GIS Proximity Radar, Alert Queue.'}
-                      {selectedRole === 'citizen' && 'Public permissions: Public Project Transparency, Photo Progress Viewer, Citizen Suggestion Loop.'}
-                    </span>
+                  {/* Role 3: Citizen Auditor */}
+                  <div
+                    onClick={() => handleRoleSelect('citizen', 'Rahul G. (Citizen Auditor)', 'Pune Constituency')}
+                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                      selectedRole === 'citizen'
+                        ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
+                        : 'border-gray-200 bg-white hover:border-emerald-300 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-800">
+                        <Users className="w-4 h-4" />
+                      </div>
+                      {selectedRole === 'citizen' ? (
+                        <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
+                      ) : (
+                        <span className="w-4 h-4 rounded-full border border-gray-300"></span>
+                      )}
+                    </div>
+                    <div className="font-bold text-xs text-gray-900">Citizen Auditor</div>
+                    <div className="text-[11px] text-gray-500 mt-0.5">Public Social Audit</div>
+                    <div className="mt-2.5 text-[10px] text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded font-semibold inline-block">
+                      QR Portal &amp; Grievance
+                    </div>
                   </div>
                 </div>
-              )}
+              </div>
 
-              {/* TAB 2: GOV SSO (e-PRAMAAN / JAN PARICHAY) */}
-              {activeTab === 'sso' && (
-                <form onSubmit={handleSsoLogin} className="space-y-3.5">
-                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-900">
-                    <strong>National Single Sign-On (Jan Parichay):</strong> Authenticate using official government credentials (<code>@gov.in</code> or <code>@nic.in</code>).
-                  </div>
+              {/* Profile Persona Details */}
+              <div className="p-3.5 bg-slate-50 rounded-xl border border-gray-200 text-xs space-y-2.5">
+                <div className="font-semibold text-gray-800 flex items-center justify-between">
+                  <span>2. Active Credentials &amp; Jurisdiction:</span>
+                  <span className="text-[10px] text-gray-500 font-normal">Auto-filled for role</span>
+                </div>
 
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">Government Email ID / Username</label>
+                    <label className="block text-[10px] text-gray-500 font-bold uppercase mb-1">Authenticated Name</label>
                     <input
-                      type="email"
-                      required
-                      value={govEmail}
-                      onChange={e => setGovEmail(e.target.value)}
-                      className="w-full text-xs px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580]"
-                      placeholder="officer.name@gov.in"
+                      type="text"
+                      value={customName}
+                      onChange={e => setCustomName(e.target.value)}
+                      placeholder="e.g. Dr. Rajesh Verma, IAS"
+                      className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580]"
                     />
                   </div>
-
                   <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">Password</label>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        required
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        className="w-full text-xs px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580] pr-9"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-2.5 top-2 text-gray-400 hover:text-gray-600"
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
+                    <label className="block text-[10px] text-gray-500 font-bold uppercase mb-1">Administrative Jurisdiction</label>
+                    <input
+                      type="text"
+                      value={customJurisdiction}
+                      onChange={e => setCustomJurisdiction(e.target.value)}
+                      placeholder="e.g. MoSPI HQ / Pune District"
+                      className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580]"
+                    />
                   </div>
-
-                  {/* CAPTCHA Simulator */}
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">Security Verification Code</label>
-                    <div className="flex gap-2 items-center">
-                      <div className="bg-slate-200 px-4 py-2 rounded-lg font-mono font-bold tracking-widest text-sm text-slate-800 select-none border border-slate-300 line-through">
-                        {captchaCode}
-                      </div>
-                      <button
-                        type="button"
-                        onClick={refreshCaptcha}
-                        className="p-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded border border-gray-200"
-                        title="Refresh CAPTCHA"
-                      >
-                        <RefreshCw className="w-3.5 h-3.5" />
-                      </button>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Enter 5-digit code"
-                        value={captchaInput}
-                        onChange={e => setCaptchaInput(e.target.value)}
-                        className="flex-1 text-xs px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580]"
-                      />
-                    </div>
-                  </div>
-
-                  <button
-                    type="submit"
-                    disabled={isAuthenticating}
-                    className="w-full py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
-                  >
-                    <Lock className="w-3.5 h-3.5" />
-                    <span>{isAuthenticating ? 'Authenticating e-Pramaan...' : 'Verify & Enter Sentinel'}</span>
-                  </button>
-                </form>
-              )}
-
-              {/* TAB 3: DIGITAL TOKEN / DSC BIOMETRIC */}
-              {activeTab === 'dsc' && (
-                <div className="space-y-4 text-center py-4">
-                  <div className="w-14 h-14 rounded-full bg-blue-50 border-2 border-[#003580] flex items-center justify-center mx-auto text-[#003580]">
-                    <Smartphone className="w-7 h-7" />
-                  </div>
-
-                  <div>
-                    <h3 className="font-bold text-sm text-gray-900">NIC e-Sign / USB Crypto Token</h3>
-                    <p className="text-xs text-gray-500 max-w-sm mx-auto mt-1">
-                      Plug in your Class-3 Digital Signature Certificate (DSC) cryptographic USB token or authenticate via Aadhaar e-Sign OTP.
-                    </p>
-                  </div>
-
-                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-left space-y-1.5">
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Detected Token:</span>
-                      <strong className="text-gray-900">eMudhra / NIC PKI Token</strong>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Certificate Holder:</span>
-                      <strong className="text-gray-900">Dr. Rajesh Verma (MoSPI)</strong>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-500">Validity:</span>
-                      <span className="text-emerald-700 font-semibold">Valid until Dec 2027</span>
-                    </div>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => executeLogin('collector', 'Smt. Neha Sharma, IAS', 'District Magistrate, Pune')}
-                    disabled={isAuthenticating}
-                    className="w-full py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <KeyRound className="w-3.5 h-3.5" />
-                    <span>Authorize with Digital Signature</span>
-                  </button>
                 </div>
-              )}
+              </div>
+
+              {/* Capability Checklist preview */}
+              <div className="flex items-center gap-3 text-[11px] text-gray-600 bg-blue-50/50 p-2.5 rounded-lg border border-blue-100">
+                <Award className="w-4 h-4 text-[#003580] shrink-0" />
+                <span>
+                  {selectedRole === 'officer' && 'Full permissions: AI Model Pipeline, Sector Analytics, Data Quality Monitor, ML Inference.'}
+                  {selectedRole === 'collector' && 'Field permissions: Field Inspection PDF Docket Generator, GIS Proximity Radar, Alert Queue.'}
+                  {selectedRole === 'citizen' && 'Public permissions: Public Project Transparency, Photo Progress Viewer, Citizen Suggestion Loop.'}
+                </span>
+              </div>
             </div>
 
-            {/* Bottom Form Actions (Active in Roles tab) */}
-            {activeTab === 'roles' && (
-              <div className="pt-5 mt-5 border-t border-gray-100 flex flex-col sm:flex-row gap-2.5 items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => executeLogin('officer', 'Dr. Rajesh Verma, IAS', 'MoSPI HQ, New Delhi')}
-                  className="w-full sm:w-auto px-3.5 py-2 text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-                >
-                  <span>⚡ 1-Click Fast Access</span>
-                </button>
+            {/* Bottom Form Actions */}
+            <div className="pt-4 mt-5 border-t border-gray-100 flex flex-col sm:flex-row gap-2.5 items-center justify-between">
+              <button
+                type="button"
+                onClick={() => executeLogin('officer', 'Dr. Rajesh Verma, IAS', 'MoSPI HQ, New Delhi')}
+                className="w-full sm:w-auto px-3.5 py-2 text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+              >
+                <span>⚡ 1-Click Fast Access</span>
+              </button>
 
-                <button
-                  type="button"
-                  onClick={() => executeLogin(selectedRole)}
-                  disabled={isAuthenticating}
-                  className="w-full sm:w-auto px-7 py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
-                >
-                  <span>{isAuthenticating ? 'Authenticating...' : 'Enter Monitoring Platform'}</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </div>
-            )}
+              <button
+                type="button"
+                onClick={() => executeLogin(selectedRole)}
+                disabled={isAuthenticating}
+                className="w-full sm:w-auto px-7 py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+              >
+                <span>{isAuthenticating ? 'Authenticating...' : 'Enter Monitoring Platform'}</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
 
             {/* Security Compliance Strip */}
-            <div className="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-400">
+            <div className="pt-3 mt-3 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-400">
               <div className="flex items-center gap-1">
                 <Lock className="w-3 h-3 text-emerald-600" />
                 <span>256-bit TLS Encrypted Session</span>
