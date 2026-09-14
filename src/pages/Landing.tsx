@@ -95,21 +95,6 @@ const Landing: React.FC = () => {
           <button
             onClick={() => navigate('/login')}
             style={{
-              background: 'transparent',
-              border: '1.5px solid rgba(255,255,255,0.5)',
-              color: '#fff',
-              borderRadius: '4px',
-              padding: '7px 20px',
-              fontSize: '0.85rem',
-              cursor: 'pointer',
-              fontWeight: 500,
-            }}
-          >
-            {t('nav.login')}
-          </button>
-          <button
-            onClick={() => navigate('/dashboard')}
-            style={{
               background: '#FF6B00',
               border: 'none',
               color: '#fff',
@@ -119,9 +104,10 @@ const Landing: React.FC = () => {
               cursor: 'pointer',
               fontWeight: 600,
               boxShadow: '0 2px 6px rgba(255,107,0,0.4)',
+              transition: 'background 0.2s',
             }}
           >
-            {t('nav.dashboard')}
+            {t('nav.login')}
           </button>
         </div>
       </header>
@@ -179,7 +165,7 @@ const Landing: React.FC = () => {
 
           <div style={{ display: 'flex', gap: '14px', flexWrap: 'wrap', marginBottom: '40px' }}>
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/login')}
               style={{
                 background: '#003580',
                 color: '#fff',
@@ -192,7 +178,7 @@ const Landing: React.FC = () => {
                 boxShadow: '0 2px 8px rgba(0,53,128,0.3)',
               }}
             >
-              Open Monitoring Dashboard
+              Enter Monitoring Platform
             </button>
             <button
               onClick={() => navigate('/projects')}
