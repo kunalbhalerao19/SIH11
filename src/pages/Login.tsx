@@ -52,7 +52,7 @@ export default function Login() {
         return;
       }
 
-      if (trimmedPass !== 'password') {
+      if (trimmedPass !== 'kaamchor') {
         error('Authentication Failed', 'Incorrect security password for District Collector.');
         return;
       }
