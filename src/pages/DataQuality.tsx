@@ -196,7 +196,7 @@ export default function DataQuality() {
         <div className="flex items-center gap-2">
           <span
             className={`w-2 h-2 rounded-full ${
-              backendStatus.connected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+              backendStatus.connected ? 'bg-emerald-500' : 'bg-amber-500'
             }`}
           />
           <span className="font-semibold text-slate-700">

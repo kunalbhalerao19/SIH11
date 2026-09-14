@@ -328,8 +328,9 @@ export default function AIRiskAnalysis() {
                   </div>
                 </div>
                 {Math.abs(costDevPct) > 50 && (
-                  <div style={{ marginTop: 6, fontSize: 11, color: '#dc2626', fontWeight: 600 }}>
-                    ⚠ Significant cost deviation detected. Requires verification.
+                  <div style={{ marginTop: 6, fontSize: 11, color: '#dc2626', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <AlertTriangle size={12} className="text-red-600 shrink-0" />
+                    <span>Significant cost deviation detected. Requires verification.</span>
                   </div>
                 )}
               </div>
@@ -398,8 +399,9 @@ export default function AIRiskAnalysis() {
                 </div>
               ))}
               {project.delay_days > 0 && (
-                <div style={{ padding: '6px 10px', background: '#fef2f2', borderRadius: 4, border: '1px solid #fecaca', fontSize: 11, color: '#991b1b', fontWeight: 600 }}>
-                  ⚠ Overdue by {project.delay_days} days
+                <div style={{ padding: '6px 10px', background: '#fef2f2', borderRadius: 4, border: '1px solid #fecaca', fontSize: 11, color: '#991b1b', fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
+                  <Clock size={12} className="text-red-700 shrink-0" />
+                  <span>Overdue by {project.delay_days} days</span>
                 </div>
               )}
             </div>
@@ -441,7 +443,10 @@ export default function AIRiskAnalysis() {
                       <span style={{ fontSize: 11, fontWeight: 700, color: step.color }}>{step.amount}</span>
                     </div>
                     {step.flag && (
-                      <div style={{ fontSize: 10, color: '#ea580c', marginTop: 2 }}>⚠ Unusual payment pattern</div>
+                      <div style={{ fontSize: 10, color: '#ea580c', marginTop: 2, display: 'flex', alignItems: 'center', gap: 3 }}>
+                        <AlertTriangle size={11} className="shrink-0" />
+                        <span>Unusual payment pattern</span>
+                      </div>
                     )}
                   </div>
                 </div>

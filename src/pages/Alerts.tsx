@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { ALERTS } from '../data/demoData';
 import type { AlertSeverity, AlertStatus } from '../types';
 import { PageHeader, KpiCard } from '../components/ui';
-import { Bell, AlertTriangle, AlertCircle, User, Info, Clock, ChevronRight } from 'lucide-react';
+import { Bell, AlertTriangle, AlertCircle, User, Info, Clock, ChevronRight, MapPin } from 'lucide-react';
 
 const SEVERITY_CONFIG: Record<AlertSeverity, { color: string; bg: string; icon: React.ReactNode; label: string }> = {
   CRITICAL: { color: '#991b1b', bg: '#fee2e2', icon: <AlertTriangle size={13} color="#991b1b" />, label: 'CRITICAL' },
@@ -130,8 +130,13 @@ export default function Alerts() {
                   </div>
                   <div style={{ fontSize: 13, fontWeight: 700, color: '#111827', marginBottom: 4 }}>{alert.title}</div>
                   <div style={{ fontSize: 11.5, color: '#6b7280', lineHeight: 1.5 }}>{alert.description}</div>
-                  <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
-                    {alert.state && <span style={{ fontSize: 10, background: '#f3f4f6', padding: '2px 6px', borderRadius: 3, color: '#374151' }}>📍 {alert.state}{alert.district ? `, ${alert.district}` : ''}</span>}
+                  <div style={{ display: 'flex', gap: 10, marginTop: 6, alignItems: 'center' }}>
+                    {alert.state && (
+                      <span style={{ fontSize: 10, background: '#f1f5f9', padding: '2px 6px', borderRadius: 3, color: '#334155', display: 'flex', alignItems: 'center', gap: 3 }}>
+                        <MapPin size={10} className="text-slate-500 shrink-0" />
+                        <span>{alert.state}{alert.district ? `, ${alert.district}` : ''}</span>
+                      </span>
+                    )}
                     <span style={{ fontSize: 10, color: '#9ca3af', display: 'flex', alignItems: 'center', gap: 3 }}>
                       <Clock size={10} /> {formatAlertDate(alert.created_at)}
                     </span>

@@ -224,8 +224,8 @@ export default function MPAnalytics() {
                         <span className="font-semibold text-gray-700">{f.label}</span>
                         <span className="font-bold text-gray-900">{f.score}/100 <span className="text-gray-400 font-normal">({f.weighted} pts)</span></span>
                       </div>
-                      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-                        <div className="h-full rounded-full transition-all" style={{ width: `${f.score}%`, backgroundColor: f.color }} />
+                      <div className="h-1.5 bg-gray-200 rounded overflow-hidden">
+                        <div className="h-full rounded transition-all" style={{ width: `${f.score}%`, backgroundColor: f.color }} />
                       </div>
                     </div>
                   ))}

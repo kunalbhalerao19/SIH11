@@ -99,8 +99,8 @@ export default function SectorAnalytics() {
                     <td className="text-emerald-700 font-bold">₹{s.expenditureCr}</td>
                     <td>
                       <div className="flex items-center gap-2">
-                        <div className="w-16 h-2 bg-gray-200 rounded-full overflow-hidden">
-                          <div className="h-full bg-blue-800 rounded-full" style={{ width: `${util}%` }} />
+                        <div className="w-16 h-1.5 bg-gray-200 rounded overflow-hidden">
+                          <div className="h-full bg-blue-800 rounded" style={{ width: `${util}%` }} />
                         </div>
                         <span className="text-xs font-bold">{util.toFixed(1)}%</span>
                       </div>

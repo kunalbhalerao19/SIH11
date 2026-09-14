@@ -11,23 +11,23 @@ interface KpiCardProps {
 export function KpiCard({ title, value, subtitle, icon, color = '#003580', trend, border }: KpiCardProps) {
   return (
     <div style={{
-      background: 'white',
-      border: `1px solid ${border || '#e5e7eb'}`,
+      background: '#ffffff',
+      border: `1px solid ${border || '#e2e8f0'}`,
       borderTop: `3px solid ${color}`,
       borderRadius: 6,
       padding: '14px 16px',
-      boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
     }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: 11, color: '#6b7280', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 6 }}>
+          <div style={{ fontSize: 11, color: '#64748b', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: 6 }}>
             {title}
           </div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: '#111827', lineHeight: 1 }}>
+          <div style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', lineHeight: 1.1 }}>
             {value}
           </div>
           {subtitle && (
-            <div style={{ fontSize: 11, color: '#6b7280', marginTop: 4 }}>{subtitle}</div>
+            <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>{subtitle}</div>
           )}
           {trend && (
             <div style={{
@@ -41,7 +41,7 @@ export function KpiCard({ title, value, subtitle, icon, color = '#003580', trend
         </div>
         {icon && (
           <div style={{
-            width: 40, height: 40, background: `${color}15`, borderRadius: 8,
+            width: 36, height: 36, background: `${color}12`, borderRadius: 4,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexShrink: 0,
           }}>
@@ -64,26 +64,27 @@ interface SectionCardProps {
 export function SectionCard({ title, subtitle, children, actions, noPadding }: SectionCardProps) {
   return (
     <div style={{
-      background: 'white',
-      border: '1px solid #e5e7eb',
+      background: '#ffffff',
+      border: '1px solid #e2e8f0',
       borderRadius: 6,
-      boxShadow: '0 1px 3px rgba(0,0,0,0.05)',
+      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
       overflow: 'hidden',
     }}>
       <div style={{
         padding: '12px 16px',
-        borderBottom: '1px solid #e5e7eb',
+        borderBottom: '1px solid #e2e8f0',
+        background: '#ffffff',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
       }}>
         <div>
-          <h3 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#111827' }}>{title}</h3>
-          {subtitle && <p style={{ margin: 0, fontSize: 11, color: '#6b7280', marginTop: 2 }}>{subtitle}</p>}
+          <h3 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: '#0f172a' }}>{title}</h3>
+          {subtitle && <p style={{ margin: 0, fontSize: 11, color: '#64748b', marginTop: 2 }}>{subtitle}</p>}
         </div>
         {actions && <div>{actions}</div>}
       </div>
-      <div style={noPadding ? {} : { padding: '12px 16px' }}>
+      <div style={noPadding ? {} : { padding: '14px 16px' }}>
         {children}
       </div>
     </div>
@@ -97,8 +98,8 @@ interface FilterBarProps {
 export function FilterBar({ filters }: FilterBarProps) {
   return (
     <div style={{
-      background: 'white',
-      border: '1px solid #e5e7eb',
+      background: '#ffffff',
+      border: '1px solid #e2e8f0',
       borderRadius: 6,
       padding: '10px 16px',
       display: 'flex',
@@ -106,21 +107,22 @@ export function FilterBar({ filters }: FilterBarProps) {
       gap: 12,
       alignItems: 'center',
       marginBottom: 16,
+      boxShadow: '0 1px 2px rgba(0, 0, 0, 0.02)',
     }}>
-      <span style={{ fontSize: 12, fontWeight: 600, color: '#374151' }}>Filters:</span>
+      <span style={{ fontSize: 11.5, fontWeight: 700, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.02em' }}>Filter By:</span>
       {filters.map(f => (
         <div key={f.label} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <label style={{ fontSize: 11, color: '#6b7280', fontWeight: 500 }}>{f.label}</label>
+          <label style={{ fontSize: 11, color: '#64748b', fontWeight: 600 }}>{f.label}</label>
           <select
             value={f.value}
             onChange={e => f.onChange(e.target.value)}
             style={{
-              border: '1px solid #d1d5db',
+              border: '1px solid #cbd5e1',
               borderRadius: 4,
               padding: '4px 24px 4px 8px',
               fontSize: 12,
-              background: 'white',
-              color: '#374151',
+              background: '#ffffff',
+              color: '#334155',
               cursor: 'pointer',
               appearance: 'auto',
             }}
@@ -136,19 +138,19 @@ export function FilterBar({ filters }: FilterBarProps) {
 
 export function PageHeader({ title, subtitle, badge }: { title: string; subtitle?: string; badge?: React.ReactNode }) {
   return (
-    <div style={{ marginBottom: 20 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
-        <h2 style={{ margin: 0, fontSize: 20, fontWeight: 700, color: '#003580' }}>{title}</h2>
+    <div style={{ marginBottom: 18 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 3 }}>
+        <h2 style={{ margin: 0, fontSize: 19, fontWeight: 700, color: '#003580', letterSpacing: '-0.01em' }}>{title}</h2>
         {badge}
       </div>
-      {subtitle && <p style={{ margin: 0, fontSize: 13, color: '#6b7280' }}>{subtitle}</p>}
+      {subtitle && <p style={{ margin: 0, fontSize: 12.5, color: '#64748b' }}>{subtitle}</p>}
     </div>
   );
 }
 
 export function Table({ headers, children, compact }: { headers: string[]; children: React.ReactNode; compact?: boolean }) {
   return (
-    <div style={{ overflowX: 'auto' }}>
+    <div style={{ overflowX: 'auto', border: '1px solid #e2e8f0', borderRadius: 4 }}>
       <table className="gov-table" style={compact ? { fontSize: 12 } : {}}>
         <thead>
           <tr>
@@ -162,24 +164,25 @@ export function Table({ headers, children, compact }: { headers: string[]; child
 }
 
 export function StatusBadge({ status }: { status: string }) {
-  const colors: Record<string, { bg: string; color: string }> = {
-    'Completed': { bg: '#dcfce7', color: '#166534' },
-    'Ongoing': { bg: '#dbeafe', color: '#1e40af' },
-    'Sanctioned': { bg: '#e0e7ff', color: '#3730a3' },
-    'Recommended': { bg: '#f3f4f6', color: '#374151' },
-    'Non-Progress': { bg: '#fee2e2', color: '#991b1b' },
-    'Dropped': { bg: '#fef2f2', color: '#7f1d1d' },
-    'Open': { bg: '#fee2e2', color: '#991b1b' },
-    'Under Review': { bg: '#fff7ed', color: '#9a3412' },
-    'Verified': { bg: '#dcfce7', color: '#166534' },
-    'Resolved': { bg: '#f0fdf4', color: '#15803d' },
-    'False Positive': { bg: '#f3f4f6', color: '#374151' },
+  const colors: Record<string, { bg: string; color: string; border: string }> = {
+    'Completed': { bg: '#f0fdf4', color: '#166534', border: '#bbf7d0' },
+    'Ongoing': { bg: '#eff6ff', color: '#1e40af', border: '#bfdbfe' },
+    'Sanctioned': { bg: '#eef2ff', color: '#3730a3', border: '#c7d2fe' },
+    'Recommended': { bg: '#f8fafc', color: '#475569', border: '#e2e8f0' },
+    'Non-Progress': { bg: '#fef2f2', color: '#991b1b', border: '#fecaca' },
+    'Dropped': { bg: '#fef2f2', color: '#7f1d1d', border: '#fecaca' },
+    'Open': { bg: '#fef2f2', color: '#991b1b', border: '#fecaca' },
+    'Under Review': { bg: '#fff7ed', color: '#9a3412', border: '#fed7aa' },
+    'Verified': { bg: '#f0fdf4', color: '#166534', border: '#bbf7d0' },
+    'Resolved': { bg: '#f0fdf4', color: '#15803d', border: '#bbf7d0' },
+    'False Positive': { bg: '#f8fafc', color: '#475569', border: '#e2e8f0' },
   };
-  const c = colors[status] || { bg: '#f3f4f6', color: '#374151' };
+  const c = colors[status] || { bg: '#f8fafc', color: '#475569', border: '#e2e8f0' };
   return (
     <span style={{
-      background: c.bg, color: c.color, padding: '2px 8px', borderRadius: 4,
-      fontSize: 11, fontWeight: 600,
+      background: c.bg, color: c.color, border: `1px solid ${c.border}`,
+      padding: '2px 7px', borderRadius: 4,
+      fontSize: 11, fontWeight: 600, display: 'inline-block',
     }}>{status}</span>
   );
 }
@@ -191,8 +194,8 @@ export function Pagination({
   if (totalPages <= 1) return null;
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, justifyContent: 'flex-end', marginTop: 12 }}>
-      <span style={{ fontSize: 12, color: '#6b7280' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 6, justifyContent: 'flex-end', marginTop: 12 }}>
+      <span style={{ fontSize: 11.5, color: '#64748b' }}>
         Showing {(page - 1) * perPage + 1}–{Math.min(page * perPage, total)} of {total}
       </span>
       {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
@@ -200,11 +203,11 @@ export function Pagination({
           key={p}
           onClick={() => onPage(p)}
           style={{
-            width: 28, height: 28, borderRadius: 4,
-            border: p === page ? '1px solid #003580' : '1px solid #e5e7eb',
-            background: p === page ? '#003580' : 'white',
-            color: p === page ? 'white' : '#374151',
-            fontSize: 12, cursor: 'pointer', fontWeight: p === page ? 600 : 400,
+            minWidth: 26, height: 26, borderRadius: 4, padding: '0 6px',
+            border: p === page ? '1px solid #003580' : '1px solid #cbd5e1',
+            background: p === page ? '#003580' : '#ffffff',
+            color: p === page ? '#ffffff' : '#334155',
+            fontSize: 11.5, cursor: 'pointer', fontWeight: p === page ? 700 : 500,
           }}
         >{p}</button>
       ))}
@@ -216,10 +219,10 @@ export function ActionButton({ label, onClick, variant = 'primary' }: {
   label: string; onClick?: () => void; variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
 }) {
   const styles: Record<string, React.CSSProperties> = {
-    primary: { background: '#003580', color: 'white', border: '1px solid #003580' },
-    secondary: { background: 'white', color: '#003580', border: '1px solid #003580' },
-    danger: { background: '#dc2626', color: 'white', border: '1px solid #dc2626' },
-    ghost: { background: 'transparent', color: '#374151', border: '1px solid #e5e7eb' },
+    primary: { background: '#003580', color: '#ffffff', border: '1px solid #003580' },
+    secondary: { background: '#ffffff', color: '#003580', border: '1px solid #003580' },
+    danger: { background: '#dc2626', color: '#ffffff', border: '1px solid #dc2626' },
+    ghost: { background: 'transparent', color: '#334155', border: '1px solid #cbd5e1' },
   };
   return (
     <button
@@ -227,7 +230,7 @@ export function ActionButton({ label, onClick, variant = 'primary' }: {
       style={{
         ...styles[variant],
         padding: '5px 12px', borderRadius: 4, fontSize: 12, cursor: 'pointer',
-        fontWeight: 500, display: 'inline-flex', alignItems: 'center', gap: 4,
+        fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 4,
       }}
     >{label}</button>
   );

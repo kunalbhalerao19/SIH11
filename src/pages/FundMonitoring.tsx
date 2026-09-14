@@ -7,7 +7,7 @@ import {
   BarChart, Bar, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
-import { DollarSign, TrendingUp, TrendingDown, BarChart3 } from 'lucide-react';
+import { DollarSign, TrendingUp, TrendingDown, BarChart3, Info } from 'lucide-react';
 
 import { FUND_DATA, STATE_STATS, MPs, FINANCIAL_YEARS, STATES } from '../data/demoData';
 import {
@@ -142,10 +142,12 @@ export default function FundMonitoring() {
 
       {/* disclaimer */}
       <div style={{
-        background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 5,
+        background: '#fff7ed', border: '1px solid #fed7aa', borderRadius: 4,
         padding: '6px 12px', fontSize: 11, color: '#9a3412', marginBottom: 16,
+        display: 'flex', alignItems: 'center', gap: 6,
       }}>
-        ⚠️ Demo environment. Data shown for demonstration purposes only. Values are synthetic and do not represent official government statistics.
+        <Info size={12} className="text-amber-700 shrink-0" />
+        <span>Demo environment. Data shown for demonstration purposes only. Values are synthetic and do not represent official government statistics.</span>
       </div>
 
       {/* Filter Bar */}

@@ -18,7 +18,7 @@ import {
   Brain, Camera,
   AlertTriangle, ChevronRight, RefreshCw,
   Eye, CheckCircle2, Layers,
-  QrCode, Download, Sparkles
+  QrCode, Download, Sparkles, X
 } from 'lucide-react';
 import {
   ResponsiveContainer, RadarChart,
@@ -660,13 +660,15 @@ export default function AIAnalyticsModules() {
       {/* ─── Modal 1: Inspection Docket Modal ─────────────────────────────── */}
       {showInspectionModal && selectedInspection && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-          <div style={{ background: 'white', borderRadius: 8, maxWidth: 600, width: '100%', padding: '24px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e5e7eb', paddingBottom: 12, marginBottom: 16 }}>
+          <div style={{ background: '#ffffff', borderRadius: 6, maxWidth: 600, width: '100%', padding: '20px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e2e8f0', paddingBottom: 10, marginBottom: 14 }}>
               <div>
-                <div style={{ fontSize: 16, fontWeight: 800, color: '#003580' }}>Physical Inspection Docket</div>
-                <div style={{ fontSize: 11, color: '#6b7280' }}>Rank #{selectedInspection.rank} — Priority Verification Order</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#003580' }}>Physical Inspection Docket</div>
+                <div style={{ fontSize: 11, color: '#64748b' }}>Rank #{selectedInspection.rank} — Priority Verification Order</div>
               </div>
-              <button onClick={() => setShowInspectionModal(false)} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer' }}>✕</button>
+              <button onClick={() => setShowInspectionModal(false)} style={{ background: 'none', border: 'none', padding: 4, color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                <X size={16} />
+              </button>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16, fontSize: 12 }}>
@@ -716,13 +718,15 @@ export default function AIAnalyticsModules() {
       {/* ─── Modal 2: Citizen QR Verification Simulator (Step 8 & 10) ───── */}
       {showQrModal && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
-          <div style={{ background: 'white', borderRadius: 8, maxWidth: 520, width: '100%', padding: '24px', boxShadow: '0 20px 25px -5px rgba(0,0,0,0.2)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e5e7eb', paddingBottom: 12, marginBottom: 16 }}>
+          <div style={{ background: '#ffffff', borderRadius: 6, maxWidth: 520, width: '100%', padding: '20px', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', border: '1px solid #e2e8f0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #e2e8f0', paddingBottom: 10, marginBottom: 14 }}>
               <div>
-                <div style={{ fontSize: 16, fontWeight: 800, color: '#003580' }}>8. Citizen QR-Based Verification Simulator</div>
-                <div style={{ fontSize: 11, color: '#6b7280' }}>Public Transparency & Retraining Feedback Loop</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#003580' }}>8. Citizen QR-Based Verification Simulator</div>
+                <div style={{ fontSize: 11, color: '#64748b' }}>Public Transparency & Retraining Feedback Loop</div>
               </div>
-              <button onClick={() => setShowQrModal(false)} style={{ background: 'none', border: 'none', fontSize: 18, cursor: 'pointer' }}>✕</button>
+              <button onClick={() => setShowQrModal(false)} style={{ background: 'none', border: 'none', padding: 4, color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center' }}>
+                <X size={16} />
+              </button>
             </div>
 
             {citizenFeedbackSubmitted ? (

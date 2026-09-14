@@ -276,8 +276,9 @@ export default function MapView() {
                       </div>
 
                       {project.hasDuplicateOverlap && (
-                        <div className="mt-2 p-1.5 bg-red-50 border border-red-200 rounded text-[10px] text-red-800 font-medium">
-                          ⚠️ Overlap: {project.overlapDetails?.overlappingScheme} Project ({project.overlapDetails?.distanceMeters}m apart)
+                        <div className="mt-2 p-1.5 bg-red-50 border border-red-200 rounded text-[10px] text-red-800 font-medium flex items-center gap-1">
+                          <AlertTriangle className="w-3 h-3 text-red-600 shrink-0" />
+                          <span>Overlap: {project.overlapDetails?.overlappingScheme} Project ({project.overlapDetails?.distanceMeters}m apart)</span>
                         </div>
                       )}
 
@@ -299,7 +300,7 @@ export default function MapView() {
           </MapContainer>
 
           {/* Map Floating Legend */}
-          <div className="absolute bottom-4 left-4 z-[1000] bg-white/95 backdrop-blur-sm p-3 rounded-lg border border-gray-200 shadow-md text-xs">
+          <div className="absolute bottom-4 left-4 z-[1000] bg-white p-3 rounded-md border border-gray-200 shadow-sm text-xs">
             <div className="font-bold text-gray-800 mb-2">Risk Legend:</div>
             <div className="space-y-1 text-[11px]">
               <div className="flex items-center gap-2">
@@ -398,7 +399,7 @@ export default function MapView() {
               </div>
             ) : (
               <div className="text-center py-10 text-gray-400 space-y-2">
-                <MapPin className="w-8 h-8 mx-auto text-gray-300 animate-bounce" />
+                <MapPin className="w-8 h-8 mx-auto text-gray-300" />
                 <div className="text-xs text-gray-500 font-medium">Select any project marker on the map to view forensic GIS telemetry</div>
               </div>
             )}

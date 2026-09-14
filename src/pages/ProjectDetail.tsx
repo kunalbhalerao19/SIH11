@@ -195,8 +195,9 @@ export default function ProjectDetail() {
                 </div>
               </div>
             ))}
-            <div style={{ marginTop: 10, fontSize: 11, color: getRiskColor(project.risk_level), fontWeight: 600 }}>
-              ⚠ POTENTIAL ANOMALY DETECTED — Requires Official Verification
+            <div style={{ marginTop: 10, fontSize: 11, color: getRiskColor(project.risk_level), fontWeight: 600, display: 'flex', alignItems: 'center', gap: 5 }}>
+              <AlertTriangle size={12} className="shrink-0" />
+              <span>POTENTIAL ANOMALY DETECTED — Requires Official Verification</span>
             </div>
           </div>
 
@@ -272,7 +273,12 @@ export default function ProjectDetail() {
                       <span style={{ fontSize: 11, fontWeight: 600, color: step.suspicious ? '#ea580c' : '#111827' }}>{step.label}</span>
                       <span style={{ fontSize: 11, fontWeight: 700, color: step.color }}>{step.sub}</span>
                     </div>
-                    {step.suspicious && <div style={{ fontSize: 10, color: '#ea580c' }}>⚠ Unusual</div>}
+                    {step.suspicious && (
+                      <div style={{ fontSize: 10, color: '#ea580c', display: 'flex', alignItems: 'center', gap: 3 }}>
+                        <AlertTriangle size={10} className="shrink-0" />
+                        <span>Unusual</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}

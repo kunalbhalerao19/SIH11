@@ -6,8 +6,9 @@ import {
   Camera,
   Upload,
   CheckCircle2,
+  XCircle,
   MapPin,
-  Sparkles,
+  Fingerprint,
   RefreshCw,
   X,
   ShieldAlert,
@@ -273,10 +274,10 @@ export function EvidenceUploadModal({ project, isOpen, onClose, onEvidenceProces
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-xl shadow-2xl border border-gray-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto font-sans animate-scale-up">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-md shadow-lg border border-gray-200 max-w-2xl w-full max-h-[90vh] overflow-y-auto font-sans">
         {/* Modal Header */}
-        <div className="bg-[#003580] text-white p-4 px-6 flex justify-between items-center rounded-t-xl">
+        <div className="bg-[#003580] text-white p-4 px-6 flex justify-between items-center rounded-t-md">
           <div className="flex items-center gap-2.5">
             <Camera className="w-5 h-5 text-[#FF6B00]" />
             <div>
@@ -294,8 +295,8 @@ export function EvidenceUploadModal({ project, isOpen, onClose, onEvidenceProces
           {/* File Upload Box */}
           <div
             onClick={() => fileInputRef.current?.click()}
-            className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all ${
-              imagePreview ? 'border-[#003580] bg-blue-50/30' : 'border-gray-300 hover:border-[#003580] bg-gray-50'
+            className={`border border-dashed rounded-md p-6 text-center cursor-pointer transition-all ${
+              imagePreview ? 'border-[#003580] bg-blue-50/20' : 'border-gray-300 hover:border-[#003580] bg-gray-50'
             }`}
           >
             <input
@@ -373,7 +374,7 @@ export function EvidenceUploadModal({ project, isOpen, onClose, onEvidenceProces
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-4 h-4 text-[#FF6B00]" />
+                  <Fingerprint className="w-4 h-4 text-[#FF6B00]" />
                   <span>Execute Real-Time Evidence Verification</span>
                 </>
               )}
@@ -409,25 +410,31 @@ export function EvidenceUploadModal({ project, isOpen, onClose, onEvidenceProces
                       Geotag: {analysisResult.exifData.lat?.toFixed(4)}, {analysisResult.exifData.lng?.toFixed(4)}
                     </div>
                   </div>
-                  <div className="mt-2.5 font-bold text-[11px]">
+                  <div className="mt-2.5 font-bold text-[11px] flex items-center gap-1.5">
                     {analysisResult.isGpsMismatch ? (
-                      <span className="text-red-700">❌ GEOTAG MISMATCH (Out of Bounds)</span>
+                      <span className="text-red-700 flex items-center gap-1">
+                        <XCircle className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                        <span>GEOTAG MISMATCH (Out of Bounds)</span>
+                      </span>
                     ) : (
-                      <span className="text-emerald-700">✅ GPS LOCATION VERIFIED (Within 100m)</span>
+                      <span className="text-emerald-700 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                        <span>GPS LOCATION VERIFIED (Within 100m)</span>
+                      </span>
                     )}
                   </div>
                 </div>
 
                 {/* 2. Perceptual Hash (pHash) Verification */}
                 <div
-                  className={`p-3.5 rounded-lg border ${
+                  className={`p-3.5 rounded-md border ${
                     analysisResult.duplicateMatch.isDuplicate
-                      ? 'bg-red-50/80 border-red-200 text-red-950'
-                      : 'bg-blue-50/80 border-blue-200 text-blue-950'
+                      ? 'bg-red-50 border-red-200 text-red-950'
+                      : 'bg-blue-50 border-blue-200 text-blue-950'
                   }`}
                 >
                   <div className="font-bold text-xs flex items-center gap-1.5 mb-1.5">
-                    <Sparkles className="w-4 h-4" />
+                    <Fingerprint className="w-4 h-4 text-[#003580]" />
                     <span>Perceptual Hash (64-bit dHash)</span>
                   </div>
                   <div className="text-[11px] space-y-1">
@@ -437,20 +444,24 @@ export function EvidenceUploadModal({ project, isOpen, onClose, onEvidenceProces
                       Hash: {analysisResult.pHash.slice(0, 16)}...
                     </div>
                   </div>
-                  <div className="mt-2.5 font-bold text-[11px]">
+                  <div className="mt-2.5 font-bold text-[11px] flex items-center gap-1.5">
                     {analysisResult.duplicateMatch.isDuplicate ? (
-                      <span className="text-red-700">
-                        ❌ REUSED IMAGE MATCH (Project {analysisResult.duplicateMatch.matchedProjectId})
+                      <span className="text-red-700 flex items-center gap-1">
+                        <XCircle className="w-3.5 h-3.5 text-red-600 shrink-0" />
+                        <span>REUSED IMAGE MATCH (Project {analysisResult.duplicateMatch.matchedProjectId})</span>
                       </span>
                     ) : (
-                      <span className="text-blue-700">✅ UNIQUE STRUCTURAL FINGERPRINT</span>
+                      <span className="text-blue-700 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                        <span>UNIQUE STRUCTURAL FINGERPRINT</span>
+                      </span>
                     )}
                   </div>
                 </div>
               </div>
 
               {/* Dynamic Risk Score Delta Banner */}
-              <div className="p-3.5 bg-slate-900 text-white rounded-lg flex items-center justify-between">
+              <div className="p-3.5 bg-slate-900 text-white rounded-md flex items-center justify-between">
                 <div>
                   <div className="text-[10px] text-white/70 uppercase tracking-wider font-bold">Computed Impact on Risk Score</div>
                   <div className="text-xs text-white/90 mt-0.5">
@@ -471,10 +482,10 @@ export function EvidenceUploadModal({ project, isOpen, onClose, onEvidenceProces
         </div>
 
         {/* Footer Actions */}
-        <div className="bg-gray-50 px-6 py-3 border-t border-gray-200 flex justify-end gap-2 rounded-b-xl">
+        <div className="bg-gray-50 px-6 py-3 border-t border-gray-200 flex justify-end gap-2 rounded-b-md">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 text-xs font-semibold rounded-lg transition-colors cursor-pointer"
+            className="px-4 py-1.5 bg-white border border-gray-300 hover:bg-gray-100 text-gray-700 text-xs font-semibold rounded transition-colors cursor-pointer"
           >
             Close
           </button>

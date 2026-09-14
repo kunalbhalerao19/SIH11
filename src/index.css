@@ -29,14 +29,14 @@ body {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f1f5f9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #c0c0c0;
+  background: #cbd5e1;
   border-radius: 3px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a0a0a0;
+  background: #94a3b8;
 }
 
 /* Government table styles */
@@ -47,27 +47,27 @@ body {
 }
 .gov-table th {
   background-color: #003580;
-  color: white;
-  padding: 9px 12px;
+  color: #ffffff;
+  padding: 8px 12px;
   text-align: left;
   font-weight: 600;
   white-space: nowrap;
-  font-size: 12px;
-  letter-spacing: 0.02em;
+  font-size: 11.5px;
+  letter-spacing: 0.01em;
 }
 .gov-table td {
   padding: 8px 12px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e2e8f0;
   vertical-align: middle;
 }
 .gov-table tr:hover td {
-  background-color: #f0f4ff;
+  background-color: #f1f5f9;
 }
 .gov-table tr:nth-child(even) td {
-  background-color: #fafbff;
+  background-color: #f8fafc;
 }
 .gov-table tr:nth-child(even):hover td {
-  background-color: #f0f4ff;
+  background-color: #f1f5f9;
 }
 
 /* Risk badge styles */
@@ -75,91 +75,76 @@ body {
   background-color: #fef2f2;
   color: #991b1b;
   border: 1px solid #fecaca;
-  padding: 2px 8px;
+  padding: 2px 6px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
 }
 .badge-high {
   background-color: #fff7ed;
   color: #9a3412;
   border: 1px solid #fed7aa;
-  padding: 2px 8px;
+  padding: 2px 6px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
 }
 .badge-medium {
   background-color: #fffbeb;
   color: #92400e;
   border: 1px solid #fde68a;
-  padding: 2px 8px;
+  padding: 2px 6px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
 }
 .badge-low {
   background-color: #f0fdf4;
   color: #166534;
   border: 1px solid #bbf7d0;
-  padding: 2px 8px;
+  padding: 2px 6px;
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 10.5px;
   font-weight: 700;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
 }
 
 /* Progress bar */
 .progress-bar {
-  height: 8px;
-  background-color: #e5e7eb;
-  border-radius: 4px;
+  height: 6px;
+  background-color: #e2e8f0;
+  border-radius: 3px;
   overflow: hidden;
 }
 .progress-bar-fill {
   height: 100%;
-  border-radius: 4px;
-  transition: width 0.3s ease;
+  border-radius: 3px;
+  transition: width 0.2s ease-out;
 }
 
 /* Card styles */
 .gov-card {
-  background: white;
-  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: 6px;
   padding: 16px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 /* Sidebar active state */
 .sidebar-active {
-  background-color: #1a4a9e;
-  color: white;
-  border-left: 3px solid #FF6B00;
+  background-color: #002860;
+  color: #ffffff;
+  border-left: 3px solid #ff6b00;
 }
 
 /* Print styles */
 @media print {
   .no-print { display: none !important; }
-  body { background: white; }
-}
-
-/* Animations */
-@keyframes pulse-ring {
-  0% { opacity: 1; }
-  100% { opacity: 0; transform: scale(1.4); }
-}
-.pulse-dot::before {
-  content: '';
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: currentColor;
-  animation: pulse-ring 1.5s ease-out infinite;
+  body { background: #ffffff; }
 }
 
 /* Tooltip */
@@ -172,9 +157,9 @@ body {
   bottom: calc(100% + 4px);
   left: 50%;
   transform: translateX(-50%);
-  background: #1e293b;
-  color: white;
-  padding: 4px 8px;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 3px 7px;
   border-radius: 4px;
   font-size: 11px;
   white-space: nowrap;
@@ -182,10 +167,10 @@ body {
   z-index: 100;
 }
 
-/* Feature bar in AI explanation */
+/* Feature bar in AI explanation (solid crisp fill) */
 .feature-bar {
-  height: 16px;
-  background: linear-gradient(90deg, #003580, #1a4a9e);
+  height: 14px;
+  background-color: #003580;
   border-radius: 2px;
-  transition: width 0.5s ease;
+  transition: width 0.3s ease;
 }

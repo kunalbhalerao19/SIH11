@@ -90,7 +90,7 @@ const Landing: React.FC = () => {
             }}
           >
             <Globe size={13} />
-            <span>{language === 'en' ? '🇮🇳 हिंदी' : '🇬🇧 English'}</span>
+            <span>{language === 'en' ? 'हिंदी' : 'English'}</span>
           </button>
           <button
             onClick={() => navigate('/login')}

@@ -155,10 +155,10 @@ export default function Login() {
             </div>
 
             {/* 3 Step Cards in a Row */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
               {/* Card 1 */}
-              <div className="bg-white rounded-2xl p-4 text-slate-900 shadow-lg border border-white/20 transition-transform hover:-translate-y-1">
-                <div className="w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center mb-3">
+              <div className="bg-white rounded-md p-4 text-slate-900 border border-slate-200">
+                <div className="w-6 h-6 rounded bg-[#003580] text-white text-xs font-bold flex items-center justify-center mb-3">
                   1
                 </div>
                 <div className="text-xs font-bold text-slate-800 leading-snug">
@@ -170,8 +170,8 @@ export default function Login() {
               </div>
 
               {/* Card 2 */}
-              <div className="bg-[#1976D2]/90 backdrop-blur-md rounded-2xl p-4 text-white shadow-lg border border-white/20 transition-transform hover:-translate-y-1">
-                <div className="w-6 h-6 rounded-full bg-white text-[#1976D2] text-xs font-bold flex items-center justify-center mb-3">
+              <div className="bg-[#1976D2] rounded-md p-4 text-white border border-white/20">
+                <div className="w-6 h-6 rounded bg-white text-[#003580] text-xs font-bold flex items-center justify-center mb-3">
                   2
                 </div>
                 <div className="text-xs font-bold text-white leading-snug">
@@ -183,8 +183,8 @@ export default function Login() {
               </div>
 
               {/* Card 3 */}
-              <div className="bg-[#0D47A1]/90 backdrop-blur-md rounded-2xl p-4 text-white shadow-lg border border-white/20 transition-transform hover:-translate-y-1">
-                <div className="w-6 h-6 rounded-full bg-white text-[#0D47A1] text-xs font-bold flex items-center justify-center mb-3">
+              <div className="bg-[#002860] rounded-md p-4 text-white border border-white/20">
+                <div className="w-6 h-6 rounded bg-white text-[#002860] text-xs font-bold flex items-center justify-center mb-3">
                   3
                 </div>
                 <div className="text-xs font-bold text-white leading-snug">
@@ -209,10 +209,10 @@ export default function Login() {
             
             {/* Top Logo / Emblem in Form */}
             <div className="text-center space-y-2">
-              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 border-2 border-[#1565C0] shadow-sm mb-1">
-                <Shield className="w-8 h-8 text-[#1565C0]" />
+              <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-blue-50 border-2 border-[#003580] mb-1">
+                <Shield className="w-7 h-7 text-[#003580]" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
+              <h2 className="text-xl font-bold text-slate-800 tracking-tight">
                 Sign in to MPLADS Sentinel
               </h2>
               <p className="text-xs text-slate-500">
@@ -231,9 +231,9 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => handleRoleSelect('officer')}
-                  className={`py-2 px-1.5 rounded-lg border text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                  className={`py-2 px-1.5 rounded border text-xs font-bold flex flex-col items-center gap-1 transition-colors cursor-pointer ${
                     selectedRole === 'officer'
-                      ? 'border-[#1565C0] bg-blue-50 text-[#1565C0] shadow-sm ring-1 ring-[#1565C0]'
+                      ? 'border-[#003580] bg-blue-50 text-[#003580] ring-1 ring-[#003580]'
                       : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
@@ -245,9 +245,9 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => handleRoleSelect('collector')}
-                  className={`py-2 px-1.5 rounded-lg border text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                  className={`py-2 px-1.5 rounded border text-xs font-bold flex flex-col items-center gap-1 transition-colors cursor-pointer ${
                     selectedRole === 'collector'
-                      ? 'border-[#1565C0] bg-blue-50 text-[#1565C0] shadow-sm ring-1 ring-[#1565C0]'
+                      ? 'border-[#003580] bg-blue-50 text-[#003580] ring-1 ring-[#003580]'
                       : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
@@ -259,9 +259,9 @@ export default function Login() {
                 <button
                   type="button"
                   onClick={() => handleRoleSelect('citizen')}
-                  className={`py-2 px-1.5 rounded-lg border text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                  className={`py-2 px-1.5 rounded border text-xs font-bold flex flex-col items-center gap-1 transition-colors cursor-pointer ${
                     selectedRole === 'citizen'
-                      ? 'border-[#1565C0] bg-blue-50 text-[#1565C0] shadow-sm ring-1 ring-[#1565C0]'
+                      ? 'border-[#003580] bg-blue-50 text-[#003580] ring-1 ring-[#003580]'
                       : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
                   }`}
                 >
@@ -300,7 +300,7 @@ export default function Login() {
                       ? 'Enter Collector Name'
                       : 'Enter Citizen Name (Optional)'
                   }
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1565C0] focus:bg-white transition-all"
+                  className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded text-xs text-slate-800 focus:outline-none focus:border-[#003580] focus:bg-white transition-colors"
                 />
               </div>
 
@@ -319,13 +319,13 @@ export default function Login() {
                     onChange={e => setPassword(e.target.value)}
                     placeholder={selectedRole === 'citizen' ? 'No password required' : 'Enter Password'}
                     disabled={selectedRole === 'citizen'}
-                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1565C0] focus:bg-white transition-all pr-10 disabled:bg-slate-100 disabled:text-slate-400"
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-300 rounded text-xs text-slate-800 focus:outline-none focus:border-[#003580] focus:bg-white transition-colors pr-10 disabled:bg-slate-100 disabled:text-slate-400"
                   />
                   {selectedRole !== 'citizen' && (
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+                      className="absolute right-3 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -337,7 +337,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={isAuthenticating}
-                className="w-full py-3 bg-[#1565C0] hover:bg-[#0D47A1] text-white text-xs font-bold rounded-full shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                className="w-full py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded shadow-sm hover:shadow transition-colors flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
               >
                 <span>{isAuthenticating ? 'Authenticating...' : 'Sign in to Sentinel'}</span>
                 <ArrowRight className="w-4 h-4" />

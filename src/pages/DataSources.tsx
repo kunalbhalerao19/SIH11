@@ -149,7 +149,7 @@ export default function DataSources() {
               </div>
 
               <div className="flex items-center gap-2">
-                <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${getCategoryBadge(src.category)}`}>
+                <span className={`text-[11px] font-bold px-2 py-0.5 rounded border ${getCategoryBadge(src.category)}`}>
                   {src.category}
                 </span>
                 <span className={`text-[11px] font-semibold px-2 py-0.5 rounded ${

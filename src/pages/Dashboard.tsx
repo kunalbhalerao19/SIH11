@@ -9,7 +9,7 @@ import {
 } from 'recharts';
 import {
   DollarSign, FolderOpen, CheckCircle, AlertTriangle,
-  TrendingUp, ShieldAlert, Activity, Users,
+  TrendingUp, ShieldAlert, Activity, Users, Info,
 } from 'lucide-react';
 
 import { KPI, FUND_DATA, SECTOR_SPEND, RISK_TREND, PROJECTS, STATES, FINANCIAL_YEARS } from '../data/demoData';
@@ -479,7 +479,10 @@ export default function Dashboard() {
           color: '#9ca3af',
           fontStyle: 'italic',
         }}>
-          <span>⚠ Demo environment. Data shown for demonstration purposes. Does not represent official government statistics.</span>
+          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <Info size={12} className="text-gray-400 shrink-0" />
+            <span>Demo environment. Data shown for demonstration purposes. Does not represent official government statistics.</span>
+          </span>
           <span style={{ whiteSpace: 'nowrap', marginLeft: 16 }}>SIH 2026 · PS 26102</span>
         </div>
       </SectionCard>
