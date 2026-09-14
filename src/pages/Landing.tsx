@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/useLanguage';
 import {
   Brain,
-  DollarSign,
+  IndianRupee,
   Activity,
   CheckCircle,
   Eye,
@@ -310,7 +310,7 @@ const Landing: React.FC = () => {
                   marginBottom: '16px',
                 }}
               >
-                <DollarSign size={24} color="#16a34a" />
+                <IndianRupee size={24} color="#16a34a" />
               </div>
               <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#003580', marginBottom: '10px' }}>
                 Financial Monitoring

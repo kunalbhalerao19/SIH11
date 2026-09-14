@@ -8,7 +8,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
 import {
-  DollarSign, FolderOpen, CheckCircle, AlertTriangle,
+  IndianRupee, FolderOpen, CheckCircle, AlertTriangle,
   TrendingUp, ShieldAlert, Activity, Users, Info,
 } from 'lucide-react';
 
@@ -136,7 +136,7 @@ export default function Dashboard() {
           title="Total Funds Released"
           value={formatCrore(KPI.total_funds_released)}
           subtitle="Across all MPs & states"
-          icon={<DollarSign size={18} color={GOV_BLUE} />}
+          icon={<IndianRupee size={18} color={GOV_BLUE} />}
           color={GOV_BLUE}
           trend={{ value: '+5.9% vs prev. year', up: true }}
         />

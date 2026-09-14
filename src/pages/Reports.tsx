@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { PageHeader, SectionCard } from '../components/ui';
 import {
-  FileText, Download, Printer, BarChart3, AlertTriangle, DollarSign,
+  FileText, Download, Printer, BarChart3, AlertTriangle, IndianRupee,
   Users, Map, Clock, CheckCircle, RefreshCw
 } from 'lucide-react';
 
@@ -18,7 +18,7 @@ const REPORTS: ReportCard[] = [
   { id: 'anomaly', title: 'AI Anomaly Report', description: 'All AI-detected anomalies with risk scores, contributing factors, and investigation status.', icon: <AlertTriangle size={20} color="#dc2626" />, count: '287 anomalies', border: '#dc2626' },
   { id: 'state-perf', title: 'State Performance Report', description: 'State-wise fund utilization, completion rates, anomaly counts, and risk assessments.', icon: <Map size={20} color="#1e40af" />, count: '30 states', border: '#1e40af' },
   { id: 'mp-perf', title: 'MP Performance Report', description: 'MP-wise efficiency scores, expenditure analysis, and project completion statistics.', icon: <Users size={20} color="#7c3aed" />, count: '790 MPs', border: '#7c3aed' },
-  { id: 'fund', title: 'Fund Utilization Report', description: 'Year-wise and state-wise fund release, utilization, and unspent balance tracking.', icon: <DollarSign size={20} color="#16a34a" />, count: '₹1,185 Cr tracked', border: '#16a34a' },
+  { id: 'fund', title: 'Fund Utilization Report', description: 'Year-wise and state-wise fund release, utilization, and unspent balance tracking.', icon: <IndianRupee size={20} color="#16a34a" />, count: '₹1,185 Cr tracked', border: '#16a34a' },
   { id: 'high-risk', title: 'High Risk Project Report', description: 'All HIGH and CRITICAL risk projects with AI explanations and recommended actions.', icon: <BarChart3 size={20} color="#ea580c" />, count: '1,342 projects', border: '#ea580c' },
   { id: 'delayed', title: 'Delayed Project Report', description: 'All projects running behind the expected completion schedule with delay analysis.', icon: <Clock size={20} color="#d97706" />, count: '2,841 projects', border: '#d97706' },
   { id: 'sector', title: 'Sector Analysis Report', description: 'Sector-wise spending patterns, anomaly rates, and performance comparison.', icon: <BarChart3 size={20} color="#0891b2" />, count: '10 sectors', border: '#0891b2' },

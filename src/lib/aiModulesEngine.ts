@@ -27,7 +27,7 @@ export const AI_MODULE_DEFINITIONS: Record<
   financial: {
     title: 'Financial Anomaly Detection',
     description: 'Identifies unusual expenditure velocity, multi-tranche rush spending, and cost deviation outliers.',
-    iconName: 'DollarSign',
+    iconName: 'IndianRupee',
     subFeatures: [
       'Unusual Expenditure Spikes',
       'Cost Overruns vs Sanction',

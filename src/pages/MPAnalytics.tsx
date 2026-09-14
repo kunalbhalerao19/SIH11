@@ -5,7 +5,7 @@ import { RiskBadge, RiskScoreBar } from '../components/RiskBadge';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
 } from 'recharts';
-import { User, TrendingUp, AlertTriangle, CheckCircle, DollarSign, Star, Search } from 'lucide-react';
+import { User, TrendingUp, AlertTriangle, CheckCircle, IndianRupee, Star, Search } from 'lucide-react';
 
 const COLORS = ['#16a34a', '#d97706', '#ea580c', '#dc2626'];
 const SECTOR_COLORS = ['#003580', '#1e40af', '#1d4ed8', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#dbeafe', '#1e3a5f', '#374151'];
@@ -163,7 +163,7 @@ export default function MPAnalytics() {
 
       {/* 8 KPI Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginTop: 16 }}>
-        <KpiCard title="Allocated Funds (Official)" value={`₹${(mp.total_funds_released / 100).toFixed(2)} Cr`} icon={<DollarSign size={16} color="#003580" />} color="#003580" />
+        <KpiCard title="Allocated Funds (Official)" value={`₹${(mp.total_funds_released / 100).toFixed(2)} Cr`} icon={<IndianRupee size={16} color="#003580" />} color="#003580" />
         <KpiCard title="Total Expenditure" value={`₹${(mp.total_expenditure / 100).toFixed(2)} Cr`} icon={<TrendingUp size={16} color="#16a34a" />} color="#16a34a" />
         <KpiCard title="Works Recommended" value={mp.works_recommended.toLocaleString('en-IN')} icon={<Star size={16} color="#1e40af" />} color="#1e40af" />
         <KpiCard title="Works Sanctioned" value={mp.works_sanctioned.toLocaleString('en-IN')} icon={<CheckCircle size={16} color="#1e40af" />} color="#1e40af" />

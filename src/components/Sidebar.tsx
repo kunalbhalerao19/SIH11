@@ -1,6 +1,6 @@
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
-  LayoutDashboard, FolderOpen, Brain, AlertTriangle, DollarSign,
+  LayoutDashboard, FolderOpen, Brain, AlertTriangle, IndianRupee,
   Users, Map, Bell, FileText, Database, Settings, ChevronRight,
   Activity, BarChart3, ShieldAlert, Globe, Layers, PieChart, ShieldCheck
 } from 'lucide-react';
@@ -22,7 +22,7 @@ const ALL_NAV_ITEMS: NavItemDef[] = [
   { path: '/ai-analytics', translationKey: 'nav.aiAnalytics', icon: Layers, allowedRoles: ['officer'] },
   { path: '/ai-risk', translationKey: 'nav.aiRisk', icon: Brain, allowedRoles: ['officer', 'collector'] },
   { path: '/anomalies', translationKey: 'nav.anomalies', icon: AlertTriangle, allowedRoles: ['officer', 'collector'] },
-  { path: '/fund-monitoring', translationKey: 'nav.fundMonitoring', icon: DollarSign, allowedRoles: ['officer', 'collector'] },
+  { path: '/fund-monitoring', translationKey: 'nav.fundMonitoring', icon: IndianRupee, allowedRoles: ['officer', 'collector'] },
   { path: '/mp-analytics', translationKey: 'nav.mpAnalytics', icon: Users, allowedRoles: ['officer', 'collector'] },
   { path: '/state-analytics', translationKey: 'nav.stateAnalytics', icon: BarChart3, allowedRoles: ['officer', 'collector'] },
   { path: '/map', translationKey: 'nav.mapView', icon: Map, allowedRoles: ['officer', 'collector', 'citizen'] },

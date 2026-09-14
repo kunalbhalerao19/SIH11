@@ -7,7 +7,7 @@ import {
   BarChart, Bar, LineChart, Line,
   XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
-import { DollarSign, TrendingUp, TrendingDown, BarChart3, Info } from 'lucide-react';
+import { IndianRupee, TrendingUp, TrendingDown, BarChart3, Info } from 'lucide-react';
 
 import { FUND_DATA, STATE_STATS, MPs, FINANCIAL_YEARS, STATES } from '../data/demoData';
 import {
@@ -166,7 +166,7 @@ export default function FundMonitoring() {
           title="Funds Released"
           value={`₹${releasedCr.toFixed(0)} Cr`}
           subtitle="FY 2024-25 · All States"
-          icon={<DollarSign size={18} color="#003580" />}
+          icon={<IndianRupee size={18} color="#003580" />}
           color="#003580"
           trend={{ value: '+5.0% vs prev year', up: true }}
         />
@@ -198,7 +198,7 @@ export default function FundMonitoring() {
           title="Unsanctioned Balance"
           value={`₹${unsanctionedCr.toFixed(0)} Cr`}
           subtitle="Released but not sanctioned"
-          icon={<DollarSign size={18} color="#6b7280" />}
+          icon={<IndianRupee size={18} color="#6b7280" />}
           color="#6b7280"
         />
         <KpiCard

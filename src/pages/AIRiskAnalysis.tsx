@@ -7,7 +7,7 @@ import { getRiskColor, getRiskBgColor, getScoreColor } from '../lib/riskEngine';
 import { calculateMultiModalEvidence } from '../lib/aiModulesEngine';
 import { formatDate } from '../lib/utils';
 import {
-  Brain, AlertTriangle, Clock, DollarSign,
+  Brain, AlertTriangle, Clock, IndianRupee,
   Info, TrendingUp, BarChart3, Layers, ExternalLink, Sparkles
 } from 'lucide-react';
 
@@ -227,7 +227,7 @@ export default function AIRiskAnalysis() {
               )}
               {project.anomaly_type === 'High Cost' && (
                 <div style={{ display: 'flex', gap: 10, padding: '10px 12px', background: '#fef2f2', borderRadius: 6, border: '1px solid #fecaca' }}>
-                  <DollarSign size={15} color="#dc2626" style={{ flexShrink: 0, marginTop: 1 }} />
+                  <IndianRupee size={15} color="#dc2626" style={{ flexShrink: 0, marginTop: 1 }} />
                   <div>
                     <div style={{ fontSize: 12, fontWeight: 700, color: '#991b1b' }}>Unusually High Project Cost</div>
                     <div style={{ fontSize: 11, color: '#b91c1c', marginTop: 2 }}>
