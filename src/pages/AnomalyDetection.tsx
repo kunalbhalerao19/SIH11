@@ -14,7 +14,7 @@ import {
   Pagination,
   KpiCard,
 } from '../components/ui';
-import { AlertTriangle, Search, Filter, Download, Eye, FileText } from 'lucide-react';
+import { AlertTriangle, Search, Filter, Download, Eye } from 'lucide-react';
 import {
   PieChart,
   Pie,

@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
-    return localStorage.getItem('mplads_auth_token') !== 'logged_out';
+    return localStorage.getItem('mplads_auth_token') === 'active_session';
   });
 
   useEffect(() => {
@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = () => {
     setIsAuthenticated(false);
-    localStorage.setItem('mplads_auth_token', 'logged_out');
+    localStorage.removeItem('mplads_auth_token');
   };
 
   return (

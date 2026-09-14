@@ -1,13 +1,11 @@
 import { useState, useMemo } from 'react';
 import { MPs, PROJECTS, STATES } from '../data/demoData';
-import type { MP } from '../types';
-import { PageHeader, SectionCard, KpiCard, ActionButton, StatusBadge, Pagination } from '../components/ui';
+import { PageHeader, SectionCard, KpiCard, StatusBadge, Pagination } from '../components/ui';
 import { RiskBadge, RiskScoreBar } from '../components/RiskBadge';
-import { formatCrore, formatPct } from '../lib/utils';
 import {
   PieChart, Pie, Cell, Tooltip, ResponsiveContainer,
 } from 'recharts';
-import { User, TrendingUp, AlertTriangle, CheckCircle, DollarSign, Star, Info, Search } from 'lucide-react';
+import { User, TrendingUp, AlertTriangle, CheckCircle, DollarSign, Star, Search } from 'lucide-react';
 
 const COLORS = ['#16a34a', '#d97706', '#ea580c', '#dc2626'];
 const SECTOR_COLORS = ['#003580', '#1e40af', '#1d4ed8', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#dbeafe', '#1e3a5f', '#374151'];

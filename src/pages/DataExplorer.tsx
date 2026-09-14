@@ -1,13 +1,36 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PROJECTS, STATES, SECTORS, FINANCIAL_YEARS } from '../data/demoData';
-import { PageHeader, SectionCard, FilterBar, ActionButton, StatusBadge, Pagination } from '../components/ui';
+import { PageHeader, SectionCard, FilterBar, StatusBadge, Pagination } from '../components/ui';
 import { RiskBadge } from '../components/RiskBadge';
 import { getScoreColor } from '../lib/riskEngine';
 import { truncate } from '../lib/utils';
 import { Database, Download, Search, ArrowUpDown } from 'lucide-react';
 
 type SortKey = 'risk_score' | 'sanctioned_cost' | 'expenditure' | 'physical_progress' | 'mp_name' | 'state';
+
+interface SortThProps {
+  label: string;
+  k: SortKey;
+  sortKey: SortKey;
+  sortDir: 'asc' | 'desc';
+  onSort: (k: SortKey) => void;
+}
+
+function SortTh({ label, k, sortKey, sortDir, onSort }: SortThProps) {
+  return (
+    <th
+      onClick={() => onSort(k)}
+      style={{ cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
+    >
+      <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+        {label}
+        <ArrowUpDown size={10} color="rgba(255,255,255,0.7)" />
+        {sortKey === k && <span style={{ fontSize: 10 }}>{sortDir === 'desc' ? '↓' : '↑'}</span>}
+      </span>
+    </th>
+  );
+}
 
 export default function DataExplorer() {
   const navigate = useNavigate();
@@ -59,19 +82,6 @@ export default function DataExplorer() {
 
   const paged = filtered.slice((page - 1) * perPage, page * perPage);
 
-  const SortTh = ({ label, k }: { label: string; k: SortKey }) => (
-    <th
-      onClick={() => handleSort(k)}
-      style={{ cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
-    >
-      <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
-        {label}
-        <ArrowUpDown size={10} color="rgba(255,255,255,0.7)" />
-        {sortKey === k && <span style={{ fontSize: 10 }}>{sortDir === 'desc' ? '↓' : '↑'}</span>}
-      </span>
-    </th>
-  );
-
   return (
     <div>
       <PageHeader title="Data Explorer" subtitle="Advanced MPLADS MIS data browser with full filter and search capabilities" />
@@ -115,17 +125,17 @@ export default function DataExplorer() {
               <tr>
                 <th style={{ width: 32 }}>#</th>
                 <th>Project ID</th>
-                <SortTh label="MP Name" k="mp_name" />
+                <SortTh label="MP Name" k="mp_name" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <th>House</th>
-                <SortTh label="State" k="state" />
+                <SortTh label="State" k="state" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <th>Constituency</th>
                 <th>Sector</th>
                 <th style={{ maxWidth: 220 }}>Work Name</th>
                 <th>Work Status</th>
                 <th>Sanc. Cost (L)</th>
-                <SortTh label="Expenditure (L)" k="expenditure" />
-                <SortTh label="Progress%" k="physical_progress" />
-                <SortTh label="Risk Score" k="risk_score" />
+                <SortTh label="Expenditure (L)" k="expenditure" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Progress%" k="physical_progress" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Risk Score" k="risk_score" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <th>Risk Level</th>
                 <th>Anomaly</th>
               </tr>

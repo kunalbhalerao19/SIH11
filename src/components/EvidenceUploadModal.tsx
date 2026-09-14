@@ -6,14 +6,11 @@ import {
   Camera,
   Upload,
   CheckCircle2,
-  AlertTriangle,
-  FileImage,
   MapPin,
   Sparkles,
   RefreshCw,
   X,
   ShieldAlert,
-  Sliders,
 } from 'lucide-react';
 
 interface EvidenceUploadModalProps {

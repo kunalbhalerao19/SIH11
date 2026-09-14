@@ -2,7 +2,7 @@
 // WARNING: This is a prototype scoring system for demonstration purposes only.
 // It does NOT represent the official MPLADS risk methodology.
 
-import type { Project, RiskLevel, RiskFactor } from '../types';
+import type { RiskLevel, RiskFactor } from '../types';
 
 export interface RiskScoreResult {
   score: number;
@@ -117,17 +117,14 @@ export function calculateRiskScore(params: {
     },
   ].sort((a, b) => b.contribution - a.contribution);
 
-  const summary = generateSummary(level, factors, costDeviation, progressGap, delayDays);
+  const summary = generateSummary(level, factors);
 
   return { score: clampedScore, level, factors, summary };
 }
 
 function generateSummary(
   level: RiskLevel,
-  factors: RiskFactor[],
-  costDeviation: number,
-  progressGap: number,
-  delayDays: number
+  factors: RiskFactor[]
 ): string {
   const top = factors[0];
   if (level === 'CRITICAL') {

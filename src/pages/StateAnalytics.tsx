@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { STATE_STATS } from '../data/demoData';
 import type { StateStats } from '../types';
 import { PageHeader, SectionCard, KpiCard } from '../components/ui';
-import { RiskBadge } from '../components/RiskBadge';
 import { formatNumber } from '../lib/utils';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Map, AlertTriangle, TrendingUp, Search } from 'lucide-react';
@@ -16,10 +15,20 @@ function getGrade(s: StateStats): { grade: string; color: string; bg: string } {
   return { grade: 'D', color: '#991b1b', bg: '#fee2e2' };
 }
 
-function getRiskLevelForScore(score: number) {
-  if (score >= 61) return 'HIGH';
-  if (score >= 41) return 'MEDIUM';
-  return 'LOW';
+interface SortThProps {
+  label: string;
+  k: SortKey;
+  sortKey: SortKey;
+  sortDir: 'asc' | 'desc';
+  onSort: (key: SortKey) => void;
+}
+
+function SortTh({ label, k, sortKey, sortDir, onSort }: SortThProps) {
+  return (
+    <th onClick={() => onSort(k)} style={{ cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}>
+      {label} {sortKey === k ? (sortDir === 'desc' ? '↓' : '↑') : '↕'}
+    </th>
+  );
 }
 
 export default function StateAnalytics() {
@@ -51,12 +60,6 @@ export default function StateAnalytics() {
 
   const totalFunds = STATE_STATS.reduce((s, x) => s + x.funds_released, 0);
   const avgCompletion = STATE_STATS.reduce((s, x) => s + x.completion_pct, 0) / STATE_STATS.length;
-
-  const SortTh = ({ label, k }: { label: string; k: SortKey }) => (
-    <th onClick={() => handleSort(k)} style={{ cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}>
-      {label} {sortKey === k ? (sortDir === 'desc' ? '↓' : '↑') : '↕'}
-    </th>
-  );
 
   return (
     <div>
@@ -106,15 +109,15 @@ export default function StateAnalytics() {
             <thead>
               <tr>
                 <th>State</th>
-                <SortTh label="Funds Released (Cr)" k="funds_released" />
-                <SortTh label="Expenditure (Cr)" k="expenditure" />
-                <SortTh label="Works Recommended" k="works_recommended" />
-                <SortTh label="Works Completed" k="works_completed" />
-                <SortTh label="Completion %" k="completion_pct" />
-                <SortTh label="High Risk" k="high_risk_projects" />
-                <SortTh label="Anomalies" k="anomalies" />
-                <SortTh label="Avg Risk Score" k="avg_risk_score" />
-                <SortTh label="Utilization %" k="utilization_pct" />
+                <SortTh label="Funds Released (Cr)" k="funds_released" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Expenditure (Cr)" k="expenditure" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Works Recommended" k="works_recommended" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Works Completed" k="works_completed" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Completion %" k="completion_pct" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="High Risk" k="high_risk_projects" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Anomalies" k="anomalies" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Avg Risk Score" k="avg_risk_score" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+                <SortTh label="Utilization %" k="utilization_pct" sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
                 <th>Grade</th>
               </tr>
             </thead>

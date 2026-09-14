@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PROJECTS, STATES, SECTORS, FINANCIAL_YEARS } from '../data/demoData';
-import type { WorkStatus, RiskLevel, Sector } from '../types';
 import { PageHeader, KpiCard, SectionCard, FilterBar, ActionButton, StatusBadge, Pagination } from '../components/ui';
-import { RiskBadge, RiskScoreBar } from '../components/RiskBadge';
-import { formatDate, truncate } from '../lib/utils';
+import { RiskBadge } from '../components/RiskBadge';
+import { truncate } from '../lib/utils';
 import { getScoreColor } from '../lib/riskEngine';
-import { Search, Download, Eye, FolderOpen, CheckCircle, AlertTriangle, Activity } from 'lucide-react';
+import { Search, Eye, FolderOpen, CheckCircle, AlertTriangle, Activity } from 'lucide-react';
 
 export default function Projects() {
   const navigate = useNavigate();

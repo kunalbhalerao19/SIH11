@@ -1,8 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { PageHeader, SectionCard, KpiCard } from '../components/ui';
-import { SECTOR_SPEND, PROJECTS } from '../data/demoData';
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { Layers, TrendingUp, AlertTriangle, Clock, DollarSign, CheckCircle2, ShieldAlert } from 'lucide-react';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 
 const SECTOR_METRICS = [
   { sector: 'Drinking Water Facility', code: 'SEC-DRINK', allocationCr: 215.4, expenditureCr: 198.2, completionRate: 84.5, avgDelayDays: 22, anomalyRate: 3.2, priorityWeight: 1.25 },
@@ -14,8 +12,6 @@ const SECTOR_METRICS = [
   { sector: 'Community & Cultural Centers', code: 'SEC-COMM', allocationCr: 88.4, expenditureCr: 72.1, completionRate: 71.5, avgDelayDays: 54, anomalyRate: 8.5, priorityWeight: 0.90 },
   { sector: 'Non-Conventional Energy', code: 'SEC-RENEW', allocationCr: 65.2, expenditureCr: 58.6, completionRate: 91.2, avgDelayDays: 8, anomalyRate: 1.2, priorityWeight: 1.05 },
 ];
-
-const COLORS = ['#003580', '#0052cc', '#1e40af', '#2563eb', '#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe'];
 
 export default function SectorAnalytics() {
   const [selectedSector, setSelectedSector] = useState(SECTOR_METRICS[0]);
@@ -94,7 +90,7 @@ export default function SectorAnalytics() {
                   <tr
                     key={s.code}
                     onClick={() => setSelectedSector(s)}
-                    className="cursor-pointer hover:bg-blue-50/50 transition-colors"
+                    className={`cursor-pointer transition-colors ${selectedSector.code === s.code ? 'bg-blue-50/80 ring-1 ring-blue-300' : 'hover:bg-blue-50/50'}`}
                   >
                     <td className="font-mono font-bold text-[#003580]">{s.code}</td>
                     <td className="font-semibold text-gray-900">{s.sector}</td>

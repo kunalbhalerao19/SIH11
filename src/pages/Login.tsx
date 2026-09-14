@@ -4,14 +4,14 @@ import { useAuth, type UserRole } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useToast } from '../context/ToastContext';
 import {
-  Shield, Home, Lock, KeyRound, Eye, EyeOff, Globe, Building2, Users, ArrowRight, CheckCircle2, HelpCircle
+  Shield, Home, Eye, EyeOff, Globe, Building2, Users, ArrowRight
 } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
   const { loginAs } = useAuth();
-  const { language, setLanguage, t } = useLanguage();
-  const { success, error } = useToast();
+  const { language, setLanguage } = useLanguage();
+  const { success } = useToast();
 
   const [selectedRole, setSelectedRole] = useState<UserRole>('officer');
   const [customName, setCustomName] = useState('');
@@ -28,43 +28,8 @@ export default function Login() {
   const handleLogin = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
 
-    // 1. Ministry Officer Validation
-    if (selectedRole === 'officer') {
-      const trimmedName = customName.trim().toLowerCase();
-      const trimmedPass = password.trim().toLowerCase();
-
-      if (!trimmedName || !['modi jii', 'modi ji', 'modi', 'narendra modi'].includes(trimmedName)) {
-        error('Authentication Failed', 'Invalid Officer Name for Ministry Wing. (Use: Modi Jii)');
-        return;
-      }
-
-      if (trimmedPass !== 'meloni') {
-        error('Authentication Failed', 'Incorrect security password for Ministry Officer.');
-        return;
-      }
-    }
-
-    // 2. District Collector Validation
-    else if (selectedRole === 'collector') {
-      const trimmedName = customName.trim().toLowerCase();
-      const trimmedPass = password.trim().toLowerCase();
-
-      if (!trimmedName || !['tukaram mundhe', 'tukaram', 'mundhe', 'tukaram mundhe, ias'].includes(trimmedName)) {
-        error('Authentication Failed', 'Invalid Collector Name for District Nodal. (Use: Tukaram Mundhe)');
-        return;
-      }
-
-      if (trimmedPass !== 'kaamchor') {
-        error('Authentication Failed', 'Incorrect security password for District Collector.');
-        return;
-      }
-    }
-
-    // 3. Citizen Validation
-    else if (selectedRole === 'citizen') {
-      // Citizen requires no strict password
-    }
-
+    // Prototype authentication for SIH 2026 hackathon demo:
+    // Any valid role can be authenticated directly with default or custom credentials.
     setIsAuthenticating(true);
     setTimeout(() => {
       const defaultJurisdictions = {
@@ -73,7 +38,13 @@ export default function Login() {
         citizen: 'Public Social Audit / Constituency',
       };
 
-      const finalName = customName.trim() || (selectedRole === 'citizen' ? 'Citizen Auditor' : 'Authorized Officer');
+      const defaultNames = {
+        officer: 'Ministry Nodal Officer',
+        collector: 'District Magistrate',
+        citizen: 'Citizen Auditor',
+      };
+
+      const finalName = customName.trim() || defaultNames[selectedRole];
       loginAs(selectedRole, finalName, defaultJurisdictions[selectedRole]);
       
       success('Session Authenticated', `Welcome, ${finalName}!`);
@@ -84,7 +55,7 @@ export default function Login() {
       } else {
         navigate('/dashboard');
       }
-    }, 450);
+    }, 350);
   };
 
   return (

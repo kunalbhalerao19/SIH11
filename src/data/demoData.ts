@@ -3,7 +3,7 @@
 
 import type {
   Project, MP, StateStats, Anomaly, Alert, FundData, SectorSpend,
-  RiskLevel, WorkStatus, House, AnomalyType, AlertSeverity, InvestigationStatus, Sector
+  RiskLevel, Sector
 } from '../types';
 
 // ─────────────────────────────────────────────────────────────────────────────

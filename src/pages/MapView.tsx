@@ -1,26 +1,22 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-import { PROJECTS, STATE_STATS, STATES } from '../data/demoData';
+import { PROJECTS, STATES } from '../data/demoData';
 import { CROSS_SCHEME_DUPLICATIONS } from '../lib/aiModulesEngine';
 import { PageHeader, SectionCard } from '../components/ui';
 import { RiskBadge } from '../components/RiskBadge';
-import { getRiskColor, getRiskBgColor, getScoreColor } from '../lib/riskEngine';
-import type { Project, RiskLevel } from '../types';
+import { getRiskColor } from '../lib/riskEngine';
+import type { Project } from '../types';
 import {
   MapPin,
   Layers,
   AlertTriangle,
-  Eye,
-  Search,
   Filter,
-  CheckCircle2,
-  Building2,
-  ExternalLink,
   Info,
+  ExternalLink,
 } from 'lucide-react';
 
 // Deterministic State Center Coordinates

@@ -1,5 +1,5 @@
 import { PageHeader, SectionCard } from '../components/ui';
-import { Settings as SettingsIcon, User, Bell, Shield, Database, Eye, Save } from 'lucide-react';
+import { User, Bell, Shield, Database, Eye, Save } from 'lucide-react';
 
 export default function Settings() {
   return (
@@ -60,7 +60,7 @@ export default function Settings() {
                 { label: 'New Anomaly Detected', desc: 'Alert for every new anomaly', enabled: true },
                 { label: 'Weekly Summary Report', desc: 'Weekly digest of monitoring metrics', enabled: false },
                 { label: 'Fund Utilization Alerts', desc: 'Alert when unspent balance exceeds threshold', enabled: false },
-              ].map((pref, i) => (
+              ].map(pref => (
                 <div key={pref.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 14px', background: '#f9fafb', borderRadius: 6, border: '1px solid #e5e7eb' }}>
                   <div>
                     <div style={{ fontSize: 13, fontWeight: 600, color: '#111827' }}>{pref.label}</div>

@@ -1,5 +1,5 @@
-import { PageHeader, SectionCard, KpiCard, Table } from '../components/ui';
-import { Brain, Activity, GitBranch, Database, Shield, CheckCircle, ArrowRight, Info, BarChart3 } from 'lucide-react';
+import { PageHeader, SectionCard } from '../components/ui';
+import { Brain, Activity, GitBranch, Database, Shield, CheckCircle, Info, BarChart3 } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 const FEATURE_WEIGHTS = [

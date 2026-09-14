@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, Search, ChevronDown, User, AlertTriangle, Database, Globe, LogOut, Shield } from 'lucide-react';
+import { Search, ChevronDown, User, AlertTriangle, Globe, LogOut, Shield } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -16,10 +16,6 @@ export function TopBar({ title = 'Dashboard', subtitle }: TopBarProps) {
 
   const [search, setSearch] = useState('');
   const [showProfileMenu, setShowProfileMenu] = useState(false);
-
-  const now = new Date();
-  const dateStr = now.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
-  const timeStr = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
 
   const roleStyles = {
     officer: 'bg-blue-100 text-blue-800 border-blue-200',

@@ -2,7 +2,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, FolderOpen, Brain, AlertTriangle, DollarSign,
   Users, Map, Bell, FileText, Database, Settings, ChevronRight,
-  Activity, BarChart3, ShieldAlert, Globe, Layers, UserCheck, PieChart, ShieldCheck
+  Activity, BarChart3, ShieldAlert, Globe, Layers, PieChart, ShieldCheck
 } from 'lucide-react';
 import { useAuth, type UserRole } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';

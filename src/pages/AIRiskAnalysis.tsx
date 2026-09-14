@@ -1,15 +1,14 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PROJECTS } from '../data/demoData';
-import type { Project } from '../types';
-import { PageHeader, SectionCard, Table, ActionButton, StatusBadge, Pagination } from '../components/ui';
+import { PageHeader, SectionCard, ActionButton, StatusBadge, Pagination } from '../components/ui';
 import { RiskBadge, RiskScoreBar } from '../components/RiskBadge';
 import { getRiskColor, getRiskBgColor, getScoreColor } from '../lib/riskEngine';
 import { calculateMultiModalEvidence } from '../lib/aiModulesEngine';
-import { formatCrore, formatDate, formatPct } from '../lib/utils';
+import { formatDate } from '../lib/utils';
 import {
-  Brain, AlertTriangle, Clock, DollarSign, ChevronRight,
-  Activity, Info, TrendingUp, BarChart3, Layers, ExternalLink, Sparkles
+  Brain, AlertTriangle, Clock, DollarSign,
+  Info, TrendingUp, BarChart3, Layers, ExternalLink, Sparkles
 } from 'lucide-react';
 
 export default function AIRiskAnalysis() {
@@ -26,9 +25,7 @@ export default function AIRiskAnalysis() {
 
   const fundUtil = project ? (project.expenditure / Math.max(project.fund_released, 1)) * 100 : 0;
 
-  const multiModal = useMemo(() => {
-    return project ? calculateMultiModalEvidence(project) : null;
-  }, [project]);
+  const multiModal = project ? calculateMultiModalEvidence(project) : null;
 
   const similarProjects = PROJECTS
     .filter(p => p.sector === project?.sector && p.project_id !== project?.project_id)

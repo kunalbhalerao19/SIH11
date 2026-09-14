@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { PageHeader, SectionCard, StatusBadge, ActionButton } from '../components/ui';
-import { Database, ShieldAlert, CheckCircle2, AlertTriangle, ExternalLink, RefreshCw, FileText, Info, Lock } from 'lucide-react';
-import { useLanguage } from '../context/LanguageContext';
+import { useState } from 'react';
+import { PageHeader } from '../components/ui';
+import { ShieldAlert, AlertTriangle } from 'lucide-react';
 
 interface DataSourceDef {
   sourceId: string;
@@ -74,7 +73,6 @@ const DATA_SOURCES: DataSourceDef[] = [
 ];
 
 export default function DataSources() {
-  const { t } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
 
   const filteredSources = selectedCategory === 'ALL'

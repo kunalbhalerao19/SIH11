@@ -4,27 +4,24 @@ import {
   AI_MODULE_DEFINITIONS,
   CROSS_SCHEME_DUPLICATIONS,
   PHOTO_EVIDENCE_ITEMS,
-  VENDOR_ANALYTICS,
-  DOCUMENT_VERIFICATIONS,
   INSPECTION_PRIORITY_QUEUE,
   calculateMultiModalEvidence,
 } from '../lib/aiModulesEngine';
-import { PROJECTS, STATES } from '../data/demoData';
-import { PageHeader, SectionCard, KpiCard, ActionButton, StatusBadge } from '../components/ui';
-import { RiskBadge, RiskScoreBar } from '../components/RiskBadge';
+import { PROJECTS } from '../data/demoData';
+import { PageHeader, SectionCard, KpiCard } from '../components/ui';
+import { RiskBadge } from '../components/RiskBadge';
 import { getRiskColor, getRiskBgColor, getScoreColor } from '../lib/riskEngine';
 import { generateInspectionDocketPDF } from '../lib/exportUtils';
 import { useToast } from '../context/ToastContext';
-import type { AIModuleId, RiskLevel, Project } from '../types';
+import type { AIModuleId } from '../types';
 import {
-  Brain, Camera, MapPin, Users, FileText, Clock,
-  ShieldCheck, AlertTriangle, ChevronRight, RefreshCw,
-  Eye, CheckCircle2, ArrowRight, Layers, Sliders,
-  QrCode, Search, Download, Sparkles, Filter, ExternalLink
+  Brain, Camera,
+  AlertTriangle, ChevronRight, RefreshCw,
+  Eye, CheckCircle2, Layers,
+  QrCode, Download, Sparkles
 } from 'lucide-react';
 import {
-  BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart,
+  ResponsiveContainer, RadarChart,
   PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
 } from 'recharts';
 

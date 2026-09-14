@@ -7,8 +7,8 @@ import { getRiskColor, getRiskBgColor, getScoreColor } from '../lib/riskEngine';
 import { formatDate } from '../lib/utils';
 import { EvidenceUploadModal, type EvidenceAnalysisResult } from '../components/EvidenceUploadModal';
 import {
-  ArrowLeft, AlertTriangle, Clock, DollarSign, Brain,
-  FileText, Camera, MapPin, User, Building, CheckCircle, Upload, Sparkles, CheckCircle2
+  ArrowLeft, AlertTriangle, Brain,
+  FileText, Camera, MapPin, User, Building, Upload, CheckCircle2
 } from 'lucide-react';
 
 export default function ProjectDetail() {

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { ALERTS } from '../data/demoData';
-import type { Alert, AlertSeverity, AlertStatus } from '../types';
-import { PageHeader, SectionCard, KpiCard, ActionButton } from '../components/ui';
-import { Bell, AlertTriangle, AlertCircle, CheckCircle, MessageSquare, User, Clock, Info, ChevronRight } from 'lucide-react';
+import type { AlertSeverity, AlertStatus } from '../types';
+import { PageHeader, KpiCard } from '../components/ui';
+import { Bell, AlertTriangle, AlertCircle, User, Info, Clock, ChevronRight } from 'lucide-react';
 
 const SEVERITY_CONFIG: Record<AlertSeverity, { color: string; bg: string; icon: React.ReactNode; label: string }> = {
   CRITICAL: { color: '#991b1b', bg: '#fee2e2', icon: <AlertTriangle size={13} color="#991b1b" />, label: 'CRITICAL' },

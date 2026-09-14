@@ -3,7 +3,6 @@
 
 import type {
   AIModuleId,
-  AIModuleScore,
   MultiModalEvidence,
   PhotoEvidenceItem,
   CrossSchemeDuplication,
@@ -437,7 +436,6 @@ export function calculateMultiModalEvidence(
 
   const isSevere = project.risk_score >= 81;
   const isHigh = project.risk_score >= 61 && project.risk_score < 81;
-  const isMed = project.risk_score >= 31 && project.risk_score < 61;
 
   // 1. Financial Sub-Score
   const fundUtil = project.fund_released > 0 ? (project.expenditure / project.fund_released) * 100 : 0;

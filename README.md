@@ -91,7 +91,8 @@ Detailed technical specs are available in:
 ### 1. Frontend Setup (React 19 + TypeScript + Vite)
 
 ```bash
-cd mplads-ai-insight
+git clone https://github.com/kunalbhalerao19/SIH11.git
+cd SIH11
 npm install
 npm run dev
 ```
@@ -100,7 +101,7 @@ Client runs at **`http://localhost:5173/`**.
 ### 2. Backend & ETL Setup (FastAPI)
 
 ```bash
-cd mplads-ai-insight
+cd SIH11
 pip install fastapi uvicorn pydantic httpx pytest
 
 # Run Python Unit Tests
