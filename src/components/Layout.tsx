@@ -4,11 +4,11 @@ import { Outlet } from 'react-router-dom';
 
 export function Layout() {
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#f1f3f6' }}>
+    <div className="flex min-h-screen bg-[var(--app-bg)] text-[var(--text-main)] transition-colors duration-200">
       <Sidebar />
-      <div style={{ marginLeft: 220, flex: 1, display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <div className="ml-[220px] flex-1 flex flex-col min-h-screen">
         <TopBar />
-        <main style={{ flex: 1, padding: '20px', overflowY: 'auto' }}>
+        <main className="flex-1 p-5 overflow-y-auto">
           <Outlet />
         </main>
       </div>

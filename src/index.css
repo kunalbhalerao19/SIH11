@@ -9,6 +9,41 @@
   --gov-red: #c0392b;
   --gov-yellow: #f39c12;
   --sidebar-width: 220px;
+
+  --app-bg: #f1f3f6;
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0;
+  --text-main: #1a1a2e;
+  --text-heading: #003580;
+  --text-muted: #64748b;
+  --table-header-bg: #003580;
+  --table-header-text: #ffffff;
+  --table-border: #e2e8f0;
+  --table-row-even: #f8fafc;
+  --table-row-hover: #f1f5f9;
+}
+
+:root.dark,
+[data-theme="dark"] {
+  --gov-blue: #3b82f6;
+  --gov-blue-dark: #1d4ed8;
+  --gov-blue-light: #60a5fa;
+  --gov-orange: #ff8c38;
+  --gov-green: #22c55e;
+  --gov-red: #ef4444;
+  --gov-yellow: #fbbf24;
+
+  --app-bg: #0b1329;
+  --card-bg: #111e38;
+  --card-border: #1e293b;
+  --text-main: #f8fafc;
+  --text-heading: #60a5fa;
+  --text-muted: #94a3b8;
+  --table-header-bg: #0d1e3d;
+  --table-header-text: #f8fafc;
+  --table-border: #1e293b;
+  --table-row-even: #0d172e;
+  --table-row-hover: #162444;
 }
 
 * {
@@ -17,10 +52,11 @@
 
 body {
   font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-  background-color: #f1f3f6;
-  color: #1a1a2e;
+  background-color: var(--app-bg);
+  color: var(--text-main);
   margin: 0;
   padding: 0;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Custom scrollbar */
@@ -39,35 +75,48 @@ body {
   background: #94a3b8;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #0b1329;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
 /* Government table styles */
 .gov-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+  background-color: var(--card-bg);
+  color: var(--text-main);
 }
 .gov-table th {
-  background-color: #003580;
-  color: #ffffff;
+  background-color: var(--table-header-bg);
+  color: var(--table-header-text);
   padding: 8px 12px;
   text-align: left;
   font-weight: 600;
   white-space: nowrap;
   font-size: 11.5px;
   letter-spacing: 0.01em;
+  border-bottom: 1px solid var(--table-border);
 }
 .gov-table td {
   padding: 8px 12px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--table-border);
   vertical-align: middle;
 }
 .gov-table tr:hover td {
-  background-color: #f1f5f9;
+  background-color: var(--table-row-hover);
 }
 .gov-table tr:nth-child(even) td {
-  background-color: #f8fafc;
+  background-color: var(--table-row-even);
 }
 .gov-table tr:nth-child(even):hover td {
-  background-color: #f1f5f9;
+  background-color: var(--table-row-hover);
 }
 
 /* Risk badge styles */
@@ -112,12 +161,36 @@ body {
   letter-spacing: 0.02em;
 }
 
+.dark .badge-critical {
+  background-color: rgba(220, 38, 38, 0.2);
+  color: #fca5a5;
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.dark .badge-high {
+  background-color: rgba(234, 88, 12, 0.2);
+  color: #fdba74;
+  border-color: rgba(249, 115, 22, 0.4);
+}
+.dark .badge-medium {
+  background-color: rgba(217, 119, 6, 0.2);
+  color: #fde047;
+  border-color: rgba(245, 158, 11, 0.4);
+}
+.dark .badge-low {
+  background-color: rgba(22, 163, 74, 0.2);
+  color: #86efac;
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
 /* Progress bar */
 .progress-bar {
   height: 6px;
   background-color: #e2e8f0;
   border-radius: 3px;
   overflow: hidden;
+}
+.dark .progress-bar {
+  background-color: #1e293b;
 }
 .progress-bar-fill {
   height: 100%;
@@ -127,11 +200,12 @@ body {
 
 /* Card styles */
 .gov-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 6px;
   padding: 16px;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  color: var(--text-main);
 }
 
 /* Sidebar active state */
@@ -170,7 +244,7 @@ body {
 /* Feature bar in AI explanation (solid crisp fill) */
 .feature-bar {
   height: 14px;
-  background-color: #003580;
+  background-color: var(--gov-blue);
   border-radius: 2px;
   transition: width 0.3s ease;
 }

@@ -44,8 +44,8 @@ export default function Reports() {
       <PageHeader title="Reports" subtitle="Generate and export government-grade MPLADS monitoring reports" />
 
       {/* Quick Actions */}
-      <div style={{ background: 'white', border: '1px solid #e5e7eb', borderRadius: 6, padding: '12px 16px', marginBottom: 16, display: 'flex', gap: 10, flexWrap: 'wrap', alignItems: 'center' }}>
-        <span style={{ fontSize: 12, fontWeight: 600, color: '#374151' }}>Quick Export:</span>
+      <div className="bg-white dark:bg-[#111e38] border border-gray-200 dark:border-slate-800 rounded-md p-3.5 mb-4 flex gap-2.5 flex-wrap items-center transition-colors">
+        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Quick Export:</span>
         {[
           { label: 'All Projects CSV', icon: <Download size={12} /> },
           { label: 'Anomaly Summary', icon: <Download size={12} /> },
@@ -54,46 +54,41 @@ export default function Reports() {
         ].map(btn => (
           <button
             key={btn.label}
-            style={{
-              display: 'flex', alignItems: 'center', gap: 5,
-              background: 'white', border: '1px solid #d1d5db', color: '#374151',
-              padding: '6px 12px', borderRadius: 4, fontSize: 12, cursor: 'pointer',
-            }}
+            className="flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded text-xs cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
           >
             {btn.icon} {btn.label}
           </button>
         ))}
-        <div style={{ marginLeft: 'auto', fontSize: 11, color: '#9ca3af' }}>
+        <div className="ml-auto text-[11px] text-slate-400 dark:text-slate-500">
           Last refresh: 22 Aug 2026, 22:30 IST
         </div>
       </div>
 
       {/* Report Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 14 }}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
         {REPORTS.map(report => (
           <div
             key={report.id}
-            style={{
-              background: 'white', border: '1px solid #e5e7eb',
-              borderTop: `3px solid ${report.border}`,
-              borderRadius: 6, padding: '16px',
-              boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-            }}
+            className="bg-white dark:bg-[#111e38] border border-gray-200 dark:border-slate-800 rounded-md p-4 shadow-sm transition-colors"
+            style={{ borderTop: `3px solid ${report.border}` }}
           >
-            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 10 }}>
-              <div style={{ width: 36, height: 36, background: report.border + '15', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <div className="flex items-start gap-3 mb-2.5">
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                style={{ background: report.border + '15' }}
+              >
                 {report.icon}
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#111827', marginBottom: 3 }}>{report.title}</div>
-                <div style={{ fontSize: 11, color: '#6b7280', lineHeight: 1.5 }}>{report.description}</div>
+              <div className="flex-1">
+                <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100 mb-0.5">{report.title}</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">{report.description}</div>
               </div>
             </div>
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10, fontSize: 11, color: '#9ca3af' }}>
-              <span>Records: <strong style={{ color: '#374151' }}>{report.count}</strong></span>
+            <div className="flex justify-between items-center mb-2.5 text-[11px] text-slate-400 dark:text-slate-500">
+              <span>Records: <strong className="text-slate-700 dark:text-slate-300">{report.count}</strong></span>
               {ready[report.id] && (
-                <span style={{ color: '#16a34a', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4 }}>
+                <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
                   <CheckCircle size={11} /> Report Ready
                 </span>
               )}
@@ -102,28 +97,26 @@ export default function Reports() {
               )}
             </div>
 
-            <div style={{ display: 'flex', gap: 6 }}>
+            <div className="flex gap-1.5">
               <button
                 onClick={() => handleGenerate(report.id)}
                 disabled={generating[report.id]}
-                style={{
-                  flex: 1, background: generating[report.id] ? '#e5e7eb' : '#003580',
-                  color: generating[report.id] ? '#6b7280' : 'white',
-                  border: 'none', padding: '6px 0', borderRadius: 4, fontSize: 11,
-                  cursor: generating[report.id] ? 'not-allowed' : 'pointer', fontWeight: 600,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4,
-                }}
+                className={`flex-1 py-1.5 rounded text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors ${
+                  generating[report.id]
+                    ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed'
+                    : 'bg-[#003580] dark:bg-blue-600 hover:opacity-90 text-white cursor-pointer'
+                }`}
               >
                 {generating[report.id] ? (
-                  <><RefreshCw size={11} style={{ animation: 'spin 1s linear infinite' }} /> Generating...</>
+                  <><RefreshCw size={11} className="animate-spin" /> Generating...</>
                 ) : (
                   'Generate'
                 )}
               </button>
-              <button style={{ background: 'white', border: '1px solid #d1d5db', padding: '6px 10px', borderRadius: 4, fontSize: 11, cursor: 'pointer', color: '#374151', display: 'flex', alignItems: 'center', gap: 3 }}>
+              <button className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-2.5 py-1.5 rounded text-[11px] cursor-pointer text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-1 transition-colors">
                 <FileText size={11} /> PDF
               </button>
-              <button style={{ background: 'white', border: '1px solid #d1d5db', padding: '6px 10px', borderRadius: 4, fontSize: 11, cursor: 'pointer', color: '#374151', display: 'flex', alignItems: 'center', gap: 3 }}>
+              <button className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-2.5 py-1.5 rounded text-[11px] cursor-pointer text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-1 transition-colors">
                 <Download size={11} /> CSV
               </button>
             </div>
@@ -132,22 +125,25 @@ export default function Reports() {
       </div>
 
       {/* Scheduled Reports */}
-      <div style={{ marginTop: 20 }}>
+      <div className="mt-5">
         <SectionCard title="Automated Report Schedule" subtitle="Configure reports to be generated automatically">
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {[
               { label: 'Daily Anomaly Summary', schedule: 'Every day at 06:00 IST', status: 'Active' },
               { label: 'Weekly State Performance', schedule: 'Every Monday at 08:00 IST', status: 'Active' },
               { label: 'Monthly MP Report', schedule: '1st of each month', status: 'Inactive' },
             ].map(sr => (
-              <div key={sr.label} style={{ padding: '12px 14px', background: '#f9fafb', borderRadius: 6, border: '1px solid #e5e7eb' }}>
-                <div style={{ fontSize: 12, fontWeight: 700, color: '#111827', marginBottom: 4 }}>{sr.label}</div>
-                <div style={{ fontSize: 11, color: '#6b7280', marginBottom: 6 }}>{sr.schedule}</div>
-                <span style={{
-                  fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 3,
-                  background: sr.status === 'Active' ? '#dcfce7' : '#f3f4f6',
-                  color: sr.status === 'Active' ? '#166534' : '#6b7280',
-                }}>
+              <div
+                key={sr.label}
+                className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-md border border-slate-200 dark:border-slate-800"
+              >
+                <div className="text-xs font-bold text-slate-900 dark:text-slate-100 mb-1">{sr.label}</div>
+                <div className="text-[11px] text-slate-500 dark:text-slate-400 mb-1.5">{sr.schedule}</div>
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
+                  sr.status === 'Active'
+                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
+                    : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
+                }`}>
                   {sr.status}
                 </span>
               </div>

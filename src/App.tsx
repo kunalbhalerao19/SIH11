@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { LanguageProvider } from './context/LanguageContext';
 import { ToastProvider } from './context/ToastContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { Layout } from './components/Layout';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import './index.css';
@@ -42,52 +43,54 @@ function PageLoader() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <LanguageProvider>
-        <ToastProvider>
-          <BrowserRouter>
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                {/* Public routes (no sidebar) */}
-                <Route path="/" element={<Landing />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/citizen" element={<CitizenPortal />} />
+    <ThemeProvider>
+      <AuthProvider>
+        <LanguageProvider>
+          <ToastProvider>
+            <BrowserRouter>
+              <Suspense fallback={<PageLoader />}>
+                <Routes>
+                  {/* Public routes (no sidebar) */}
+                  <Route path="/" element={<Landing />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/citizen" element={<CitizenPortal />} />
 
-                {/* Dashboard routes with sidebar layout protected by auth */}
-                <Route
-                  element={
-                    <ProtectedRoute>
-                      <Layout />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/projects" element={<Projects />} />
-                  <Route path="/projects/:id" element={<ProjectDetail />} />
-                  <Route path="/sector-analytics" element={<SectorAnalytics />} />
-                  <Route path="/ai-analytics" element={<AIAnalyticsModules />} />
-                  <Route path="/ai-risk" element={<AIRiskAnalysis />} />
-                  <Route path="/anomalies" element={<AnomalyDetection />} />
-                  <Route path="/fund-monitoring" element={<FundMonitoring />} />
-                  <Route path="/mp-analytics" element={<MPAnalytics />} />
-                  <Route path="/state-analytics" element={<StateAnalytics />} />
-                  <Route path="/map" element={<MapView />} />
-                  <Route path="/data-sources" element={<DataSources />} />
-                  <Route path="/data-quality" element={<DataQuality />} />
-                  <Route path="/alerts" element={<Alerts />} />
-                  <Route path="/reports" element={<Reports />} />
-                  <Route path="/data-explorer" element={<DataExplorer />} />
-                  <Route path="/ai-model" element={<AIModel />} />
-                  <Route path="/settings" element={<Settings />} />
-                </Route>
+                  {/* Dashboard routes with sidebar layout protected by auth */}
+                  <Route
+                    element={
+                      <ProtectedRoute>
+                        <Layout />
+                      </ProtectedRoute>
+                    }
+                  >
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/projects" element={<Projects />} />
+                    <Route path="/projects/:id" element={<ProjectDetail />} />
+                    <Route path="/sector-analytics" element={<SectorAnalytics />} />
+                    <Route path="/ai-analytics" element={<AIAnalyticsModules />} />
+                    <Route path="/ai-risk" element={<AIRiskAnalysis />} />
+                    <Route path="/anomalies" element={<AnomalyDetection />} />
+                    <Route path="/fund-monitoring" element={<FundMonitoring />} />
+                    <Route path="/mp-analytics" element={<MPAnalytics />} />
+                    <Route path="/state-analytics" element={<StateAnalytics />} />
+                    <Route path="/map" element={<MapView />} />
+                    <Route path="/data-sources" element={<DataSources />} />
+                    <Route path="/data-quality" element={<DataQuality />} />
+                    <Route path="/alerts" element={<Alerts />} />
+                    <Route path="/reports" element={<Reports />} />
+                    <Route path="/data-explorer" element={<DataExplorer />} />
+                    <Route path="/ai-model" element={<AIModel />} />
+                    <Route path="/settings" element={<Settings />} />
+                  </Route>
 
-                {/* 404 Catch-All */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
-        </ToastProvider>
-      </LanguageProvider>
-    </AuthProvider>
+                  {/* 404 Catch-All */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </Suspense>
+            </BrowserRouter>
+          </ToastProvider>
+        </LanguageProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
