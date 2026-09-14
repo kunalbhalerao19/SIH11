@@ -3,217 +3,543 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth, type UserRole } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useToast } from '../context/ToastContext';
-import { Shield, UserCheck, Building2, Users, ArrowRight, Lock, CheckCircle2, Globe } from 'lucide-react';
+import {
+  Shield, UserCheck, Building2, Users, ArrowRight, Lock, CheckCircle2,
+  Globe, KeyRound, Smartphone, RefreshCw, Cpu, Database, Eye, EyeOff,
+  AlertTriangle, Check, Award, MapPin, Sparkles, HelpCircle
+} from 'lucide-react';
+
+type AuthTab = 'roles' | 'sso' | 'dsc';
 
 export default function Login() {
   const navigate = useNavigate();
   const { loginAs, user } = useAuth();
-  const { language, setLanguage } = useLanguage();
-  const { success } = useToast();
+  const { language, setLanguage, t } = useLanguage();
+  const { success, error } = useToast();
 
+  const [activeTab, setActiveTab] = useState<AuthTab>('roles');
   const [selectedRole, setSelectedRole] = useState<UserRole>('officer');
   const [customName, setCustomName] = useState('');
   const [customJurisdiction, setCustomJurisdiction] = useState('');
+  const [isAuthenticating, setIsAuthenticating] = useState(false);
 
-  const handleLogin = (roleToLogin?: UserRole) => {
-    const role = roleToLogin || selectedRole;
-    loginAs(role, customName || undefined, customJurisdiction || undefined);
-    
-    const roleLabels = {
-      officer: 'Ministry Officer (MoSPI)',
-      collector: 'District Collector',
-      citizen: 'Citizen Auditor',
-    };
-    
-    success('Session Authenticated', `Logged in as ${roleLabels[role]}`);
+  // SSO form states
+  const [govEmail, setGovEmail] = useState('rajesh.verma@gov.in');
+  const [password, setPassword] = useState('••••••••••••');
+  const [showPassword, setShowPassword] = useState(false);
+  const [captchaInput, setCaptchaInput] = useState('');
+  const [captchaCode, setCaptchaCode] = useState('7K9P2');
 
-    if (role === 'citizen') {
-      navigate('/citizen');
-    } else {
-      navigate('/dashboard');
+  const refreshCaptcha = () => {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < 5; i++) {
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
+    setCaptchaCode(code);
+  };
+
+  const handleRoleSelect = (role: UserRole, presetName?: string, presetJurisdiction?: string) => {
+    setSelectedRole(role);
+    if (presetName) setCustomName(presetName);
+    if (presetJurisdiction) setCustomJurisdiction(presetJurisdiction);
+  };
+
+  const executeLogin = (role: UserRole, name?: string, jurisdiction?: string) => {
+    setIsAuthenticating(true);
+    setTimeout(() => {
+      loginAs(role, name || customName || undefined, jurisdiction || customJurisdiction || undefined);
+      
+      const roleLabels = {
+        officer: 'Ministry Officer (MoSPI National Wing)',
+        collector: 'District Collector (Pune Nodal Office)',
+        citizen: 'Citizen Auditor (Public Social Audit)',
+      };
+      
+      success('Session Authenticated', `Logged in as ${roleLabels[role]}`);
+      setIsAuthenticating(false);
+
+      if (role === 'citizen') {
+        navigate('/citizen');
+      } else {
+        navigate('/dashboard');
+      }
+    }, 600);
+  };
+
+  const handleSsoLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (captchaInput.toUpperCase() !== captchaCode.toUpperCase()) {
+      error('Invalid CAPTCHA', 'Please enter the characters shown in the security image.');
+      refreshCaptcha();
+      return;
+    }
+    executeLogin('officer', 'Dr. Rajesh Verma, IAS', 'MoSPI HQ, New Delhi');
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col justify-between font-sans">
+    <div className="min-h-screen bg-slate-950 flex flex-col justify-between font-sans selection:bg-[#003580] selection:text-white">
       {/* Top Government Header Strip */}
-      <header className="bg-[#003580] text-white px-6 py-3 shadow-md flex justify-between items-center border-b-2 border-[#FF6B00]">
+      <header className="bg-[#002060] text-white px-6 py-2.5 shadow-md flex justify-between items-center border-b-2 border-[#FF6B00]">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center border border-white/20">
-            <Shield className="w-5 h-5 text-[#FF6B00]" />
+          <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/20 shadow-inner">
+            <Shield className="w-4 h-4 text-[#FF6B00]" />
           </div>
           <div>
-            <div className="text-sm font-bold tracking-wide">भारत सरकार • GOVERNMENT OF INDIA</div>
-            <div className="text-xs text-white/80">Ministry of Statistics & Programme Implementation (MoSPI)</div>
+            <div className="text-xs font-bold tracking-wider text-white">भारत सरकार • GOVERNMENT OF INDIA</div>
+            <div className="text-[11px] text-white/80 font-medium">Ministry of Statistics & Programme Implementation (MoSPI)</div>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
-          {/* Language Toggle */}
+          {/* Status Indicator */}
+          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-[10px] text-emerald-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>Sentinel Core Online</span>
+          </div>
+
+          {/* Language Switcher */}
           <button
             onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-            className="flex items-center gap-1.5 px-3 py-1 bg-white/10 hover:bg-white/20 rounded border border-white/20 text-xs font-semibold transition-colors"
+            className="flex items-center gap-1.5 px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded border border-white/20 text-xs font-semibold transition-all cursor-pointer"
           >
-            <Globe className="w-3.5 h-3.5" />
+            <Globe className="w-3.5 h-3.5 text-[#FF6B00]" />
             <span>{language === 'en' ? 'हिंदी' : 'English'}</span>
           </button>
+
           <button
             onClick={() => navigate('/')}
-            className="text-xs text-white/80 hover:text-white underline transition-colors"
+            className="text-xs text-white/80 hover:text-white underline transition-colors cursor-pointer hidden md:block"
           >
-            Back to Public Portal
+            Public Portal
           </button>
         </div>
       </header>
 
-      {/* Main Login Form Area */}
-      <main className="flex-1 flex items-center justify-center p-6">
-        <div className="bg-white rounded-xl shadow-xl border border-gray-200 max-w-2xl w-full overflow-hidden">
-          {/* Header */}
-          <div className="bg-slate-50 p-6 border-b border-gray-200 text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-[#003580]/10 text-[#003580] mb-3">
-              <Lock className="w-6 h-6" />
-            </div>
-            <h1 className="text-xl font-bold text-[#003580]">MPLADS AI Insight • Sentinel Login</h1>
-            <p className="text-xs text-gray-600 mt-1">
-              Select your administrative role to access personalized vigilance and monitoring tools
-            </p>
-          </div>
+      {/* Main Dual-Column Authentication Canvas */}
+      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-10">
+        <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 overflow-hidden">
+          
+          {/* LEFT SHOWCASE PANEL (5 Cols) */}
+          <div className="lg:col-span-5 bg-gradient-to-br from-[#002060] via-[#003580] to-slate-900 p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden text-white border-b lg:border-b-0 lg:border-r border-blue-900/50">
+            {/* Background glowing watermark */}
+            <div className="absolute -right-16 -bottom-16 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            <div className="absolute -left-16 -top-16 w-64 h-64 bg-[#FF6B00]/10 rounded-full blur-3xl pointer-events-none"></div>
 
-          {/* Role Cards Grid */}
-          <div className="p-6">
-            <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-3">
-              1. Select Administrative Role:
-            </label>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
-              {/* Role 1: Ministry Officer */}
-              <div
-                onClick={() => setSelectedRole('officer')}
-                className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                  selectedRole === 'officer'
-                    ? 'border-[#003580] bg-blue-50/60 shadow-sm'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-[#003580]">
-                    <Shield className="w-4 h-4" />
-                  </div>
-                  {selectedRole === 'officer' && <CheckCircle2 className="w-4 h-4 text-[#003580]" />}
-                </div>
-                <div className="font-bold text-xs text-gray-900">Ministry Officer</div>
-                <div className="text-[11px] text-gray-500 mt-1">MoSPI National Wing</div>
-                <div className="mt-3 text-[10px] text-blue-800 bg-blue-100/70 px-2 py-0.5 rounded font-medium inline-block">
-                  All 15 Pages & AI Models
-                </div>
+            <div className="relative z-10 space-y-6">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[11px] font-semibold text-blue-200 backdrop-blur-sm">
+                <Sparkles className="w-3.5 h-3.5 text-[#FF6B00]" />
+                <span>Smart India Hackathon 2026 Prototype</span>
               </div>
 
-              {/* Role 2: District Collector */}
-              <div
-                onClick={() => setSelectedRole('collector')}
-                className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                  selectedRole === 'collector'
-                    ? 'border-[#003580] bg-blue-50/60 shadow-sm'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-amber-800">
-                    <Building2 className="w-4 h-4" />
-                  </div>
-                  {selectedRole === 'collector' && <CheckCircle2 className="w-4 h-4 text-[#003580]" />}
-                </div>
-                <div className="font-bold text-xs text-gray-900">District Collector</div>
-                <div className="text-[11px] text-gray-500 mt-1">District / DRDA</div>
-                <div className="mt-3 text-[10px] text-amber-800 bg-amber-100/70 px-2 py-0.5 rounded font-medium inline-block">
-                  Field Audits & Triage
-                </div>
+              <div>
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white leading-tight">
+                  MPLADS AI Insight
+                </h1>
+                <p className="text-sm font-semibold text-[#FF6B00] mt-1">
+                  National Financial Vigilance &amp; Anomaly Detection System
+                </p>
+                <p className="text-xs text-slate-300 mt-2.5 leading-relaxed">
+                  Advanced multi-modal artificial intelligence engineered for MoSPI, District Collectors, and Citizens to audit ₹8,300+ Cr annual development funds.
+                </p>
               </div>
 
-              {/* Role 3: Citizen Auditor */}
-              <div
-                onClick={() => setSelectedRole('citizen')}
-                className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${
-                  selectedRole === 'citizen'
-                    ? 'border-[#003580] bg-blue-50/60 shadow-sm'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                }`}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-800">
-                    <Users className="w-4 h-4" />
+              {/* Live Feature Highlights */}
+              <div className="space-y-2.5 pt-2">
+                <div className="flex items-start gap-2.5 text-xs text-slate-200">
+                  <div className="p-1 rounded bg-emerald-500/20 text-emerald-300 shrink-0 mt-0.5">
+                    <Check className="w-3.5 h-3.5" />
                   </div>
-                  {selectedRole === 'citizen' && <CheckCircle2 className="w-4 h-4 text-[#003580]" />}
+                  <div>
+                    <strong className="text-white">Cross-Scheme Duplication Guard:</strong> Geospatial proximity analysis against PMGSY, JJM, and SCM assets.
+                  </div>
                 </div>
-                <div className="font-bold text-xs text-gray-900">Citizen Auditor</div>
-                <div className="text-[11px] text-gray-500 mt-1">Public Social Audit</div>
-                <div className="mt-3 text-[10px] text-emerald-800 bg-emerald-100/70 px-2 py-0.5 rounded font-medium inline-block">
-                  Public Data & QR Grievance
+
+                <div className="flex items-start gap-2.5 text-xs text-slate-200">
+                  <div className="p-1 rounded bg-blue-500/20 text-blue-300 shrink-0 mt-0.5">
+                    <Check className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <strong className="text-white">64-bit dHash &amp; EXIF GPS:</strong> Client-side tamper detection on site completion photographs.
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-2.5 text-xs text-slate-200">
+                  <div className="p-1 rounded bg-amber-500/20 text-amber-300 shrink-0 mt-0.5">
+                    <Check className="w-3.5 h-3.5" />
+                  </div>
+                  <div>
+                    <strong className="text-white">Explainable AI (XAI):</strong> SHAP-style breakdown for every flagged risk score.
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Optional Custom Credentials */}
-            <div className="bg-slate-50 p-4 rounded-lg border border-gray-200 mb-6 space-y-3">
-              <div className="text-xs font-semibold text-gray-700">Optional Profile Customization:</div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] text-gray-500 mb-1">Officer / User Name:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Dr. Rajesh Verma, IAS"
-                    value={customName}
-                    onChange={e => setCustomName(e.target.value)}
-                    className="w-full text-xs px-3 py-2 bg-white border border-gray-300 rounded focus:outline-none focus:border-[#003580]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] text-gray-500 mb-1">Jurisdiction / District:</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. Pune / Maharashtra"
-                    value={customJurisdiction}
-                    onChange={e => setCustomJurisdiction(e.target.value)}
-                    className="w-full text-xs px-3 py-2 bg-white border border-gray-300 rounded focus:outline-none focus:border-[#003580]"
-                  />
-                </div>
+            {/* Micro Stats Bar */}
+            <div className="relative z-10 pt-6 mt-6 border-t border-white/10 grid grid-cols-3 gap-2 text-center">
+              <div className="p-2 rounded-lg bg-white/5 border border-white/10">
+                <div className="text-sm font-bold text-white">₹8,320 Cr</div>
+                <div className="text-[9px] text-slate-300 uppercase tracking-wider">Funds Tracked</div>
               </div>
-            </div>
-
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">
-              <button
-                type="button"
-                onClick={() => handleLogin('officer')}
-                className="w-full sm:w-auto px-4 py-2 text-xs font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded transition-colors"
-              >
-                ⚡ Instant Demo Login (Ministry Officer)
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleLogin()}
-                className="w-full sm:w-auto px-6 py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2"
-              >
-                <span>Enter Portal</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <div className="p-2 rounded-lg bg-white/5 border border-white/10">
+                <div className="text-sm font-bold text-emerald-400">543 Seats</div>
+                <div className="text-[9px] text-slate-300 uppercase tracking-wider">Covered</div>
+              </div>
+              <div className="p-2 rounded-lg bg-white/5 border border-white/10">
+                <div className="text-sm font-bold text-[#FF6B00]">287 Alerts</div>
+                <div className="text-[9px] text-slate-300 uppercase tracking-wider">Under Review</div>
+              </div>
             </div>
           </div>
 
-          {/* Footer notice */}
-          <div className="bg-slate-100 px-6 py-3 text-center border-t border-gray-200">
-            <div className="text-[11px] text-gray-500">
-              Smart India Hackathon 2026 Prototype • Problem Statement 26102 • Demo Access
+          {/* RIGHT AUTH TERMINAL (7 Cols) */}
+          <div className="lg:col-span-7 bg-white p-6 sm:p-8 flex flex-col justify-between">
+            <div>
+              {/* Header inside Form */}
+              <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                    <Lock className="w-4 h-4 text-[#003580]" />
+                    <span>Sentinel Access Gateway</span>
+                  </h2>
+                  <p className="text-xs text-gray-500 mt-0.5">
+                    Select your operational mode or authenticate via Government SSO
+                  </p>
+                </div>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-[#003580] border border-blue-200">
+                  v1.0-2026
+                </span>
+              </div>
+
+              {/* Mode Switcher Tabs */}
+              <div className="flex gap-1.5 p-1 bg-slate-100 rounded-lg my-5 border border-slate-200">
+                <button
+                  onClick={() => setActiveTab('roles')}
+                  className={`flex-1 py-1.5 px-2 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    activeTab === 'roles'
+                      ? 'bg-white text-[#003580] shadow-sm border border-gray-200'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <UserCheck className="w-3.5 h-3.5" />
+                  <span>Interactive Role Portal</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('sso')}
+                  className={`flex-1 py-1.5 px-2 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    activeTab === 'sso'
+                      ? 'bg-white text-[#003580] shadow-sm border border-gray-200'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <KeyRound className="w-3.5 h-3.5" />
+                  <span>Gov SSO (e-Pramaan)</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveTab('dsc')}
+                  className={`flex-1 py-1.5 px-2 rounded-md text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                    activeTab === 'dsc'
+                      ? 'bg-white text-[#003580] shadow-sm border border-gray-200'
+                      : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <Smartphone className="w-3.5 h-3.5" />
+                  <span>Digital Token / DSC</span>
+                </button>
+              </div>
+
+              {/* TAB 1: INTERACTIVE ROLES (SIH DEMO MODE) */}
+              {activeTab === 'roles' && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
+                      Select Authorization Level:
+                    </label>
+                    <span className="text-[11px] text-[#003580] font-medium">Click to select role</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {/* Role 1: Ministry Officer */}
+                    <div
+                      onClick={() => handleRoleSelect('officer', 'Dr. Rajesh Verma, IAS', 'MoSPI HQ, New Delhi')}
+                      className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                        selectedRole === 'officer'
+                          ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
+                          : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-[#003580]">
+                          <Shield className="w-4 h-4" />
+                        </div>
+                        {selectedRole === 'officer' ? (
+                          <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
+                        ) : (
+                          <span className="w-4 h-4 rounded-full border border-gray-300"></span>
+                        )}
+                      </div>
+                      <div className="font-bold text-xs text-gray-900">Ministry Officer</div>
+                      <div className="text-[11px] text-gray-500 mt-0.5">MoSPI National Wing</div>
+                      <div className="mt-2.5 text-[10px] text-blue-900 bg-blue-100 px-2 py-0.5 rounded font-semibold inline-block">
+                        Full Access (15+ Pages)
+                      </div>
+                    </div>
+
+                    {/* Role 2: District Collector */}
+                    <div
+                      onClick={() => handleRoleSelect('collector', 'Smt. Neha Sharma, IAS', 'District Magistrate, Pune')}
+                      className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                        selectedRole === 'collector'
+                          ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
+                          : 'border-gray-200 bg-white hover:border-amber-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-800">
+                          <Building2 className="w-4 h-4" />
+                        </div>
+                        {selectedRole === 'collector' ? (
+                          <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
+                        ) : (
+                          <span className="w-4 h-4 rounded-full border border-gray-300"></span>
+                        )}
+                      </div>
+                      <div className="font-bold text-xs text-gray-900">District Collector</div>
+                      <div className="text-[11px] text-gray-500 mt-0.5">District / DRDA Nodal</div>
+                      <div className="mt-2.5 text-[10px] text-amber-900 bg-amber-100 px-2 py-0.5 rounded font-semibold inline-block">
+                        Field Audit &amp; Dockets
+                      </div>
+                    </div>
+
+                    {/* Role 3: Citizen Auditor */}
+                    <div
+                      onClick={() => handleRoleSelect('citizen', 'Rahul G. (Citizen Auditor)', 'Pune Constituency')}
+                      className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                        selectedRole === 'citizen'
+                          ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
+                          : 'border-gray-200 bg-white hover:border-emerald-300 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-800">
+                          <Users className="w-4 h-4" />
+                        </div>
+                        {selectedRole === 'citizen' ? (
+                          <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
+                        ) : (
+                          <span className="w-4 h-4 rounded-full border border-gray-300"></span>
+                        )}
+                      </div>
+                      <div className="font-bold text-xs text-gray-900">Citizen Auditor</div>
+                      <div className="text-[11px] text-gray-500 mt-0.5">Public Social Audit</div>
+                      <div className="mt-2.5 text-[10px] text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded font-semibold inline-block">
+                        QR Portal &amp; Grievance
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Quick Profile Persona Details */}
+                  <div className="p-3.5 bg-slate-50 rounded-xl border border-gray-200 text-xs space-y-2.5">
+                    <div className="font-semibold text-gray-800 flex items-center justify-between">
+                      <span>Active Credentials &amp; Jurisdiction:</span>
+                      <span className="text-[10px] text-gray-500 font-normal">Auto-filled for role</span>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                      <div>
+                        <label className="block text-[10px] text-gray-500 font-bold uppercase mb-1">Authenticated Name</label>
+                        <input
+                          type="text"
+                          value={customName}
+                          onChange={e => setCustomName(e.target.value)}
+                          placeholder="e.g. Dr. Rajesh Verma, IAS"
+                          className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580]"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] text-gray-500 font-bold uppercase mb-1">Administrative Jurisdiction</label>
+                        <input
+                          type="text"
+                          value={customJurisdiction}
+                          onChange={e => setCustomJurisdiction(e.target.value)}
+                          placeholder="e.g. MoSPI HQ / Pune District"
+                          className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Capability Checklist preview */}
+                  <div className="flex items-center gap-3 text-[11px] text-gray-600 bg-blue-50/50 p-2.5 rounded-lg border border-blue-100">
+                    <Award className="w-4 h-4 text-[#003580] shrink-0" />
+                    <span>
+                      {selectedRole === 'officer' && 'Full permissions: AI Model Pipeline, Sector Analytics, Data Quality Monitor, ML Inference.'}
+                      {selectedRole === 'collector' && 'Field permissions: Field Inspection PDF Docket Generator, GIS Proximity Radar, Alert Queue.'}
+                      {selectedRole === 'citizen' && 'Public permissions: Public Project Transparency, Photo Progress Viewer, Citizen Suggestion Loop.'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* TAB 2: GOV SSO (e-PRAMAAN / JAN PARICHAY) */}
+              {activeTab === 'sso' && (
+                <form onSubmit={handleSsoLogin} className="space-y-3.5">
+                  <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-xs text-blue-900">
+                    <strong>National Single Sign-On (Jan Parichay):</strong> Authenticate using official government credentials (<code>@gov.in</code> or <code>@nic.in</code>).
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">Government Email ID / Username</label>
+                    <input
+                      type="email"
+                      required
+                      value={govEmail}
+                      onChange={e => setGovEmail(e.target.value)}
+                      className="w-full text-xs px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580]"
+                      placeholder="officer.name@gov.in"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">Password</label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        required
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        className="w-full text-xs px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580] pr-9"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2.5 top-2 text-gray-400 hover:text-gray-600"
+                      >
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* CAPTCHA Simulator */}
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">Security Verification Code</label>
+                    <div className="flex gap-2 items-center">
+                      <div className="bg-slate-200 px-4 py-2 rounded-lg font-mono font-bold tracking-widest text-sm text-slate-800 select-none border border-slate-300 line-through">
+                        {captchaCode}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={refreshCaptcha}
+                        className="p-2 text-gray-500 hover:text-gray-800 hover:bg-gray-100 rounded border border-gray-200"
+                        title="Refresh CAPTCHA"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                      </button>
+                      <input
+                        type="text"
+                        required
+                        placeholder="Enter 5-digit code"
+                        value={captchaInput}
+                        onChange={e => setCaptchaInput(e.target.value)}
+                        className="flex-1 text-xs px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580]"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isAuthenticating}
+                    className="w-full py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                  >
+                    <Lock className="w-3.5 h-3.5" />
+                    <span>{isAuthenticating ? 'Authenticating e-Pramaan...' : 'Verify & Enter Sentinel'}</span>
+                  </button>
+                </form>
+              )}
+
+              {/* TAB 3: DIGITAL TOKEN / DSC BIOMETRIC */}
+              {activeTab === 'dsc' && (
+                <div className="space-y-4 text-center py-4">
+                  <div className="w-14 h-14 rounded-full bg-blue-50 border-2 border-[#003580] flex items-center justify-center mx-auto text-[#003580]">
+                    <Smartphone className="w-7 h-7" />
+                  </div>
+
+                  <div>
+                    <h3 className="font-bold text-sm text-gray-900">NIC e-Sign / USB Crypto Token</h3>
+                    <p className="text-xs text-gray-500 max-w-sm mx-auto mt-1">
+                      Plug in your Class-3 Digital Signature Certificate (DSC) cryptographic USB token or authenticate via Aadhaar e-Sign OTP.
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-left space-y-1.5">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Detected Token:</span>
+                      <strong className="text-gray-900">eMudhra / NIC PKI Token</strong>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Certificate Holder:</span>
+                      <strong className="text-gray-900">Dr. Rajesh Verma (MoSPI)</strong>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Validity:</span>
+                      <span className="text-emerald-700 font-semibold">Valid until Dec 2027</span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => executeLogin('collector', 'Smt. Neha Sharma, IAS', 'District Magistrate, Pune')}
+                    disabled={isAuthenticating}
+                    className="w-full py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <KeyRound className="w-3.5 h-3.5" />
+                    <span>Authorize with Digital Signature</span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* Bottom Form Actions (Active in Roles tab) */}
+            {activeTab === 'roles' && (
+              <div className="pt-5 mt-5 border-t border-gray-100 flex flex-col sm:flex-row gap-2.5 items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => executeLogin('officer', 'Dr. Rajesh Verma, IAS', 'MoSPI HQ, New Delhi')}
+                  className="w-full sm:w-auto px-3.5 py-2 text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                >
+                  <span>⚡ 1-Click Fast Access</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => executeLogin(selectedRole)}
+                  disabled={isAuthenticating}
+                  className="w-full sm:w-auto px-7 py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                >
+                  <span>{isAuthenticating ? 'Authenticating...' : 'Enter Monitoring Platform'}</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
+
+            {/* Security Compliance Strip */}
+            <div className="pt-4 mt-4 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-400">
+              <div className="flex items-center gap-1">
+                <Lock className="w-3 h-3 text-emerald-600" />
+                <span>256-bit TLS Encrypted Session</span>
+              </div>
+              <div>NIC / MoSPI SIH 2026 Standards</div>
             </div>
           </div>
         </div>
       </main>
 
       {/* Page Footer */}
-      <footer className="bg-slate-900 text-white/60 text-[11px] text-center py-3 border-t border-slate-800">
-        © 2026 Ministry of Statistics & Programme Implementation • Smart India Hackathon Prototype
+      <footer className="bg-[#001438] text-white/60 text-[11px] text-center py-2.5 border-t border-white/10">
+        © 2026 Ministry of Statistics &amp; Programme Implementation • Smart India Hackathon Prototype (Problem Statement 26102)
       </footer>
     </div>
   );
