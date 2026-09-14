@@ -4,13 +4,13 @@ import { useAuth, type UserRole } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useToast } from '../context/ToastContext';
 import {
-  Shield, Building2, Users, ArrowRight, Lock, KeyRound, Eye, EyeOff, Sparkles, Globe, Check, Award
+  Shield, Home, Lock, KeyRound, Eye, EyeOff, Globe, Building2, Users, ArrowRight, CheckCircle2, HelpCircle
 } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
   const { loginAs } = useAuth();
-  const { language, setLanguage } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
   const { success, error } = useToast();
 
   const [selectedRole, setSelectedRole] = useState<UserRole>('officer');
@@ -25,14 +25,16 @@ export default function Login() {
     setPassword('');
   };
 
-  const executeLogin = () => {
+  const handleLogin = (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+
     // 1. Ministry Officer Validation
     if (selectedRole === 'officer') {
       const trimmedName = customName.trim().toLowerCase();
       const trimmedPass = password.trim().toLowerCase();
 
       if (!trimmedName || !['modi jii', 'modi ji', 'modi', 'narendra modi'].includes(trimmedName)) {
-        error('Authentication Failed', 'Invalid Officer Name for Ministry Wing.');
+        error('Authentication Failed', 'Invalid Officer Name for Ministry Wing. (Use: Modi Jii)');
         return;
       }
 
@@ -48,7 +50,7 @@ export default function Login() {
       const trimmedPass = password.trim().toLowerCase();
 
       if (!trimmedName || !['tukaram mundhe', 'tukaram', 'mundhe', 'tukaram mundhe, ias'].includes(trimmedName)) {
-        error('Authentication Failed', 'Invalid Collector Name for District Nodal.');
+        error('Authentication Failed', 'Invalid Collector Name for District Nodal. (Use: Tukaram Mundhe)');
         return;
       }
 
@@ -58,13 +60,17 @@ export default function Login() {
       }
     }
 
-    // 3. Authenticate Session
+    // 3. Citizen Validation
+    else if (selectedRole === 'citizen') {
+      // Citizen requires no strict password
+    }
+
     setIsAuthenticating(true);
     setTimeout(() => {
       const defaultJurisdictions = {
         officer: 'PMO & MoSPI National Wing, New Delhi',
         collector: 'District Magistrate & Collector, Pune',
-        citizen: 'Public Constituency Audit',
+        citizen: 'Public Social Audit / Constituency',
       };
 
       const finalName = customName.trim() || (selectedRole === 'citizen' ? 'Citizen Auditor' : 'Authorized Officer');
@@ -82,331 +88,318 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex flex-col justify-between font-sans selection:bg-[#003580] selection:text-white">
-      {/* Top Government Header Strip */}
-      <header className="bg-[#002060] text-white px-6 py-2.5 shadow-md flex justify-between items-center border-b-2 border-[#FF6B00]">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-between font-sans selection:bg-[#003580] selection:text-white">
+      {/* 1. TOP BLUE GOVERNMENT APP BAR */}
+      <header className="bg-[#1565C0] text-white px-4 sm:px-8 py-2.5 shadow-md flex items-center justify-between z-20">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center border border-white/20 shadow-inner">
-            <Shield className="w-4 h-4 text-[#FF6B00]" />
-          </div>
-          <div>
-            <div className="text-xs font-bold tracking-wider text-white">भारत सरकार • GOVERNMENT OF INDIA</div>
-            <div className="text-[11px] text-white/80 font-medium">Ministry of Statistics &amp; Programme Implementation (MoSPI)</div>
+          <button
+            onClick={() => navigate('/')}
+            className="p-1.5 hover:bg-white/10 rounded-full transition-colors cursor-pointer"
+            title="Go to Home"
+          >
+            <Home className="w-5 h-5 text-white" />
+          </button>
+          <div className="h-5 w-[1px] bg-white/30 hidden sm:block"></div>
+          <div className="font-bold text-sm sm:text-base tracking-wide flex items-center gap-2">
+            <span>भारत सरकार • Government of India</span>
+            <span className="text-white/60 font-normal hidden md:inline">|</span>
+            <span className="text-xs text-white/90 font-medium hidden md:inline">Ministry of Statistics &amp; PI</span>
           </div>
         </div>
 
+        {/* Right Nav Options */}
         <div className="flex items-center gap-3">
-          {/* Status Indicator */}
-          <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-[10px] text-emerald-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>Sentinel Core Online</span>
-          </div>
-
-          {/* Language Switcher */}
           <button
             onClick={() => setLanguage(language === 'en' ? 'hi' : 'en')}
-            className="flex items-center gap-1.5 px-2.5 py-1 bg-white/10 hover:bg-white/20 rounded border border-white/20 text-xs font-semibold transition-all cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 bg-white/10 hover:bg-white/20 rounded border border-white/20 text-xs font-semibold transition-all cursor-pointer"
           >
-            <Globe className="w-3.5 h-3.5 text-[#FF6B00]" />
+            <Globe className="w-3.5 h-3.5 text-white" />
             <span>{language === 'en' ? 'हिंदी' : 'English'}</span>
           </button>
 
           <button
             onClick={() => navigate('/')}
-            className="text-xs text-white/80 hover:text-white underline transition-colors cursor-pointer hidden md:block"
+            className="text-xs text-white/80 hover:text-white underline transition-colors cursor-pointer hidden sm:block"
           >
             Public Portal
           </button>
         </div>
       </header>
 
-      {/* Main Dual-Column Authentication Canvas */}
-      <main className="flex-1 flex items-center justify-center p-4 sm:p-6 lg:p-10">
-        <div className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 bg-slate-900 rounded-2xl shadow-2xl border border-slate-800 overflow-hidden">
-          
-          {/* LEFT SHOWCASE PANEL (5 Cols) */}
-          <div className="lg:col-span-5 bg-gradient-to-br from-[#002060] via-[#003580] to-slate-900 p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden text-white border-b lg:border-b-0 lg:border-r border-blue-900/50">
-            {/* Background glowing watermark */}
-            <div className="absolute -right-16 -bottom-16 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
-            <div className="absolute -left-16 -top-16 w-64 h-64 bg-[#FF6B00]/10 rounded-full blur-3xl pointer-events-none"></div>
+      {/* 2. MAIN VIKASPEDIA-STYLE DUAL-PANEL BODY */}
+      <main className="flex-1 flex flex-col lg:flex-row relative overflow-hidden bg-white">
+        
+        {/* LEFT WAVE ART PANEL (55% width on desktop) */}
+        <div className="lg:w-[55%] relative bg-[#1565C0] overflow-hidden p-8 sm:p-12 lg:p-16 flex flex-col justify-between text-white min-h-[420px] lg:min-h-auto">
+          {/* Decorative Layered Organic Waves */}
+          <div className="absolute inset-0 pointer-events-none z-0">
+            {/* Top Wave in Light Sky Blue */}
+            <svg
+              className="absolute top-0 left-0 w-full h-[65%] text-[#e3f2fd]"
+              viewBox="0 0 800 600"
+              preserveAspectRatio="none"
+              fill="currentColor"
+            >
+              <path d="M0,0 L800,0 L800,180 C620,320 540,60 320,240 C180,360 80,280 0,380 Z" />
+            </svg>
 
-            <div className="relative z-10 space-y-6">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[11px] font-semibold text-blue-200 backdrop-blur-sm">
-                <Sparkles className="w-3.5 h-3.5 text-[#FF6B00]" />
-                <span>Smart India Hackathon 2026 Prototype</span>
+            {/* Middle Deep Navy Wave */}
+            <svg
+              className="absolute top-0 left-0 w-full h-[80%] text-[#0d47a1]"
+              viewBox="0 0 800 600"
+              preserveAspectRatio="none"
+              fill="currentColor"
+            >
+              <path d="M0,0 L800,0 L800,280 C640,420 520,120 300,320 C140,460 60,380 0,500 Z" opacity="0.95" />
+            </svg>
+          </div>
+
+          {/* Top Emblem and Brand Name in Left Panel */}
+          <div className="relative z-10">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center border-2 border-[#1565C0] p-1">
+                <Shield className="w-7 h-7 text-[#1565C0]" />
               </div>
-
               <div>
-                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white leading-tight">
+                <div className="text-xs uppercase tracking-wider font-bold text-slate-800 lg:text-slate-900">
                   MPLADS AI Insight
-                </h1>
-                <p className="text-sm font-semibold text-[#FF6B00] mt-1">
-                  National Financial Vigilance &amp; Anomaly Detection System
-                </p>
-                <p className="text-xs text-slate-300 mt-2.5 leading-relaxed">
-                  Advanced multi-modal artificial intelligence engineered for MoSPI, District Collectors, and Citizens to audit ₹8,300+ Cr annual development funds.
-                </p>
-              </div>
-
-              {/* Live Feature Highlights */}
-              <div className="space-y-2.5 pt-2">
-                <div className="flex items-start gap-2.5 text-xs text-slate-200">
-                  <div className="p-1 rounded bg-emerald-500/20 text-emerald-300 shrink-0 mt-0.5">
-                    <Check className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <strong className="text-white">Cross-Scheme Duplication Guard:</strong> Geospatial proximity analysis against PMGSY, JJM, and SCM assets.
-                  </div>
                 </div>
-
-                <div className="flex items-start gap-2.5 text-xs text-slate-200">
-                  <div className="p-1 rounded bg-blue-500/20 text-blue-300 shrink-0 mt-0.5">
-                    <Check className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <strong className="text-white">64-bit dHash &amp; EXIF GPS:</strong> Client-side tamper detection on site completion photographs.
-                  </div>
+                <div className="text-[11px] text-slate-600 font-medium">
+                  National Vigilance &amp; Decision Support
                 </div>
-
-                <div className="flex items-start gap-2.5 text-xs text-slate-200">
-                  <div className="p-1 rounded bg-amber-500/20 text-amber-300 shrink-0 mt-0.5">
-                    <Check className="w-3.5 h-3.5" />
-                  </div>
-                  <div>
-                    <strong className="text-white">Explainable AI (XAI):</strong> SHAP-style breakdown for every flagged risk score.
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Micro Stats Bar */}
-            <div className="relative z-10 pt-6 mt-6 border-t border-white/10 grid grid-cols-3 gap-2 text-center">
-              <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-                <div className="text-sm font-bold text-white">₹8,320 Cr</div>
-                <div className="text-[9px] text-slate-300 uppercase tracking-wider">Funds Tracked</div>
-              </div>
-              <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-                <div className="text-sm font-bold text-emerald-400">543 Seats</div>
-                <div className="text-[9px] text-slate-300 uppercase tracking-wider">Covered</div>
-              </div>
-              <div className="p-2 rounded-lg bg-white/5 border border-white/10">
-                <div className="text-sm font-bold text-[#FF6B00]">287 Alerts</div>
-                <div className="text-[9px] text-slate-300 uppercase tracking-wider">Under Review</div>
               </div>
             </div>
           </div>
 
-          {/* RIGHT AUTH TERMINAL (7 Cols) */}
-          <div className="lg:col-span-7 bg-white p-6 sm:p-8 flex flex-col justify-between">
-            <div className="space-y-4">
-              {/* Header inside Form */}
-              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-                <div>
-                  <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                    <Lock className="w-4 h-4 text-[#003580]" />
-                    <span>Sentinel Access Gateway</span>
-                  </h2>
-                  <p className="text-xs text-gray-500 mt-0.5">
-                    Select your administrative role and enter credentials
-                  </p>
+          {/* Hero Pitch & 3 Flow Step Cards */}
+          <div className="relative z-10 space-y-8 mt-12 lg:mt-0">
+            <div>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white leading-tight">
+                Get Started<br />with Us
+              </h1>
+              <p className="text-sm text-blue-100 mt-3 max-w-md leading-relaxed font-normal">
+                Ministry-grade artificial intelligence auditing ₹8,300+ Cr annual development funds across 543 Parliamentary constituencies.
+              </p>
+            </div>
+
+            {/* 3 Step Cards in a Row */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              {/* Card 1 */}
+              <div className="bg-white rounded-2xl p-4 text-slate-900 shadow-lg border border-white/20 transition-transform hover:-translate-y-1">
+                <div className="w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold flex items-center justify-center mb-3">
+                  1
                 </div>
-                <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-[#003580] border border-blue-200">
-                  v1.0-2026
-                </span>
-              </div>
-
-              {/* Role Selection Cards */}
-              <div className="space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
-                    1. Select Administrative Role:
-                  </label>
-                  <span className="text-[11px] text-[#003580] font-medium">Click to choose role</span>
+                <div className="text-xs font-bold text-slate-800 leading-snug">
+                  Select Official Role
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  {/* Role 1: Ministry Officer */}
-                  <div
-                    onClick={() => handleRoleSelect('officer')}
-                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
-                      selectedRole === 'officer'
-                        ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
-                        : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-slate-50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-[#003580]">
-                        <Shield className="w-4 h-4" />
-                      </div>
-                      {selectedRole === 'officer' ? (
-                        <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
-                      ) : (
-                        <span className="w-4 h-4 rounded-full border border-gray-300"></span>
-                      )}
-                    </div>
-                    <div className="font-bold text-xs text-gray-900">Ministry Officer</div>
-                    <div className="text-[11px] text-gray-500 mt-0.5">MoSPI National Wing</div>
-                    <div className="mt-2 text-[9.5px] text-blue-900 bg-blue-100 px-2 py-0.5 rounded font-semibold inline-block">
-                      Full Access
-                    </div>
-                  </div>
-
-                  {/* Role 2: District Collector */}
-                  <div
-                    onClick={() => handleRoleSelect('collector')}
-                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
-                      selectedRole === 'collector'
-                        ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
-                        : 'border-gray-200 bg-white hover:border-amber-300 hover:bg-slate-50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-800">
-                        <Building2 className="w-4 h-4" />
-                      </div>
-                      {selectedRole === 'collector' ? (
-                        <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
-                      ) : (
-                        <span className="w-4 h-4 rounded-full border border-gray-300"></span>
-                      )}
-                    </div>
-                    <div className="font-bold text-xs text-gray-900">District Collector</div>
-                    <div className="text-[11px] text-gray-500 mt-0.5">District / DRDA Nodal</div>
-                    <div className="mt-2 text-[9.5px] text-amber-900 bg-amber-100 px-2 py-0.5 rounded font-semibold inline-block">
-                      Field Audits
-                    </div>
-                  </div>
-
-                  {/* Role 3: Citizen Auditor */}
-                  <div
-                    onClick={() => handleRoleSelect('citizen')}
-                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
-                      selectedRole === 'citizen'
-                        ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
-                        : 'border-gray-200 bg-white hover:border-emerald-300 hover:bg-slate-50'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-800">
-                        <Users className="w-4 h-4" />
-                      </div>
-                      {selectedRole === 'citizen' ? (
-                        <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
-                      ) : (
-                        <span className="w-4 h-4 rounded-full border border-gray-300"></span>
-                      )}
-                    </div>
-                    <div className="font-bold text-xs text-gray-900">Citizen Auditor</div>
-                    <div className="text-[11px] text-gray-500 mt-0.5">Public Social Audit</div>
-                    <div className="mt-2 text-[9.5px] text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded font-semibold inline-block">
-                      Public Portal
-                    </div>
-                  </div>
+                <div className="text-[10px] text-slate-500 mt-1">
+                  Ministry, District Collector, or Citizen
                 </div>
               </div>
 
-              {/* Profile Credentials & Security Input Block */}
-              <div className="p-4 bg-slate-50 rounded-xl border border-gray-200 text-xs space-y-3">
-                <div className="font-semibold text-gray-800 flex items-center justify-between">
-                  <span>2. Credentials &amp; Authentication:</span>
-                  <span className="text-[10px] text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded font-semibold">
-                    {selectedRole === 'officer' && 'Ministry Sign In'}
-                    {selectedRole === 'collector' && 'Collector Sign In'}
-                    {selectedRole === 'citizen' && 'Citizen Sign In'}
-                  </span>
+              {/* Card 2 */}
+              <div className="bg-[#1976D2]/90 backdrop-blur-md rounded-2xl p-4 text-white shadow-lg border border-white/20 transition-transform hover:-translate-y-1">
+                <div className="w-6 h-6 rounded-full bg-white text-[#1976D2] text-xs font-bold flex items-center justify-center mb-3">
+                  2
                 </div>
-
-                {/* Name Input */}
-                <div>
-                  <label className="block text-[10px] text-gray-600 font-bold uppercase mb-1">
-                    {selectedRole === 'officer' && 'Officer Name / User ID'}
-                    {selectedRole === 'collector' && 'Collector Name / User ID'}
-                    {selectedRole === 'citizen' && 'Citizen Name / ID (Optional)'}
-                  </label>
-                  <input
-                    type="text"
-                    value={customName}
-                    onChange={e => setCustomName(e.target.value)}
-                    placeholder={
-                      selectedRole === 'officer'
-                        ? 'Enter Ministry Officer Name'
-                        : selectedRole === 'collector'
-                        ? 'Enter District Collector Name'
-                        : 'Enter your name (optional)'
-                    }
-                    className="w-full text-xs px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580] text-gray-900 placeholder:text-gray-400"
-                  />
+                <div className="text-xs font-bold text-white leading-snug">
+                  Verify Credentials
                 </div>
-
-                {/* Password Input Field */}
-                <div>
-                  <label className="block text-[10px] text-gray-600 font-bold uppercase mb-1 flex items-center gap-1">
-                    <KeyRound className="w-3 h-3 text-[#003580]" />
-                    <span>Security Password</span>
-                  </label>
-                  <div className="relative">
-                    <input
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={e => setPassword(e.target.value)}
-                      placeholder={selectedRole === 'citizen' ? 'No password required for Public access' : 'Enter Password'}
-                      disabled={selectedRole === 'citizen'}
-                      className="w-full text-xs px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580] pr-9 text-gray-900 placeholder:text-gray-400 disabled:bg-gray-100 disabled:text-gray-400"
-                    />
-                    {selectedRole !== 'citizen' && (
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-2.5 top-2 text-gray-400 hover:text-gray-700 cursor-pointer"
-                        title={showPassword ? 'Hide password' : 'Show password'}
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    )}
-                  </div>
+                <div className="text-[10px] text-blue-100 mt-1">
+                  Authorized access for governance
                 </div>
               </div>
 
-              {/* Capability Checklist preview */}
-              <div className="flex items-center gap-2.5 text-[11px] text-gray-600 bg-blue-50/60 p-2.5 rounded-lg border border-blue-100">
-                <Award className="w-4 h-4 text-[#003580] shrink-0" />
-                <span>
-                  {selectedRole === 'officer' && 'Authorized Scope: AI Model Pipeline, Sector Analytics, Data Quality Monitor, National Telemetry.'}
-                  {selectedRole === 'collector' && 'Authorized Scope: Field Inspection Docket Generator, GIS Proximity Radar, Alert Queue.'}
-                  {selectedRole === 'citizen' && 'Authorized Scope: Public Project Transparency, Photo Progress Viewer, Citizen Suggestion Loop.'}
-                </span>
+              {/* Card 3 */}
+              <div className="bg-[#0D47A1]/90 backdrop-blur-md rounded-2xl p-4 text-white shadow-lg border border-white/20 transition-transform hover:-translate-y-1">
+                <div className="w-6 h-6 rounded-full bg-white text-[#0D47A1] text-xs font-bold flex items-center justify-center mb-3">
+                  3
+                </div>
+                <div className="text-xs font-bold text-white leading-snug">
+                  Access AI Sentinel
+                </div>
+                <div className="text-[10px] text-blue-100 mt-1">
+                  Real-time audit &amp; fraud prevention
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer note in left wave */}
+          <div className="relative z-10 text-[11px] text-blue-200 mt-8">
+            Smart India Hackathon 2026 • MoSPI Problem Statement 26102
+          </div>
+        </div>
+
+        {/* RIGHT SIGN-IN FORM PANEL (45% width on desktop) */}
+        <div className="lg:w-[45%] bg-white p-6 sm:p-10 lg:p-14 flex flex-col justify-center items-center">
+          <div className="w-full max-w-md space-y-6">
+            
+            {/* Top Logo / Emblem in Form */}
+            <div className="text-center space-y-2">
+              <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-50 border-2 border-[#1565C0] shadow-sm mb-1">
+                <Shield className="w-8 h-8 text-[#1565C0]" />
+              </div>
+              <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
+                Sign in to MPLADS Sentinel
+              </h2>
+              <p className="text-xs text-slate-500">
+                Official Ministry of Statistics &amp; Programme Implementation Portal
+              </p>
+            </div>
+
+            {/* Quick Role Selection Buttons */}
+            <div className="space-y-2 pt-2">
+              <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider text-center">
+                Select Sign-in Category:
+              </label>
+
+              <div className="grid grid-cols-3 gap-2">
+                {/* Role 1: Ministry Officer */}
+                <button
+                  type="button"
+                  onClick={() => handleRoleSelect('officer')}
+                  className={`py-2 px-1.5 rounded-lg border text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                    selectedRole === 'officer'
+                      ? 'border-[#1565C0] bg-blue-50 text-[#1565C0] shadow-sm ring-1 ring-[#1565C0]'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                  }`}
+                >
+                  <Shield className="w-4 h-4" />
+                  <span className="text-[11px] truncate w-full text-center">Ministry Officer</span>
+                </button>
+
+                {/* Role 2: District Collector */}
+                <button
+                  type="button"
+                  onClick={() => handleRoleSelect('collector')}
+                  className={`py-2 px-1.5 rounded-lg border text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                    selectedRole === 'collector'
+                      ? 'border-[#1565C0] bg-blue-50 text-[#1565C0] shadow-sm ring-1 ring-[#1565C0]'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                  }`}
+                >
+                  <Building2 className="w-4 h-4" />
+                  <span className="text-[11px] truncate w-full text-center">District Collector</span>
+                </button>
+
+                {/* Role 3: Citizen Auditor */}
+                <button
+                  type="button"
+                  onClick={() => handleRoleSelect('citizen')}
+                  className={`py-2 px-1.5 rounded-lg border text-xs font-bold flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                    selectedRole === 'citizen'
+                      ? 'border-[#1565C0] bg-blue-50 text-[#1565C0] shadow-sm ring-1 ring-[#1565C0]'
+                      : 'border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50'
+                  }`}
+                >
+                  <Users className="w-4 h-4" />
+                  <span className="text-[11px] truncate w-full text-center">Citizen Auditor</span>
+                </button>
               </div>
             </div>
 
-            {/* Bottom Form Action */}
-            <div className="pt-3 mt-4 border-t border-gray-100 flex items-center justify-end">
+            {/* Form Divider */}
+            <div className="relative flex items-center justify-center my-4">
+              <div className="border-t border-slate-200 w-full"></div>
+              <span className="bg-white px-3 text-[11px] text-slate-400 uppercase font-semibold">
+                Credentials
+              </span>
+              <div className="border-t border-slate-200 w-full"></div>
+            </div>
+
+            {/* Login Form */}
+            <form onSubmit={handleLogin} className="space-y-4">
+              {/* Officer / User Name */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  {selectedRole === 'officer' && 'Ministry Officer Name *'}
+                  {selectedRole === 'collector' && 'District Collector Name *'}
+                  {selectedRole === 'citizen' && 'Citizen Name (Optional)'}
+                </label>
+                <input
+                  type="text"
+                  value={customName}
+                  onChange={e => setCustomName(e.target.value)}
+                  placeholder={
+                    selectedRole === 'officer'
+                      ? 'Enter Officer Name'
+                      : selectedRole === 'collector'
+                      ? 'Enter Collector Name'
+                      : 'Enter Citizen Name (Optional)'
+                  }
+                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1565C0] focus:bg-white transition-all"
+                />
+              </div>
+
+              {/* Password Input */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1 flex items-center justify-between">
+                  <span>Security Password *</span>
+                  {selectedRole === 'citizen' && (
+                    <span className="text-[10px] text-emerald-600 font-normal">Public Access (No Password)</span>
+                  )}
+                </label>
+                <div className="relative">
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={e => setPassword(e.target.value)}
+                    placeholder={selectedRole === 'citizen' ? 'No password required' : 'Enter Password'}
+                    disabled={selectedRole === 'citizen'}
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:outline-none focus:border-[#1565C0] focus:bg-white transition-all pr-10 disabled:bg-slate-100 disabled:text-slate-400"
+                  />
+                  {selectedRole !== 'citizen' && (
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-2.5 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Submit Button */}
               <button
-                type="button"
-                onClick={executeLogin}
+                type="submit"
                 disabled={isAuthenticating}
-                className="w-full sm:w-auto px-8 py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                className="w-full py-3 bg-[#1565C0] hover:bg-[#0D47A1] text-white text-xs font-bold rounded-full shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
               >
-                <span>{isAuthenticating ? 'Authenticating Credentials...' : 'Enter Monitoring Platform'}</span>
+                <span>{isAuthenticating ? 'Authenticating...' : 'Sign in to Sentinel'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
+            </form>
+
+            {/* Bottom Support Link */}
+            <div className="text-center pt-2 space-y-1">
+              <div className="text-xs text-slate-500">
+                New User?{' '}
+                <button
+                  type="button"
+                  onClick={() => handleRoleSelect('citizen')}
+                  className="text-[#1565C0] font-bold hover:underline cursor-pointer"
+                >
+                  Access as Citizen Auditor
+                </button>
+              </div>
+
+              <div className="text-[11px] text-slate-400 pt-3">
+                If you face any issues, write to{' '}
+                <a href="mailto:support-mplads@mospi.gov.in" className="text-slate-600 hover:underline">
+                  support-mplads@mospi.gov.in
+                </a>
+              </div>
             </div>
 
-            {/* Security Compliance Strip */}
-            <div className="pt-2.5 mt-2.5 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-400">
-              <div className="flex items-center gap-1">
-                <Lock className="w-3 h-3 text-emerald-600" />
-                <span>256-bit TLS Encrypted Session</span>
-              </div>
-              <div>NIC / MoSPI SIH 2026 Standards</div>
-            </div>
           </div>
         </div>
       </main>
 
-      {/* Page Footer */}
-      <footer className="bg-[#001438] text-white/60 text-[11px] text-center py-2.5 border-t border-white/10">
-        © 2026 Ministry of Statistics &amp; Programme Implementation • Smart India Hackathon Prototype (Problem Statement 26102)
+      {/* 3. BOTTOM FOOTER STRIP */}
+      <footer className="bg-slate-900 text-slate-400 text-[11px] text-center py-2.5 border-t border-slate-800">
+        © 2026 Ministry of Statistics &amp; Programme Implementation • Government of India • SIH 2026 Prototype
       </footer>
     </div>
   );
