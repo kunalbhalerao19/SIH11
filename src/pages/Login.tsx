@@ -4,60 +4,76 @@ import { useAuth, type UserRole } from '../context/AuthContext';
 import { useLanguage } from '../context/LanguageContext';
 import { useToast } from '../context/ToastContext';
 import {
-  Shield, UserCheck, Building2, Users, ArrowRight, Lock, CheckCircle2,
-  Globe, Check, Award, Sparkles, KeyRound, Eye, EyeOff, Info
+  Shield, Building2, Users, ArrowRight, Lock, KeyRound, Eye, EyeOff, Sparkles, Globe, Check, Award
 } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
-  const { loginAs, user } = useAuth();
-  const { language, setLanguage, t } = useLanguage();
+  const { loginAs } = useAuth();
+  const { language, setLanguage } = useLanguage();
   const { success, error } = useToast();
 
   const [selectedRole, setSelectedRole] = useState<UserRole>('officer');
-  const [customName, setCustomName] = useState('Modi Jii');
-  const [customJurisdiction, setCustomJurisdiction] = useState('PMO & MoSPI National Wing, New Delhi');
-  const [password, setPassword] = useState('Meloni');
+  const [customName, setCustomName] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
-  const handleRoleSelect = (role: UserRole, presetName: string, presetJurisdiction: string, defaultPass: string) => {
+  const handleRoleSelect = (role: UserRole) => {
     setSelectedRole(role);
-    setCustomName(presetName);
-    setCustomJurisdiction(presetJurisdiction);
-    setPassword(defaultPass);
+    setCustomName('');
+    setPassword('');
   };
 
-  const executeLogin = (roleToLogin?: UserRole) => {
-    const targetRole = roleToLogin || selectedRole;
-    
-    // Password Verification
-    if (targetRole === 'officer') {
-      if (password.trim().toLowerCase() !== 'meloni') {
-        error('Authentication Failed', 'Invalid password for Modi Jii. (Hint: Meloni)');
+  const executeLogin = () => {
+    // 1. Ministry Officer Validation
+    if (selectedRole === 'officer') {
+      const trimmedName = customName.trim().toLowerCase();
+      const trimmedPass = password.trim().toLowerCase();
+
+      if (!trimmedName || !['modi jii', 'modi ji', 'modi', 'narendra modi'].includes(trimmedName)) {
+        error('Authentication Failed', 'Invalid Officer Name for Ministry Wing.');
         return;
       }
-    } else if (targetRole === 'collector') {
-      if (!['password', 'mundhe', 'tukaram'].includes(password.trim().toLowerCase())) {
-        error('Authentication Failed', 'Invalid password for Tukaram Mundhe. (Hint: Password)');
+
+      if (trimmedPass !== 'meloni') {
+        error('Authentication Failed', 'Incorrect security password for Ministry Officer.');
         return;
       }
     }
 
+    // 2. District Collector Validation
+    else if (selectedRole === 'collector') {
+      const trimmedName = customName.trim().toLowerCase();
+      const trimmedPass = password.trim().toLowerCase();
+
+      if (!trimmedName || !['tukaram mundhe', 'tukaram', 'mundhe', 'tukaram mundhe, ias'].includes(trimmedName)) {
+        error('Authentication Failed', 'Invalid Collector Name for District Nodal.');
+        return;
+      }
+
+      if (trimmedPass !== 'password') {
+        error('Authentication Failed', 'Incorrect security password for District Collector.');
+        return;
+      }
+    }
+
+    // 3. Authenticate Session
     setIsAuthenticating(true);
     setTimeout(() => {
-      loginAs(targetRole, customName || undefined, customJurisdiction || undefined);
-      
-      const roleLabels = {
-        officer: `Ministry Officer (${customName || 'Modi Jii'})`,
-        collector: `District Collector (${customName || 'Tukaram Mundhe'})`,
-        citizen: 'Citizen Auditor (Public Social Audit)',
+      const defaultJurisdictions = {
+        officer: 'PMO & MoSPI National Wing, New Delhi',
+        collector: 'District Magistrate & Collector, Pune',
+        citizen: 'Public Constituency Audit',
       };
+
+      const finalName = customName.trim() || (selectedRole === 'citizen' ? 'Citizen Auditor' : 'Authorized Officer');
+      loginAs(selectedRole, finalName, defaultJurisdictions[selectedRole]);
       
-      success('Session Authenticated', `Welcome, ${customName || 'User'}! Logged in as ${roleLabels[targetRole]}`);
+      success('Session Authenticated', `Welcome, ${finalName}!`);
       setIsAuthenticating(false);
 
-      if (targetRole === 'citizen') {
+      if (selectedRole === 'citizen') {
         navigate('/citizen');
       } else {
         navigate('/dashboard');
@@ -192,7 +208,7 @@ export default function Login() {
                     <span>Sentinel Access Gateway</span>
                   </h2>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    Select your authorized administrative role and credentials
+                    Select your administrative role and enter credentials
                   </p>
                 </div>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-[#003580] border border-blue-200">
@@ -210,18 +226,18 @@ export default function Login() {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  {/* Role 1: Ministry Officer (Modi Jii) */}
+                  {/* Role 1: Ministry Officer */}
                   <div
-                    onClick={() => handleRoleSelect('officer', 'Modi Jii', 'PMO & MoSPI National Wing, New Delhi', 'Meloni')}
-                    className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                    onClick={() => handleRoleSelect('officer')}
+                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
                       selectedRole === 'officer'
                         ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
                         : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-slate-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-[#003580]">
-                        <Shield className="w-3.5 h-3.5" />
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-[#003580]">
+                        <Shield className="w-4 h-4" />
                       </div>
                       {selectedRole === 'officer' ? (
                         <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
@@ -230,24 +246,24 @@ export default function Login() {
                       )}
                     </div>
                     <div className="font-bold text-xs text-gray-900">Ministry Officer</div>
-                    <div className="text-[11px] font-semibold text-blue-800 mt-0.5">Modi Jii</div>
-                    <div className="mt-2 text-[9.5px] text-blue-900 bg-blue-100/80 px-1.5 py-0.5 rounded font-semibold inline-block">
-                      Password: Meloni
+                    <div className="text-[11px] text-gray-500 mt-0.5">MoSPI National Wing</div>
+                    <div className="mt-2 text-[9.5px] text-blue-900 bg-blue-100 px-2 py-0.5 rounded font-semibold inline-block">
+                      Full Access
                     </div>
                   </div>
 
-                  {/* Role 2: District Collector (Tukaram Mundhe) */}
+                  {/* Role 2: District Collector */}
                   <div
-                    onClick={() => handleRoleSelect('collector', 'Tukaram Mundhe', 'District Magistrate & Collector, Pune', 'Password')}
-                    className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                    onClick={() => handleRoleSelect('collector')}
+                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
                       selectedRole === 'collector'
                         ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
                         : 'border-gray-200 bg-white hover:border-amber-300 hover:bg-slate-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center text-amber-800">
-                        <Building2 className="w-3.5 h-3.5" />
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-800">
+                        <Building2 className="w-4 h-4" />
                       </div>
                       {selectedRole === 'collector' ? (
                         <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
@@ -256,24 +272,24 @@ export default function Login() {
                       )}
                     </div>
                     <div className="font-bold text-xs text-gray-900">District Collector</div>
-                    <div className="text-[11px] font-semibold text-amber-800 mt-0.5">Tukaram Mundhe</div>
-                    <div className="mt-2 text-[9.5px] text-amber-900 bg-amber-100/80 px-1.5 py-0.5 rounded font-semibold inline-block">
-                      Password: Password
+                    <div className="text-[11px] text-gray-500 mt-0.5">District / DRDA Nodal</div>
+                    <div className="mt-2 text-[9.5px] text-amber-900 bg-amber-100 px-2 py-0.5 rounded font-semibold inline-block">
+                      Field Audits
                     </div>
                   </div>
 
                   {/* Role 3: Citizen Auditor */}
                   <div
-                    onClick={() => handleRoleSelect('citizen', 'Rahul G. (Citizen Auditor)', 'Pune Constituency', '')}
-                    className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                    onClick={() => handleRoleSelect('citizen')}
+                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
                       selectedRole === 'citizen'
                         ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
                         : 'border-gray-200 bg-white hover:border-emerald-300 hover:bg-slate-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-1.5">
-                      <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-800">
-                        <Users className="w-3.5 h-3.5" />
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-800">
+                        <Users className="w-4 h-4" />
                       </div>
                       {selectedRole === 'citizen' ? (
                         <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
@@ -282,67 +298,61 @@ export default function Login() {
                       )}
                     </div>
                     <div className="font-bold text-xs text-gray-900">Citizen Auditor</div>
-                    <div className="text-[11px] font-semibold text-emerald-800 mt-0.5">Public Social Audit</div>
-                    <div className="mt-2 text-[9.5px] text-emerald-900 bg-emerald-100/80 px-1.5 py-0.5 rounded font-semibold inline-block">
-                      Public Access (No Pass)
+                    <div className="text-[11px] text-gray-500 mt-0.5">Public Social Audit</div>
+                    <div className="mt-2 text-[9.5px] text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded font-semibold inline-block">
+                      Public Portal
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Profile Credentials & Password Details */}
-              <div className="p-3.5 bg-slate-50 rounded-xl border border-gray-200 text-xs space-y-2.5">
+              {/* Profile Credentials & Security Input Block */}
+              <div className="p-4 bg-slate-50 rounded-xl border border-gray-200 text-xs space-y-3">
                 <div className="font-semibold text-gray-800 flex items-center justify-between">
-                  <span>2. Active Credentials &amp; Security:</span>
-                  <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-semibold">
-                    ✓ Verified Credentials
+                  <span>2. Credentials &amp; Authentication:</span>
+                  <span className="text-[10px] text-blue-700 bg-blue-50 border border-blue-200 px-2 py-0.5 rounded font-semibold">
+                    {selectedRole === 'officer' && 'Ministry Sign In'}
+                    {selectedRole === 'collector' && 'Collector Sign In'}
+                    {selectedRole === 'citizen' && 'Citizen Sign In'}
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                  <div>
-                    <label className="block text-[10px] text-gray-500 font-bold uppercase mb-1">Authenticated Name</label>
-                    <input
-                      type="text"
-                      value={customName}
-                      onChange={e => setCustomName(e.target.value)}
-                      placeholder="e.g. Modi Jii"
-                      className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580] font-semibold text-gray-900"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-[10px] text-gray-500 font-bold uppercase mb-1">Administrative Jurisdiction</label>
-                    <input
-                      type="text"
-                      value={customJurisdiction}
-                      onChange={e => setCustomJurisdiction(e.target.value)}
-                      placeholder="e.g. PMO / Pune District"
-                      className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580] text-gray-800"
-                    />
-                  </div>
+                {/* Name Input */}
+                <div>
+                  <label className="block text-[10px] text-gray-600 font-bold uppercase mb-1">
+                    {selectedRole === 'officer' && 'Officer Name / User ID'}
+                    {selectedRole === 'collector' && 'Collector Name / User ID'}
+                    {selectedRole === 'citizen' && 'Citizen Name / ID (Optional)'}
+                  </label>
+                  <input
+                    type="text"
+                    value={customName}
+                    onChange={e => setCustomName(e.target.value)}
+                    placeholder={
+                      selectedRole === 'officer'
+                        ? 'Enter Ministry Officer Name'
+                        : selectedRole === 'collector'
+                        ? 'Enter District Collector Name'
+                        : 'Enter your name (optional)'
+                    }
+                    className="w-full text-xs px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580] text-gray-900 placeholder:text-gray-400"
+                  />
                 </div>
 
                 {/* Password Input Field */}
                 <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-[10px] text-gray-500 font-bold uppercase flex items-center gap-1">
-                      <KeyRound className="w-3 h-3 text-[#003580]" />
-                      <span>Security Password</span>
-                    </label>
-                    <span className="text-[10px] text-blue-800 font-medium">
-                      {selectedRole === 'officer' && '(Enter: Meloni)'}
-                      {selectedRole === 'collector' && '(Enter: Password)'}
-                      {selectedRole === 'citizen' && '(Public Guest Access)'}
-                    </span>
-                  </div>
+                  <label className="block text-[10px] text-gray-600 font-bold uppercase mb-1 flex items-center gap-1">
+                    <KeyRound className="w-3 h-3 text-[#003580]" />
+                    <span>Security Password</span>
+                  </label>
                   <div className="relative">
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={password}
                       onChange={e => setPassword(e.target.value)}
-                      placeholder={selectedRole === 'citizen' ? 'No password required' : 'Enter password'}
+                      placeholder={selectedRole === 'citizen' ? 'No password required for Public access' : 'Enter Password'}
                       disabled={selectedRole === 'citizen'}
-                      className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580] pr-8 font-medium disabled:bg-gray-100 disabled:text-gray-400"
+                      className="w-full text-xs px-3 py-2 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580] pr-9 text-gray-900 placeholder:text-gray-400 disabled:bg-gray-100 disabled:text-gray-400"
                     />
                     {selectedRole !== 'citizen' && (
                       <button
@@ -351,7 +361,7 @@ export default function Login() {
                         className="absolute right-2.5 top-2 text-gray-400 hover:text-gray-700 cursor-pointer"
                         title={showPassword ? 'Hide password' : 'Show password'}
                       >
-                        {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                       </button>
                     )}
                   </div>
@@ -359,34 +369,23 @@ export default function Login() {
               </div>
 
               {/* Capability Checklist preview */}
-              <div className="flex items-center gap-2.5 text-[11px] text-gray-600 bg-blue-50/60 p-2 rounded-lg border border-blue-100">
+              <div className="flex items-center gap-2.5 text-[11px] text-gray-600 bg-blue-50/60 p-2.5 rounded-lg border border-blue-100">
                 <Award className="w-4 h-4 text-[#003580] shrink-0" />
                 <span>
-                  {selectedRole === 'officer' && 'Full National Access: AI Model Pipeline, Sector Analytics, Data Quality, Macro Forensics.'}
-                  {selectedRole === 'collector' && 'District Nodal Access: Field Inspection Docket Generator, Overlap Radar, Alert Queue.'}
-                  {selectedRole === 'citizen' && 'Public Citizen Access: Public Works Transparency, Progress Photo Viewer, Grievance Loop.'}
+                  {selectedRole === 'officer' && 'Authorized Scope: AI Model Pipeline, Sector Analytics, Data Quality Monitor, National Telemetry.'}
+                  {selectedRole === 'collector' && 'Authorized Scope: Field Inspection Docket Generator, GIS Proximity Radar, Alert Queue.'}
+                  {selectedRole === 'citizen' && 'Authorized Scope: Public Project Transparency, Photo Progress Viewer, Citizen Suggestion Loop.'}
                 </span>
               </div>
             </div>
 
-            {/* Bottom Form Actions */}
-            <div className="pt-3.5 mt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-2 items-center justify-between">
+            {/* Bottom Form Action */}
+            <div className="pt-3 mt-4 border-t border-gray-100 flex items-center justify-end">
               <button
                 type="button"
-                onClick={() => {
-                  handleRoleSelect('officer', 'Modi Jii', 'PMO & MoSPI National Wing, New Delhi', 'Meloni');
-                  executeLogin('officer');
-                }}
-                className="w-full sm:w-auto px-3.5 py-2 text-xs font-semibold text-blue-900 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-              >
-                <span>⚡ 1-Click Modi Jii Access</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => executeLogin()}
+                onClick={executeLogin}
                 disabled={isAuthenticating}
-                className="w-full sm:w-auto px-7 py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                className="w-full sm:w-auto px-8 py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
               >
                 <span>{isAuthenticating ? 'Authenticating Credentials...' : 'Enter Monitoring Platform'}</span>
                 <ArrowRight className="w-4 h-4" />
