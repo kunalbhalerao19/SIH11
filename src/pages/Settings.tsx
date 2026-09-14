@@ -1,5 +1,6 @@
 import { PageHeader, SectionCard } from '../components/ui';
 import { User, Bell, Shield, Database, Eye, Save } from 'lucide-react';
+import { APP_CONFIG } from '../lib/config';
 
 export default function Settings() {
   return (
@@ -86,16 +87,16 @@ export default function Settings() {
           <SectionCard title="System Information">
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
               {[
-                { label: 'Version', value: '1.0.0-demo' },
-                { label: 'Environment', value: 'SIH 2026 Demo' },
-                { label: 'Data Source', value: 'Synthetic Demo Data' },
-                { label: 'AI Model Version', value: 'v0.1-prototype' },
-                { label: 'Last Data Refresh', value: '22 Aug 2026' },
-                { label: 'Build Date', value: 'Aug 2026' },
+                { label: 'Platform Title', value: APP_CONFIG.title },
+                { label: 'Version', value: `v${APP_CONFIG.version}` },
+                { label: 'Environment', value: 'SIH 2026 Prototype' },
+                { label: 'API Base URL', value: APP_CONFIG.apiBaseUrl },
+                { label: 'Confidence Threshold', value: `${(APP_CONFIG.confidenceThreshold * 100).toFixed(0)}%` },
+                { label: 'Mock Data Mode', value: APP_CONFIG.enableMockData ? 'Enabled (Certified Seed)' : 'Live DB' },
               ].map(item => (
                 <div key={item.label} style={{ padding: '12px', background: '#f9fafb', borderRadius: 6, border: '1px solid #e5e7eb' }}>
                   <div style={{ fontSize: 10, color: '#9ca3af', marginBottom: 3 }}>{item.label}</div>
-                  <div style={{ fontSize: 13, fontWeight: 600, color: '#374151' }}>{item.value}</div>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: '#374151', wordBreak: 'break-all' }}>{item.value}</div>
                 </div>
               ))}
             </div>

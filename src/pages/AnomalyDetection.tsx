@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ANOMALIES } from '../data/demoData';
 import type { AnomalyType, AlertSeverity, InvestigationStatus, Anomaly } from '../types';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../context/useToast';
 import { generateAnomaliesPDF, exportToCSV } from '../lib/exportUtils';
 import {
   PageHeader,

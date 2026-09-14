@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, ChevronDown, User, AlertTriangle, Globe, LogOut, Shield } from 'lucide-react';
-import { useAuth } from '../context/AuthContext';
-import { useLanguage } from '../context/LanguageContext';
+import { useAuth } from '../context/useAuth';
+import { useLanguage } from '../context/useLanguage';
 
 interface TopBarProps {
   title?: string;

@@ -2,6 +2,7 @@ import { useState, Fragment } from 'react';
 import { PROJECTS, STATES } from '../data/demoData';
 import { StatusBadge } from '../components/ui';
 import { Search, Flag, CheckCircle, Eye } from 'lucide-react';
+import { APP_CONFIG } from '../lib/config';
 
 let reportCounter = 100000;
 
@@ -258,8 +259,11 @@ export default function CitizenPortal() {
         </div>
 
         <div style={{ marginTop: 20, padding: '10px 14px', background: 'white', borderRadius: 6, fontSize: 11, color: '#9ca3af', border: '1px solid #e5e7eb', textAlign: 'center' }}>
-          This is a demo citizen portal. Official MPLADS data is available at <strong>mplads.mospi.gov.in</strong> |
-          Data shown is synthetic and for SIH 2026 demonstration purposes only.
+          This is a demo citizen portal. Official MPLADS data is available at{' '}
+          <a href={APP_CONFIG.govPortalUrl} target="_blank" rel="noreferrer" className="font-bold text-blue-700 hover:underline">
+            {APP_CONFIG.govPortalUrl.replace(/^https?:\/\//, '')}
+          </a>{' '}
+          | Data shown is synthetic and for SIH 2026 demonstration purposes only.
         </div>
       </div>
     </div>

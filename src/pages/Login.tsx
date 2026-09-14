@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth, type UserRole } from '../context/AuthContext';
-import { useLanguage } from '../context/LanguageContext';
-import { useToast } from '../context/ToastContext';
+import type { UserRole } from '../context/auth-context';
+import { useAuth } from '../context/useAuth';
+import { useLanguage } from '../context/useLanguage';
+import { useToast } from '../context/useToast';
 import {
   Shield, Home, Eye, EyeOff, Globe, Building2, Users, ArrowRight
 } from 'lucide-react';

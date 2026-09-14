@@ -12,7 +12,7 @@ import { PageHeader, SectionCard, KpiCard } from '../components/ui';
 import { RiskBadge } from '../components/RiskBadge';
 import { getRiskColor, getRiskBgColor, getScoreColor } from '../lib/riskEngine';
 import { generateInspectionDocketPDF } from '../lib/exportUtils';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../context/useToast';
 import type { AIModuleId } from '../types';
 import {
   Brain, Camera,

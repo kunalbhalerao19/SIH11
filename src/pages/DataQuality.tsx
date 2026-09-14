@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { PageHeader, SectionCard, KpiCard } from '../components/ui';
-import { ShieldCheck, CheckCircle2, RefreshCw } from 'lucide-react';
-import { useToast } from '../context/ToastContext';
+import { ShieldCheck, CheckCircle2, RefreshCw, Activity, Server } from 'lucide-react';
+import { useToast } from '../context/useToast';
+import { checkBackendHealth, API_BASE_URL } from '../lib/api';
 
 interface ExtractionRun {
   runId: string;
@@ -92,13 +93,54 @@ const DEMO_QUALITY_ERRORS: DataQualityError[] = [
 ];
 
 export default function DataQuality() {
-  const { success } = useToast();
+  const { success, info } = useToast();
   const [isRunningPipeline, setIsRunningPipeline] = useState(false);
+  const [isCheckingBackend, setIsCheckingBackend] = useState(false);
+  const [backendStatus, setBackendStatus] = useState<{ connected: boolean | null; latencyMs?: number; version?: string }>({ connected: null });
   const [selectedSeverity, setSelectedSeverity] = useState<string>('ALL');
 
   const filteredErrors = selectedSeverity === 'ALL'
     ? DEMO_QUALITY_ERRORS
     : DEMO_QUALITY_ERRORS.filter(e => e.severity === selectedSeverity);
+
+  const runBackendHealthCheck = useCallback(async (silent = false) => {
+    setIsCheckingBackend(true);
+    try {
+      const result = await checkBackendHealth();
+      setBackendStatus({
+        connected: result.connected,
+        latencyMs: result.latencyMs,
+        version: result.version,
+      });
+
+      if (!silent) {
+        if (result.connected) {
+          success('Backend Online', `FastAPI backend connected at ${API_BASE_URL} (${result.latencyMs}ms, v${result.version || '1.0.0'}).`);
+        } else {
+          info('Client Fallback Active', `FastAPI backend at ${API_BASE_URL} is offline. Seamlessly serving certified in-memory demo datasets.`);
+        }
+      }
+    } finally {
+      setIsCheckingBackend(false);
+    }
+  }, [success, info]);
+
+  useEffect(() => {
+    let isMounted = true;
+    checkBackendHealth().then((result) => {
+      if (isMounted) {
+        setBackendStatus({
+          connected: result.connected,
+          latencyMs: result.latencyMs,
+          version: result.version,
+        });
+      }
+    });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleTriggerETL = () => {
     setIsRunningPipeline(true);
@@ -121,14 +163,48 @@ export default function DataQuality() {
             </span>
           }
         />
-        <button
-          onClick={handleTriggerETL}
-          disabled={isRunningPipeline}
-          className="px-4 py-2 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg flex items-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50 self-start sm:self-auto"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 ${isRunningPipeline ? 'animate-spin' : ''}`} />
-          <span>{isRunningPipeline ? 'Running ETL Pipeline...' : 'Trigger ETL Validation Run'}</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-2">
+          <button
+            onClick={() => runBackendHealthCheck(false)}
+            disabled={isCheckingBackend}
+            className="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 text-xs font-semibold rounded-lg flex items-center gap-1.5 shadow-sm transition-all cursor-pointer disabled:opacity-50"
+            title="Probe backend API endpoint at API_BASE_URL"
+          >
+            <Server className="w-3.5 h-3.5 text-blue-700" />
+            <span>{isCheckingBackend ? 'Probing...' : 'Test Backend API'}</span>
+          </button>
+          <button
+            onClick={handleTriggerETL}
+            disabled={isRunningPipeline}
+            className="px-4 py-2 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg flex items-center gap-2 shadow-sm transition-all cursor-pointer disabled:opacity-50"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isRunningPipeline ? 'animate-spin' : ''}`} />
+            <span>{isRunningPipeline ? 'Running ETL Pipeline...' : 'Trigger ETL Validation Run'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Live Backend Connection Status Banner */}
+      <div className="flex items-center justify-between px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs">
+        <div className="flex items-center gap-2">
+          <Activity className="w-4 h-4 text-[#003580]" />
+          <span className="font-bold text-slate-800">REST API Gateway:</span>
+          <code className="text-[11px] font-mono bg-white px-2 py-0.5 rounded border border-slate-300 text-slate-700">
+            {API_BASE_URL}
+          </code>
+        </div>
+        <div className="flex items-center gap-2">
+          <span
+            className={`w-2 h-2 rounded-full ${
+              backendStatus.connected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'
+            }`}
+          />
+          <span className="font-semibold text-slate-700">
+            {backendStatus.connected
+              ? `Connected (Latency: ${backendStatus.latencyMs}ms)`
+              : 'Standby / Resilient In-Memory Demo Data Mode'}
+          </span>
+        </div>
       </div>
 
       {/* KPI Cards Grid */}

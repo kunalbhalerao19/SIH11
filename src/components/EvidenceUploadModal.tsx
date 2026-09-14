@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import exifr from 'exifr';
 import type { Project } from '../types';
-import { useToast } from '../context/ToastContext';
+import { useToast } from '../context/useToast';
 import {
   Camera,
   Upload,

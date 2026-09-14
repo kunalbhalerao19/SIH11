@@ -4,8 +4,9 @@ import {
   Users, Map, Bell, FileText, Database, Settings, ChevronRight,
   Activity, BarChart3, ShieldAlert, Globe, Layers, PieChart, ShieldCheck
 } from 'lucide-react';
-import { useAuth, type UserRole } from '../context/AuthContext';
-import { useLanguage } from '../context/LanguageContext';
+import type { UserRole } from '../context/auth-context';
+import { useAuth } from '../context/useAuth';
+import { useLanguage } from '../context/useLanguage';
 
 interface NavItemDef {
   path: string;
