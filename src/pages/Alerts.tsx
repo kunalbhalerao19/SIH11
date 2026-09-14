@@ -5,10 +5,10 @@ import { PageHeader, KpiCard } from '../components/ui';
 import { Bell, AlertTriangle, AlertCircle, User, Info, Clock, ChevronRight, MapPin } from 'lucide-react';
 
 const SEVERITY_CONFIG: Record<AlertSeverity, { color: string; bg: string; icon: React.ReactNode; label: string }> = {
-  CRITICAL: { color: '#ef4444', bg: 'rgba(239, 68, 68, 0.15)', icon: <AlertTriangle size={13} className="text-red-600 dark:text-red-400" />, label: 'CRITICAL' },
-  HIGH: { color: '#f97316', bg: 'rgba(249, 115, 22, 0.15)', icon: <AlertCircle size={13} className="text-orange-600 dark:text-orange-400" />, label: 'HIGH' },
-  MEDIUM: { color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.15)', icon: <Info size={13} className="text-amber-600 dark:text-amber-400" />, label: 'MEDIUM' },
-  LOW: { color: '#64748b', bg: 'rgba(100, 116, 139, 0.15)', icon: <Bell size={13} className="text-slate-500 dark:text-slate-400" />, label: 'LOW' },
+  CRITICAL: { color: '#ef4444', bg: '#fee2e2', icon: <AlertTriangle size={13} className="text-red-600" />, label: 'CRITICAL' },
+  HIGH: { color: '#f97316', bg: '#fff7ed', icon: <AlertCircle size={13} className="text-orange-600" />, label: 'HIGH' },
+  MEDIUM: { color: '#f59e0b', bg: '#fffbeb', icon: <Info size={13} className="text-amber-600" />, label: 'MEDIUM' },
+  LOW: { color: '#64748b', bg: '#f9fafb', icon: <Bell size={13} className="text-slate-500" />, label: 'LOW' },
 };
 
 function formatAlertDate(iso: string) {
@@ -68,26 +68,26 @@ export default function Alerts() {
       </div>
 
       {/* Filters */}
-      <div className="flex gap-3 flex-wrap items-center mb-4 p-2.5 px-3.5 bg-white dark:bg-[#111e38] border border-gray-200 dark:border-slate-800 rounded-md transition-colors">
-        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Filters:</span>
+      <div className="flex gap-3 flex-wrap items-center mb-4 p-2.5 px-3.5 bg-white border border-gray-200 rounded-md">
+        <span className="text-xs font-semibold text-slate-700">Filters:</span>
         {[
           { label: 'Severity', options: ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'], value: filterSeverity, onChange: setFilterSeverity },
           { label: 'Status', options: ['Open', 'Under Review', 'Resolved', 'False Positive'], value: filterStatus, onChange: setFilterStatus },
           { label: 'State', options: ['Maharashtra', 'Bihar', 'Rajasthan', 'Tamil Nadu'], value: filterState, onChange: setFilterState },
         ].map(f => (
           <div key={f.label} className="flex items-center gap-1.5">
-            <label className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold">{f.label}</label>
+            <label className="text-[11px] text-slate-500 font-semibold">{f.label}</label>
             <select
               value={f.value}
               onChange={e => f.onChange(e.target.value)}
-              className="border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-200 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
+              className="border border-slate-300 bg-white text-slate-700 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
             >
               <option value="">All</option>
               {f.options.map(o => <option key={o} value={o}>{o}</option>)}
             </select>
           </div>
         ))}
-        <span className="text-[11px] text-slate-400 dark:text-slate-500 ml-auto">Showing {filtered.length} of {ALERTS.length} alerts</span>
+        <span className="text-[11px] text-slate-400 ml-auto">Showing {filtered.length} of {ALERTS.length} alerts</span>
       </div>
 
       {/* Alert Cards */}
@@ -99,16 +99,16 @@ export default function Alerts() {
           const comment = comments[alert.alert_id] || alert.investigation_comment;
 
           const statusBadgeColors: Record<string, string> = {
-            Open: 'bg-red-50 text-red-800 dark:bg-red-950/60 dark:text-red-300 border-red-200 dark:border-red-800',
-            'Under Review': 'bg-amber-50 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-            Resolved: 'bg-emerald-50 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-            'False Positive': 'bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border-slate-200 dark:border-slate-700',
+            Open: 'bg-red-50 text-red-800 border-red-200',
+            'Under Review': 'bg-amber-50 text-amber-800 border-amber-200',
+            Resolved: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+            'False Positive': 'bg-slate-50 text-slate-700 border-slate-200',
           };
 
           return (
             <div
               key={alert.alert_id}
-              className="bg-white dark:bg-[#111e38] rounded-md border border-gray-200 dark:border-slate-800 shadow-sm overflow-hidden transition-colors"
+              className="bg-white rounded-md border border-gray-200 shadow-sm overflow-hidden"
               style={{ borderLeft: `4px solid ${cfg.color}` }}
             >
               {/* Header */}
@@ -122,28 +122,28 @@ export default function Alerts() {
                     <span style={{ background: cfg.bg, color: cfg.color }} className="px-1.5 py-0.5 rounded text-[10px] font-bold">
                       {cfg.label}
                     </span>
-                    <span className="text-[11px] text-slate-400 dark:text-slate-500">{alert.alert_id}</span>
+                    <span className="text-[11px] text-slate-400">{alert.alert_id}</span>
                     {alert.project_id && (
-                      <span className="text-[11px] text-[#003580] dark:text-blue-400 font-semibold">{alert.project_id}</span>
+                      <span className="text-[11px] text-[#003580] font-semibold">{alert.project_id}</span>
                     )}
-                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold border ${statusBadgeColors[status] || 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'}`}>
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-semibold border ${statusBadgeColors[status] || 'bg-slate-100 text-slate-700'}`}>
                       {status}
                     </span>
                   </div>
-                  <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100 mb-1">{alert.title}</div>
-                  <div className="text-[11.5px] text-slate-600 dark:text-slate-400 leading-relaxed">{alert.description}</div>
+                  <div className="text-[13px] font-bold text-slate-900 mb-1">{alert.title}</div>
+                  <div className="text-[11.5px] text-slate-600 leading-relaxed">{alert.description}</div>
                   <div className="flex gap-2.5 mt-2 items-center flex-wrap">
                     {alert.state && (
-                      <span className="text-[10px] bg-slate-100 dark:bg-slate-800/80 px-2 py-0.5 rounded text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                      <span className="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-700 flex items-center gap-1">
                         <MapPin size={10} className="text-slate-500 shrink-0" />
                         <span>{alert.state}{alert.district ? `, ${alert.district}` : ''}</span>
                       </span>
                     )}
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
+                    <span className="text-[10px] text-slate-400 flex items-center gap-1">
                       <Clock size={10} /> {formatAlertDate(alert.created_at)}
                     </span>
                     {alert.assigned_to && (
-                      <span className="text-[10px] text-blue-700 dark:text-blue-400 flex items-center gap-1">
+                      <span className="text-[10px] text-blue-700 flex items-center gap-1">
                         <User size={10} /> {alert.assigned_to}
                       </span>
                     )}
@@ -154,9 +154,9 @@ export default function Alerts() {
 
               {/* Expanded Details */}
               {isExpanded && (
-                <div className="border-t border-gray-100 dark:border-slate-800 p-3.5 px-4 bg-slate-50/70 dark:bg-slate-900/60">
+                <div className="border-t border-gray-100 p-3.5 px-4 bg-slate-50/70">
                   {comment && (
-                    <div className="mb-2.5 p-2.5 bg-blue-50 dark:bg-blue-950/40 rounded border border-blue-200 dark:border-blue-900/60 text-[11px] text-blue-950 dark:text-blue-200">
+                    <div className="mb-2.5 p-2.5 bg-blue-50 rounded border border-blue-200 text-[11px] text-blue-950">
                       <div className="font-semibold mb-0.5">Investigation Comment:</div>
                       {comment}
                     </div>
@@ -167,7 +167,7 @@ export default function Alerts() {
                     {status === 'Open' && (
                       <button
                         onClick={() => handleMarkReviewed(alert.alert_id)}
-                        className="bg-[#003580] dark:bg-blue-600 hover:opacity-90 text-white px-3 py-1 rounded text-[11px] font-semibold cursor-pointer transition-colors"
+                        className="bg-[#003580] hover:opacity-90 text-white px-3 py-1 rounded text-[11px] font-semibold cursor-pointer transition-colors"
                       >
                         Mark as Under Review
                       </button>
@@ -182,24 +182,24 @@ export default function Alerts() {
                     )}
                     <button
                       onClick={() => setShowAssign(p => ({ ...p, [alert.alert_id]: !p[alert.alert_id] }))}
-                      className="bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 px-3 py-1 rounded text-[11px] font-semibold cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                      className="bg-white text-slate-700 border border-slate-300 px-3 py-1 rounded text-[11px] font-semibold cursor-pointer hover:bg-slate-50 transition-colors"
                     >
                       Assign Officer
                     </button>
                     <button
                       onClick={() => setShowComment(p => ({ ...p, [alert.alert_id]: !p[alert.alert_id] }))}
-                      className="bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 px-3 py-1 rounded text-[11px] font-semibold cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                      className="bg-white text-slate-700 border border-slate-300 px-3 py-1 rounded text-[11px] font-semibold cursor-pointer hover:bg-slate-50 transition-colors"
                     >
                       Add Comment
                     </button>
                     {alert.project_id && (
-                      <button className="bg-white dark:bg-slate-800 text-[#003580] dark:text-blue-400 border border-[#003580] dark:border-blue-500 px-3 py-1 rounded text-[11px] font-semibold cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700 transition-colors">
+                      <button className="bg-white text-[#003580] border border-[#003580] px-3 py-1 rounded text-[11px] font-semibold cursor-pointer hover:bg-blue-50 transition-colors">
                         View Project
                       </button>
                     )}
                     <button
                       onClick={() => setStatuses(p => ({ ...p, [alert.alert_id]: 'False Positive' }))}
-                      className="bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-slate-700 px-3 py-1 rounded text-[11px] font-semibold cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                      className="bg-white text-slate-500 border border-slate-300 px-3 py-1 rounded text-[11px] font-semibold cursor-pointer hover:bg-slate-50 transition-colors"
                     >
                       False Positive
                     </button>
@@ -211,9 +211,9 @@ export default function Alerts() {
                         placeholder="Officer name..."
                         value={assignInput[alert.alert_id] || ''}
                         onChange={e => setAssignInput(p => ({ ...p, [alert.alert_id]: e.target.value }))}
-                        className="border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded px-2.5 py-1 text-xs flex-1 focus:outline-none focus:border-blue-500"
+                        className="border border-slate-300 bg-white text-slate-900 rounded px-2.5 py-1 text-xs flex-1 focus:outline-none focus:border-blue-500"
                       />
-                      <button className="bg-[#003580] dark:bg-blue-600 hover:opacity-90 text-white px-3 py-1 rounded text-[11px] font-semibold cursor-pointer transition-colors">
+                      <button className="bg-[#003580] hover:opacity-90 text-white px-3 py-1 rounded text-[11px] font-semibold cursor-pointer transition-colors">
                         Assign
                       </button>
                     </div>
@@ -225,18 +225,18 @@ export default function Alerts() {
                         placeholder="Add investigation comment..."
                         value={commentInput[alert.alert_id] || ''}
                         onChange={e => setCommentInput(p => ({ ...p, [alert.alert_id]: e.target.value }))}
-                        className="border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 rounded p-2 text-xs w-full min-h-[60px] focus:outline-none focus:border-blue-500"
+                        className="border border-slate-300 bg-white text-slate-900 rounded p-2 text-xs w-full min-h-[60px] focus:outline-none focus:border-blue-500"
                       />
                       <div className="flex gap-2 mt-1.5">
                         <button
                           onClick={() => handleAddComment(alert.alert_id)}
-                          className="bg-[#003580] dark:bg-blue-600 hover:opacity-90 text-white px-3 py-1 rounded text-[11px] font-semibold cursor-pointer transition-colors"
+                          className="bg-[#003580] hover:opacity-90 text-white px-3 py-1 rounded text-[11px] font-semibold cursor-pointer transition-colors"
                         >
                           Save Comment
                         </button>
                         <button
                           onClick={() => setShowComment(p => ({ ...p, [alert.alert_id]: false }))}
-                          className="border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-300 px-3 py-1 rounded text-[11px] font-semibold cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                          className="border border-slate-300 text-slate-700 px-3 py-1 rounded text-[11px] font-semibold cursor-pointer hover:bg-slate-100 transition-colors"
                         >
                           Cancel
                         </button>
@@ -250,22 +250,22 @@ export default function Alerts() {
         })}
 
         {filtered.length === 0 && (
-          <div className="text-center p-10 text-slate-400 dark:text-slate-500 text-[13px]">
+          <div className="text-center p-10 text-slate-400 text-[13px]">
             No alerts match the selected filters.
           </div>
         )}
       </div>
 
       {/* Workflow */}
-      <div className="mt-5 p-4 px-5 bg-white dark:bg-[#111e38] border border-gray-200 dark:border-slate-800 rounded-md transition-colors">
-        <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100 mb-3">Anomaly Investigation Workflow</div>
+      <div className="mt-5 p-4 px-5 bg-white border border-gray-200 rounded-md">
+        <div className="text-[13px] font-bold text-slate-900 mb-3">Anomaly Investigation Workflow</div>
         <div className="flex items-center gap-0 overflow-x-auto pb-1">
           {[
             'AI Detects Anomaly', 'Alert Generated', 'Officer Opens Project',
             'Reviews AI Explanation', 'Adds Investigation Notes', 'Status Updated', 'Decision Made'
           ].map((step, i, arr) => (
             <div key={step} className="flex items-center">
-              <div className="px-3 py-2 bg-blue-50 dark:bg-blue-950/60 border border-blue-200 dark:border-blue-800/80 rounded-md text-[11px] font-semibold text-blue-900 dark:text-blue-300 whitespace-nowrap">
+              <div className="px-3 py-2 bg-blue-50 border border-blue-200 rounded-md text-[11px] font-semibold text-blue-900 whitespace-nowrap">
                 {step}
               </div>
               {i < arr.length - 1 && <ChevronRight size={16} className="text-slate-400 shrink-0 mx-0.5" />}

@@ -4,7 +4,7 @@ import { Outlet } from 'react-router-dom';
 
 export function Layout() {
   return (
-    <div className="flex min-h-screen bg-[var(--app-bg)] text-[var(--text-main)] transition-colors duration-200">
+    <div className="flex min-h-screen bg-[#f1f3f6] text-[#1a1a2e]">
       <Sidebar />
       <div className="ml-[220px] flex-1 flex flex-col min-h-screen">
         <TopBar />

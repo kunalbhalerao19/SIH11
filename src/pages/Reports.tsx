@@ -44,8 +44,8 @@ export default function Reports() {
       <PageHeader title="Reports" subtitle="Generate and export government-grade MPLADS monitoring reports" />
 
       {/* Quick Actions */}
-      <div className="bg-white dark:bg-[#111e38] border border-gray-200 dark:border-slate-800 rounded-md p-3.5 mb-4 flex gap-2.5 flex-wrap items-center transition-colors">
-        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Quick Export:</span>
+      <div className="bg-white border border-gray-200 rounded-md p-3.5 mb-4 flex gap-2.5 flex-wrap items-center">
+        <span className="text-xs font-semibold text-slate-700">Quick Export:</span>
         {[
           { label: 'All Projects CSV', icon: <Download size={12} /> },
           { label: 'Anomaly Summary', icon: <Download size={12} /> },
@@ -54,12 +54,12 @@ export default function Reports() {
         ].map(btn => (
           <button
             key={btn.label}
-            className="flex items-center gap-1.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 text-slate-700 dark:text-slate-200 px-3 py-1.5 rounded text-xs cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+            className="flex items-center gap-1.5 bg-white border border-slate-300 text-slate-700 px-3 py-1.5 rounded text-xs cursor-pointer hover:bg-slate-50 transition-colors"
           >
             {btn.icon} {btn.label}
           </button>
         ))}
-        <div className="ml-auto text-[11px] text-slate-400 dark:text-slate-500">
+        <div className="ml-auto text-[11px] text-slate-400">
           Last refresh: 22 Aug 2026, 22:30 IST
         </div>
       </div>
@@ -69,7 +69,7 @@ export default function Reports() {
         {REPORTS.map(report => (
           <div
             key={report.id}
-            className="bg-white dark:bg-[#111e38] border border-gray-200 dark:border-slate-800 rounded-md p-4 shadow-sm transition-colors"
+            className="bg-white border border-gray-200 rounded-md p-4 shadow-sm"
             style={{ borderTop: `3px solid ${report.border}` }}
           >
             <div className="flex items-start gap-3 mb-2.5">
@@ -80,15 +80,15 @@ export default function Reports() {
                 {report.icon}
               </div>
               <div className="flex-1">
-                <div className="text-[13px] font-bold text-slate-900 dark:text-slate-100 mb-0.5">{report.title}</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">{report.description}</div>
+                <div className="text-[13px] font-bold text-slate-900 mb-0.5">{report.title}</div>
+                <div className="text-[11px] text-slate-500 leading-relaxed">{report.description}</div>
               </div>
             </div>
 
-            <div className="flex justify-between items-center mb-2.5 text-[11px] text-slate-400 dark:text-slate-500">
-              <span>Records: <strong className="text-slate-700 dark:text-slate-300">{report.count}</strong></span>
+            <div className="flex justify-between items-center mb-2.5 text-[11px] text-slate-400">
+              <span>Records: <strong className="text-slate-700">{report.count}</strong></span>
               {ready[report.id] && (
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold flex items-center gap-1">
+                <span className="text-emerald-600 font-bold flex items-center gap-1">
                   <CheckCircle size={11} /> Report Ready
                 </span>
               )}
@@ -103,8 +103,8 @@ export default function Reports() {
                 disabled={generating[report.id]}
                 className={`flex-1 py-1.5 rounded text-[11px] font-semibold flex items-center justify-center gap-1 transition-colors ${
                   generating[report.id]
-                    ? 'bg-slate-200 dark:bg-slate-800 text-slate-500 dark:text-slate-400 cursor-not-allowed'
-                    : 'bg-[#003580] dark:bg-blue-600 hover:opacity-90 text-white cursor-pointer'
+                    ? 'bg-slate-200 text-slate-500 cursor-not-allowed'
+                    : 'bg-[#003580] hover:opacity-90 text-white cursor-pointer'
                 }`}
               >
                 {generating[report.id] ? (
@@ -113,10 +113,10 @@ export default function Reports() {
                   'Generate'
                 )}
               </button>
-              <button className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-2.5 py-1.5 rounded text-[11px] cursor-pointer text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-1 transition-colors">
+              <button className="bg-white border border-slate-300 px-2.5 py-1.5 rounded text-[11px] cursor-pointer text-slate-700 hover:bg-slate-50 flex items-center gap-1 transition-colors">
                 <FileText size={11} /> PDF
               </button>
-              <button className="bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 px-2.5 py-1.5 rounded text-[11px] cursor-pointer text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 flex items-center gap-1 transition-colors">
+              <button className="bg-white border border-slate-300 px-2.5 py-1.5 rounded text-[11px] cursor-pointer text-slate-700 hover:bg-slate-50 flex items-center gap-1 transition-colors">
                 <Download size={11} /> CSV
               </button>
             </div>
@@ -135,14 +135,14 @@ export default function Reports() {
             ].map(sr => (
               <div
                 key={sr.label}
-                className="p-3 bg-slate-50 dark:bg-slate-900/60 rounded-md border border-slate-200 dark:border-slate-800"
+                className="p-3 bg-slate-50 rounded-md border border-slate-200"
               >
-                <div className="text-xs font-bold text-slate-900 dark:text-slate-100 mb-1">{sr.label}</div>
-                <div className="text-[11px] text-slate-500 dark:text-slate-400 mb-1.5">{sr.schedule}</div>
+                <div className="text-xs font-bold text-slate-900 mb-1">{sr.label}</div>
+                <div className="text-[11px] text-slate-500 mb-1.5">{sr.schedule}</div>
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
                   sr.status === 'Active'
-                    ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800'
-                    : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                    : 'bg-slate-100 text-slate-700 border border-slate-200'
                 }`}>
                   {sr.status}
                 </span>
