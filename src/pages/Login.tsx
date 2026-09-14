@@ -5,41 +5,59 @@ import { useLanguage } from '../context/LanguageContext';
 import { useToast } from '../context/ToastContext';
 import {
   Shield, UserCheck, Building2, Users, ArrowRight, Lock, CheckCircle2,
-  Globe, Check, Award, Sparkles
+  Globe, Check, Award, Sparkles, KeyRound, Eye, EyeOff, Info
 } from 'lucide-react';
 
 export default function Login() {
   const navigate = useNavigate();
   const { loginAs, user } = useAuth();
   const { language, setLanguage, t } = useLanguage();
-  const { success } = useToast();
+  const { success, error } = useToast();
 
   const [selectedRole, setSelectedRole] = useState<UserRole>('officer');
-  const [customName, setCustomName] = useState('Dr. Rajesh Verma, IAS');
-  const [customJurisdiction, setCustomJurisdiction] = useState('MoSPI HQ, New Delhi');
+  const [customName, setCustomName] = useState('Modi Jii');
+  const [customJurisdiction, setCustomJurisdiction] = useState('PMO & MoSPI National Wing, New Delhi');
+  const [password, setPassword] = useState('Meloni');
+  const [showPassword, setShowPassword] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
 
-  const handleRoleSelect = (role: UserRole, presetName?: string, presetJurisdiction?: string) => {
+  const handleRoleSelect = (role: UserRole, presetName: string, presetJurisdiction: string, defaultPass: string) => {
     setSelectedRole(role);
-    if (presetName) setCustomName(presetName);
-    if (presetJurisdiction) setCustomJurisdiction(presetJurisdiction);
+    setCustomName(presetName);
+    setCustomJurisdiction(presetJurisdiction);
+    setPassword(defaultPass);
   };
 
-  const executeLogin = (role: UserRole, name?: string, jurisdiction?: string) => {
+  const executeLogin = (roleToLogin?: UserRole) => {
+    const targetRole = roleToLogin || selectedRole;
+    
+    // Password Verification
+    if (targetRole === 'officer') {
+      if (password.trim().toLowerCase() !== 'meloni') {
+        error('Authentication Failed', 'Invalid password for Modi Jii. (Hint: Meloni)');
+        return;
+      }
+    } else if (targetRole === 'collector') {
+      if (!['password', 'mundhe', 'tukaram'].includes(password.trim().toLowerCase())) {
+        error('Authentication Failed', 'Invalid password for Tukaram Mundhe. (Hint: Password)');
+        return;
+      }
+    }
+
     setIsAuthenticating(true);
     setTimeout(() => {
-      loginAs(role, name || customName || undefined, jurisdiction || customJurisdiction || undefined);
+      loginAs(targetRole, customName || undefined, customJurisdiction || undefined);
       
       const roleLabels = {
-        officer: 'Ministry Officer (MoSPI National Wing)',
-        collector: 'District Collector (Pune Nodal Office)',
+        officer: `Ministry Officer (${customName || 'Modi Jii'})`,
+        collector: `District Collector (${customName || 'Tukaram Mundhe'})`,
         citizen: 'Citizen Auditor (Public Social Audit)',
       };
       
-      success('Session Authenticated', `Logged in as ${roleLabels[role]}`);
+      success('Session Authenticated', `Welcome, ${customName || 'User'}! Logged in as ${roleLabels[targetRole]}`);
       setIsAuthenticating(false);
 
-      if (role === 'citizen') {
+      if (targetRole === 'citizen') {
         navigate('/citizen');
       } else {
         navigate('/dashboard');
@@ -165,16 +183,16 @@ export default function Login() {
 
           {/* RIGHT AUTH TERMINAL (7 Cols) */}
           <div className="lg:col-span-7 bg-white p-6 sm:p-8 flex flex-col justify-between">
-            <div className="space-y-5">
+            <div className="space-y-4">
               {/* Header inside Form */}
-              <div className="flex items-center justify-between pb-3.5 border-b border-gray-100">
+              <div className="flex items-center justify-between pb-3 border-b border-gray-100">
                 <div>
                   <h2 className="text-lg font-bold text-gray-900 flex items-center gap-2">
                     <Lock className="w-4 h-4 text-[#003580]" />
                     <span>Sentinel Access Gateway</span>
                   </h2>
                   <p className="text-xs text-gray-500 mt-0.5">
-                    Select your administrative role to access authorized vigilance tools
+                    Select your authorized administrative role and credentials
                   </p>
                 </div>
                 <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-[#003580] border border-blue-200">
@@ -183,27 +201,27 @@ export default function Login() {
               </div>
 
               {/* Role Selection Cards */}
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-gray-700 uppercase tracking-wider">
                     1. Select Administrative Role:
                   </label>
-                  <span className="text-[11px] text-[#003580] font-medium">Click to select role</span>
+                  <span className="text-[11px] text-[#003580] font-medium">Click to choose role</span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                  {/* Role 1: Ministry Officer */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  {/* Role 1: Ministry Officer (Modi Jii) */}
                   <div
-                    onClick={() => handleRoleSelect('officer', 'Dr. Rajesh Verma, IAS', 'MoSPI HQ, New Delhi')}
-                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                    onClick={() => handleRoleSelect('officer', 'Modi Jii', 'PMO & MoSPI National Wing, New Delhi', 'Meloni')}
+                    className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
                       selectedRole === 'officer'
                         ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
                         : 'border-gray-200 bg-white hover:border-blue-300 hover:bg-slate-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center text-[#003580]">
-                        <Shield className="w-4 h-4" />
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center text-[#003580]">
+                        <Shield className="w-3.5 h-3.5" />
                       </div>
                       {selectedRole === 'officer' ? (
                         <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
@@ -212,24 +230,24 @@ export default function Login() {
                       )}
                     </div>
                     <div className="font-bold text-xs text-gray-900">Ministry Officer</div>
-                    <div className="text-[11px] text-gray-500 mt-0.5">MoSPI National Wing</div>
-                    <div className="mt-2.5 text-[10px] text-blue-900 bg-blue-100 px-2 py-0.5 rounded font-semibold inline-block">
-                      Full Access (15+ Pages)
+                    <div className="text-[11px] font-semibold text-blue-800 mt-0.5">Modi Jii</div>
+                    <div className="mt-2 text-[9.5px] text-blue-900 bg-blue-100/80 px-1.5 py-0.5 rounded font-semibold inline-block">
+                      Password: Meloni
                     </div>
                   </div>
 
-                  {/* Role 2: District Collector */}
+                  {/* Role 2: District Collector (Tukaram Mundhe) */}
                   <div
-                    onClick={() => handleRoleSelect('collector', 'Smt. Neha Sharma, IAS', 'District Magistrate, Pune')}
-                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                    onClick={() => handleRoleSelect('collector', 'Tukaram Mundhe', 'District Magistrate & Collector, Pune', 'Password')}
+                    className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
                       selectedRole === 'collector'
                         ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
                         : 'border-gray-200 bg-white hover:border-amber-300 hover:bg-slate-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center text-amber-800">
-                        <Building2 className="w-4 h-4" />
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center text-amber-800">
+                        <Building2 className="w-3.5 h-3.5" />
                       </div>
                       {selectedRole === 'collector' ? (
                         <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
@@ -238,24 +256,24 @@ export default function Login() {
                       )}
                     </div>
                     <div className="font-bold text-xs text-gray-900">District Collector</div>
-                    <div className="text-[11px] text-gray-500 mt-0.5">District / DRDA Nodal</div>
-                    <div className="mt-2.5 text-[10px] text-amber-900 bg-amber-100 px-2 py-0.5 rounded font-semibold inline-block">
-                      Field Audit &amp; Dockets
+                    <div className="text-[11px] font-semibold text-amber-800 mt-0.5">Tukaram Mundhe</div>
+                    <div className="mt-2 text-[9.5px] text-amber-900 bg-amber-100/80 px-1.5 py-0.5 rounded font-semibold inline-block">
+                      Password: Password
                     </div>
                   </div>
 
                   {/* Role 3: Citizen Auditor */}
                   <div
-                    onClick={() => handleRoleSelect('citizen', 'Rahul G. (Citizen Auditor)', 'Pune Constituency')}
-                    className={`p-3.5 rounded-xl border-2 cursor-pointer transition-all ${
+                    onClick={() => handleRoleSelect('citizen', 'Rahul G. (Citizen Auditor)', 'Pune Constituency', '')}
+                    className={`p-3 rounded-xl border-2 cursor-pointer transition-all ${
                       selectedRole === 'citizen'
                         ? 'border-[#003580] bg-blue-50/70 shadow-sm ring-1 ring-[#003580]'
                         : 'border-gray-200 bg-white hover:border-emerald-300 hover:bg-slate-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-800">
-                        <Users className="w-4 h-4" />
+                    <div className="flex items-center justify-between mb-1.5">
+                      <div className="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-800">
+                        <Users className="w-3.5 h-3.5" />
                       </div>
                       {selectedRole === 'citizen' ? (
                         <span className="w-4 h-4 rounded-full bg-[#003580] text-white flex items-center justify-center text-[10px]">✓</span>
@@ -264,19 +282,21 @@ export default function Login() {
                       )}
                     </div>
                     <div className="font-bold text-xs text-gray-900">Citizen Auditor</div>
-                    <div className="text-[11px] text-gray-500 mt-0.5">Public Social Audit</div>
-                    <div className="mt-2.5 text-[10px] text-emerald-900 bg-emerald-100 px-2 py-0.5 rounded font-semibold inline-block">
-                      QR Portal &amp; Grievance
+                    <div className="text-[11px] font-semibold text-emerald-800 mt-0.5">Public Social Audit</div>
+                    <div className="mt-2 text-[9.5px] text-emerald-900 bg-emerald-100/80 px-1.5 py-0.5 rounded font-semibold inline-block">
+                      Public Access (No Pass)
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Profile Persona Details */}
+              {/* Profile Credentials & Password Details */}
               <div className="p-3.5 bg-slate-50 rounded-xl border border-gray-200 text-xs space-y-2.5">
                 <div className="font-semibold text-gray-800 flex items-center justify-between">
-                  <span>2. Active Credentials &amp; Jurisdiction:</span>
-                  <span className="text-[10px] text-gray-500 font-normal">Auto-filled for role</span>
+                  <span>2. Active Credentials &amp; Security:</span>
+                  <span className="text-[10px] text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded font-semibold">
+                    ✓ Verified Credentials
+                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -286,8 +306,8 @@ export default function Login() {
                       type="text"
                       value={customName}
                       onChange={e => setCustomName(e.target.value)}
-                      placeholder="e.g. Dr. Rajesh Verma, IAS"
-                      className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580]"
+                      placeholder="e.g. Modi Jii"
+                      className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580] font-semibold text-gray-900"
                     />
                   </div>
                   <div>
@@ -296,47 +316,85 @@ export default function Login() {
                       type="text"
                       value={customJurisdiction}
                       onChange={e => setCustomJurisdiction(e.target.value)}
-                      placeholder="e.g. MoSPI HQ / Pune District"
-                      className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580]"
+                      placeholder="e.g. PMO / Pune District"
+                      className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580] text-gray-800"
                     />
+                  </div>
+                </div>
+
+                {/* Password Input Field */}
+                <div>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="text-[10px] text-gray-500 font-bold uppercase flex items-center gap-1">
+                      <KeyRound className="w-3 h-3 text-[#003580]" />
+                      <span>Security Password</span>
+                    </label>
+                    <span className="text-[10px] text-blue-800 font-medium">
+                      {selectedRole === 'officer' && '(Enter: Meloni)'}
+                      {selectedRole === 'collector' && '(Enter: Password)'}
+                      {selectedRole === 'citizen' && '(Public Guest Access)'}
+                    </span>
+                  </div>
+                  <div className="relative">
+                    <input
+                      type={showPassword ? 'text' : 'password'}
+                      value={password}
+                      onChange={e => setPassword(e.target.value)}
+                      placeholder={selectedRole === 'citizen' ? 'No password required' : 'Enter password'}
+                      disabled={selectedRole === 'citizen'}
+                      className="w-full text-xs px-2.5 py-1.5 bg-white border border-gray-300 rounded-lg focus:outline-none focus:border-[#003580] pr-8 font-medium disabled:bg-gray-100 disabled:text-gray-400"
+                    />
+                    {selectedRole !== 'citizen' && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-2.5 top-2 text-gray-400 hover:text-gray-700 cursor-pointer"
+                        title={showPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
 
               {/* Capability Checklist preview */}
-              <div className="flex items-center gap-3 text-[11px] text-gray-600 bg-blue-50/50 p-2.5 rounded-lg border border-blue-100">
+              <div className="flex items-center gap-2.5 text-[11px] text-gray-600 bg-blue-50/60 p-2 rounded-lg border border-blue-100">
                 <Award className="w-4 h-4 text-[#003580] shrink-0" />
                 <span>
-                  {selectedRole === 'officer' && 'Full permissions: AI Model Pipeline, Sector Analytics, Data Quality Monitor, ML Inference.'}
-                  {selectedRole === 'collector' && 'Field permissions: Field Inspection PDF Docket Generator, GIS Proximity Radar, Alert Queue.'}
-                  {selectedRole === 'citizen' && 'Public permissions: Public Project Transparency, Photo Progress Viewer, Citizen Suggestion Loop.'}
+                  {selectedRole === 'officer' && 'Full National Access: AI Model Pipeline, Sector Analytics, Data Quality, Macro Forensics.'}
+                  {selectedRole === 'collector' && 'District Nodal Access: Field Inspection Docket Generator, Overlap Radar, Alert Queue.'}
+                  {selectedRole === 'citizen' && 'Public Citizen Access: Public Works Transparency, Progress Photo Viewer, Grievance Loop.'}
                 </span>
               </div>
             </div>
 
             {/* Bottom Form Actions */}
-            <div className="pt-4 mt-5 border-t border-gray-100 flex flex-col sm:flex-row gap-2.5 items-center justify-between">
+            <div className="pt-3.5 mt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-2 items-center justify-between">
               <button
                 type="button"
-                onClick={() => executeLogin('officer', 'Dr. Rajesh Verma, IAS', 'MoSPI HQ, New Delhi')}
-                className="w-full sm:w-auto px-3.5 py-2 text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg border border-gray-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                onClick={() => {
+                  handleRoleSelect('officer', 'Modi Jii', 'PMO & MoSPI National Wing, New Delhi', 'Meloni');
+                  executeLogin('officer');
+                }}
+                className="w-full sm:w-auto px-3.5 py-2 text-xs font-semibold text-blue-900 bg-blue-50 hover:bg-blue-100 rounded-lg border border-blue-200 transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
               >
-                <span>⚡ 1-Click Fast Access</span>
+                <span>⚡ 1-Click Modi Jii Access</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => executeLogin(selectedRole)}
+                onClick={() => executeLogin()}
                 disabled={isAuthenticating}
                 className="w-full sm:w-auto px-7 py-2.5 bg-[#003580] hover:bg-[#002860] text-white text-xs font-bold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
               >
-                <span>{isAuthenticating ? 'Authenticating...' : 'Enter Monitoring Platform'}</span>
+                <span>{isAuthenticating ? 'Authenticating Credentials...' : 'Enter Monitoring Platform'}</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
             {/* Security Compliance Strip */}
-            <div className="pt-3 mt-3 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-400">
+            <div className="pt-2.5 mt-2.5 border-t border-gray-100 flex items-center justify-between text-[10px] text-gray-400">
               <div className="flex items-center gap-1">
                 <Lock className="w-3 h-3 text-emerald-600" />
                 <span>256-bit TLS Encrypted Session</span>
