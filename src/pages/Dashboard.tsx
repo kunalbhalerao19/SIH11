@@ -24,21 +24,21 @@ const GOV_ORANGE = '#FF6B00';
 const GOV_GREEN  = '#16a34a';
 const GOV_RED    = '#dc2626';
 
-// ─── Work Status donut data ────────────────────────────────────────────────────
+// ─── Work Status donut data (Derived from PROJECTS) ───────────────────────────
 const WORK_STATUS_DATA = [
-  { name: 'Completed',    value: 31248, color: GOV_GREEN  },
-  { name: 'Ongoing',      value: 6240,  color: GOV_BLUE   },
-  { name: 'Sanctioned',   value: 1753,  color: GOV_ORANGE },
-  { name: 'Recommended',  value: 1077,  color: '#6b7280'  },
-  { name: 'Non-Progress', value: 280,   color: GOV_RED    },
+  { name: 'Completed',    value: PROJECTS.filter(p => p.work_status === 'Completed').length,    color: GOV_GREEN  },
+  { name: 'Ongoing',      value: PROJECTS.filter(p => p.work_status === 'Ongoing').length,      color: GOV_BLUE   },
+  { name: 'Sanctioned',   value: PROJECTS.filter(p => p.work_status === 'Sanctioned').length,   color: GOV_ORANGE },
+  { name: 'Recommended',  value: PROJECTS.filter(p => p.work_status === 'Recommended').length,  color: '#6b7280'  },
+  { name: 'Non-Progress', value: PROJECTS.filter(p => p.work_status === 'Non-Progress').length, color: GOV_RED    },
 ];
 
-// ─── Risk Distribution donut data ─────────────────────────────────────────────
+// ─── Risk Distribution donut data (Derived from PROJECTS) ──────────────────────
 const RISK_DIST_DATA = [
-  { name: 'Low',      value: 24832, color: GOV_GREEN  },
-  { name: 'Medium',   value: 12341, color: '#d97706'  },
-  { name: 'High',     value: 3803,  color: GOV_ORANGE },
-  { name: 'Critical', value: 1342,  color: GOV_RED    },
+  { name: 'Low',      value: PROJECTS.filter(p => p.risk_level === 'LOW').length,      color: GOV_GREEN  },
+  { name: 'Medium',   value: PROJECTS.filter(p => p.risk_level === 'MEDIUM').length,   color: '#d97706'  },
+  { name: 'High',     value: PROJECTS.filter(p => p.risk_level === 'HIGH').length,     color: GOV_ORANGE },
+  { name: 'Critical', value: PROJECTS.filter(p => p.risk_level === 'CRITICAL').length, color: GOV_RED    },
 ];
 
 // ─── Custom donut label renderer ──────────────────────────────────────────────
@@ -108,18 +108,18 @@ export default function Dashboard() {
       }}>
         <AlertTriangle size={16} color={GOV_ORANGE} />
         <span style={{ fontSize: 13, color: '#92400e', fontWeight: 500 }}>
-          <strong>287 anomalies detected</strong> this monitoring cycle.{' '}
-          <strong>48 require immediate attention.</strong>
+          <strong>{KPI.anomalies_detected} anomalies detected</strong> this monitoring cycle.{' '}
+          <strong>{KPI.financial_irregularities} require immediate attention.</strong>
         </span>
         <span style={{ marginLeft: 'auto', fontSize: 11, color: '#9a3412', fontStyle: 'italic' }}>
-          Demo environment. Data shown for demonstration purposes.
+          Demo environment. Synthetic data for prototype demonstration.
         </span>
       </div>
 
       {/* ── Page Header ───────────────────────────────────────────────────────── */}
       <PageHeader
         title="Executive Dashboard"
-        subtitle="Ministry of Statistics & Programme Implementation · MPLADS Monitoring System · Last updated: Aug 22, 2026 — 23:00 IST"
+        subtitle="Ministry of Statistics & Programme Implementation · MPLADS Monitoring System · Prototype Demonstration"
       />
 
       {/* ── Filter Bar ────────────────────────────────────────────────────────── */}

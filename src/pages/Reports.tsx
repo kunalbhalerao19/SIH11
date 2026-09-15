@@ -4,6 +4,8 @@ import {
   FileText, Download, Printer, BarChart3, AlertTriangle, IndianRupee,
   Users, Map, Clock, CheckCircle, RefreshCw
 } from 'lucide-react';
+import { PROJECTS, ANOMALIES, KPI, MPs, STATES, SECTORS } from '../data/demoData';
+import { formatCrore, formatNumber } from '../lib/utils';
 
 interface ReportCard {
   id: string;
@@ -14,21 +16,23 @@ interface ReportCard {
   border: string;
 }
 
-const REPORTS: ReportCard[] = [
-  { id: 'anomaly', title: 'AI Anomaly Report', description: 'All AI-detected anomalies with risk scores, contributing factors, and investigation status.', icon: <AlertTriangle size={20} color="#dc2626" />, count: '287 anomalies', border: '#dc2626' },
-  { id: 'state-perf', title: 'State Performance Report', description: 'State-wise fund utilization, completion rates, anomaly counts, and risk assessments.', icon: <Map size={20} color="#1e40af" />, count: '30 states', border: '#1e40af' },
-  { id: 'mp-perf', title: 'MP Performance Report', description: 'MP-wise efficiency scores, expenditure analysis, and project completion statistics.', icon: <Users size={20} color="#7c3aed" />, count: '790 MPs', border: '#7c3aed' },
-  { id: 'fund', title: 'Fund Utilization Report', description: 'Year-wise and state-wise fund release, utilization, and unspent balance tracking.', icon: <IndianRupee size={20} color="#16a34a" />, count: '₹1,185 Cr tracked', border: '#16a34a' },
-  { id: 'high-risk', title: 'High Risk Project Report', description: 'All HIGH and CRITICAL risk projects with AI explanations and recommended actions.', icon: <BarChart3 size={20} color="#ea580c" />, count: '1,342 projects', border: '#ea580c' },
-  { id: 'delayed', title: 'Delayed Project Report', description: 'All projects running behind the expected completion schedule with delay analysis.', icon: <Clock size={20} color="#d97706" />, count: '2,841 projects', border: '#d97706' },
-  { id: 'sector', title: 'Sector Analysis Report', description: 'Sector-wise spending patterns, anomaly rates, and performance comparison.', icon: <BarChart3 size={20} color="#0891b2" />, count: '10 sectors', border: '#0891b2' },
-  { id: 'irregularity', title: 'Financial Irregularity Report', description: 'Potential financial irregularities detected by AI requiring official verification.', icon: <AlertTriangle size={20} color="#9f1239" />, count: '48 flagged', border: '#9f1239' },
-  { id: 'completed', title: 'Completed Works Report', description: 'All completed works verification data including actual vs expected completion timelines.', icon: <CheckCircle size={20} color="#15803d" />, count: '31,248 works', border: '#15803d' },
-];
-
 export default function Reports() {
   const [generating, setGenerating] = useState<Record<string, boolean>>({});
   const [ready, setReady] = useState<Record<string, boolean>>({});
+
+  const currentDateStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+  const REPORTS: ReportCard[] = [
+    { id: 'anomaly', title: 'AI Anomaly Report', description: 'All AI-detected anomalies with risk scores, contributing factors, and investigation status.', icon: <AlertTriangle size={20} color="#dc2626" />, count: `${formatNumber(ANOMALIES.length)} anomalies`, border: '#dc2626' },
+    { id: 'state-perf', title: 'State Performance Report', description: 'State-wise fund utilization, completion rates, anomaly counts, and risk assessments.', icon: <Map size={20} color="#1e40af" />, count: `${STATES.length} states`, border: '#1e40af' },
+    { id: 'mp-perf', title: 'MP Performance Report', description: 'MP-wise efficiency scores, expenditure analysis, and project completion statistics.', icon: <Users size={20} color="#7c3aed" />, count: `${formatNumber(MPs.length)} MPs`, border: '#7c3aed' },
+    { id: 'fund', title: 'Fund Utilization Report', description: 'Year-wise and state-wise fund release, utilization, and unspent balance tracking.', icon: <IndianRupee size={20} color="#16a34a" />, count: `${formatCrore(KPI.total_funds_released)} tracked`, border: '#16a34a' },
+    { id: 'high-risk', title: 'High Risk Project Report', description: 'All HIGH and CRITICAL risk projects with AI explanations and recommended actions.', icon: <BarChart3 size={20} color="#ea580c" />, count: `${formatNumber(KPI.high_risk_projects)} projects`, border: '#ea580c' },
+    { id: 'delayed', title: 'Delayed Project Report', description: 'All projects running behind the expected completion schedule with delay analysis.', icon: <Clock size={20} color="#d97706" />, count: `${formatNumber(PROJECTS.filter(p => p.delay_days > 0).length)} projects`, border: '#d97706' },
+    { id: 'sector', title: 'Sector Analysis Report', description: 'Sector-wise spending patterns, anomaly rates, and performance comparison.', icon: <BarChart3 size={20} color="#0891b2" />, count: `${SECTORS.length} sectors`, border: '#0891b2' },
+    { id: 'irregularity', title: 'Financial Irregularity Report', description: 'Potential financial irregularities detected by AI requiring official verification.', icon: <AlertTriangle size={20} color="#9f1239" />, count: `${KPI.financial_irregularities} flagged`, border: '#9f1239' },
+    { id: 'completed', title: 'Completed Works Report', description: 'All completed works verification data including actual vs expected completion timelines.', icon: <CheckCircle size={20} color="#15803d" />, count: `${formatNumber(KPI.works_completed)} works`, border: '#15803d' },
+  ];
 
   const handleGenerate = (id: string) => {
     setGenerating(p => ({ ...p, [id]: true }));
@@ -60,7 +64,7 @@ export default function Reports() {
           </button>
         ))}
         <div className="ml-auto text-[11px] text-slate-400">
-          Last refresh: 22 Aug 2026, 22:30 IST
+          Last refresh: {currentDateStr}
         </div>
       </div>
 
@@ -93,7 +97,7 @@ export default function Reports() {
                 </span>
               )}
               {!ready[report.id] && (
-                <span>Last generated: 22 Aug 2026</span>
+                <span>Last generated: {currentDateStr}</span>
               )}
             </div>
 

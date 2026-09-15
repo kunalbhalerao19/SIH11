@@ -1,20 +1,50 @@
 import { useState } from 'react';
 import { PageHeader, SectionCard, KpiCard } from '../components/ui';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { PROJECTS, SECTORS } from '../data/demoData';
 
-const SECTOR_METRICS = [
-  { sector: 'Drinking Water Facility', code: 'SEC-DRINK', allocationCr: 215.4, expenditureCr: 198.2, completionRate: 84.5, avgDelayDays: 22, anomalyRate: 3.2, priorityWeight: 1.25 },
-  { sector: 'Education', code: 'SEC-EDU', allocationCr: 248.6, expenditureCr: 225.8, completionRate: 88.0, avgDelayDays: 14, anomalyRate: 1.8, priorityWeight: 1.20 },
-  { sector: 'Health & Family Welfare', code: 'SEC-HEALTH', allocationCr: 192.3, expenditureCr: 174.5, completionRate: 82.1, avgDelayDays: 28, anomalyRate: 4.1, priorityWeight: 1.30 },
-  { sector: 'Sanitation & Public Health', code: 'SEC-SAN', allocationCr: 145.8, expenditureCr: 128.4, completionRate: 79.4, avgDelayDays: 35, anomalyRate: 5.4, priorityWeight: 1.15 },
-  { sector: 'Roads & Pathways', code: 'SEC-ROAD', allocationCr: 285.2, expenditureCr: 242.6, completionRate: 74.2, avgDelayDays: 48, anomalyRate: 7.8, priorityWeight: 1.10 },
-  { sector: 'Irrigation & Water Harvesting', code: 'SEC-IRRI', allocationCr: 110.5, expenditureCr: 94.2, completionRate: 81.0, avgDelayDays: 31, anomalyRate: 3.9, priorityWeight: 1.15 },
-  { sector: 'Community & Cultural Centers', code: 'SEC-COMM', allocationCr: 88.4, expenditureCr: 72.1, completionRate: 71.5, avgDelayDays: 54, anomalyRate: 8.5, priorityWeight: 0.90 },
-  { sector: 'Non-Conventional Energy', code: 'SEC-RENEW', allocationCr: 65.2, expenditureCr: 58.6, completionRate: 91.2, avgDelayDays: 8, anomalyRate: 1.2, priorityWeight: 1.05 },
-];
+const SECTOR_CODES: Record<string, string> = {
+  'Education': 'SEC-EDU',
+  'Health': 'SEC-HEALTH',
+  'Roads & Transport': 'SEC-ROAD',
+  'Water Supply': 'SEC-WATER',
+  'Sanitation': 'SEC-SAN',
+  'Community Infrastructure': 'SEC-COMM',
+  'Agriculture': 'SEC-AGRI',
+  'Sports': 'SEC-SPORT',
+  'Culture': 'SEC-CULT',
+  'Other': 'SEC-OTHR',
+};
+
+const SECTOR_METRICS = SECTORS.map((sec) => {
+  const pList = PROJECTS.filter(p => p.sector === sec);
+  const allocLakhs = pList.reduce((s, p) => s + p.sanctioned_cost, 0);
+  const expLakhs = pList.reduce((s, p) => s + p.expenditure, 0);
+  const completed = pList.filter(p => p.work_status === 'Completed').length;
+  const compRate = pList.length > 0 ? (completed / pList.length) * 100 : 0;
+  const delayed = pList.filter(p => p.delay_days > 0);
+  const avgDelay = delayed.length > 0 ? Math.round(delayed.reduce((s, p) => s + p.delay_days, 0) / delayed.length) : 0;
+  const anomalies = pList.filter(p => p.anomaly_type || p.risk_level === 'HIGH' || p.risk_level === 'CRITICAL').length;
+  const anmRate = pList.length > 0 ? (anomalies / pList.length) * 100 : 0;
+
+  return {
+    sector: sec,
+    code: SECTOR_CODES[sec] || 'SEC-GEN',
+    allocationCr: parseFloat((allocLakhs / 100).toFixed(1)),
+    expenditureCr: parseFloat((expLakhs / 100).toFixed(1)),
+    completionRate: parseFloat(compRate.toFixed(1)),
+    avgDelayDays: avgDelay,
+    anomalyRate: parseFloat(anmRate.toFixed(1)),
+    priorityWeight: sec === 'Health' ? 1.3 : sec === 'Water Supply' ? 1.25 : sec === 'Education' ? 1.2 : 1.1,
+  };
+});
 
 export default function SectorAnalytics() {
   const [selectedSector, setSelectedSector] = useState(SECTOR_METRICS[0]);
+
+  const topAlloc = [...SECTOR_METRICS].sort((a, b) => b.allocationCr - a.allocationCr)[0];
+  const topComp = [...SECTOR_METRICS].sort((a, b) => b.completionRate - a.completionRate)[0];
+  const topFlags = [...SECTOR_METRICS].sort((a, b) => b.anomalyRate - a.anomalyRate)[0];
 
   return (
     <div className="space-y-5">
@@ -25,10 +55,10 @@ export default function SectorAnalytics() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KpiCard title="Total Core Sectors" value="8 Master Sectors" subtitle="MPLADS 2023 Guidelines" color="blue" />
-        <KpiCard title="Highest Allocation" value="Roads & Pathways" subtitle="₹285.2 Cr (24.8%)" color="blue" />
-        <KpiCard title="Highest Completion Rate" value="Solar & Energy (91.2%)" subtitle="Avg 8 days delay" color="green" />
-        <KpiCard title="Highest Review Flags" value="Community Halls (8.5%)" subtitle="Cost overruns & delays" color="red" />
+        <KpiCard title="Total Core Sectors" value={`${SECTORS.length} Master Sectors`} subtitle="MPLADS 2023 Guidelines" color="blue" />
+        <KpiCard title="Highest Allocation" value={topAlloc.sector} subtitle={`₹${topAlloc.allocationCr} Cr allocated`} color="blue" />
+        <KpiCard title="Highest Completion Rate" value={`${topComp.sector} (${topComp.completionRate}%)`} subtitle={`Avg ${topComp.avgDelayDays} days delay`} color="green" />
+        <KpiCard title="Highest Review Flags" value={`${topFlags.sector} (${topFlags.anomalyRate}%)`} subtitle="Cost overruns & flags" color="red" />
       </div>
 
       {/* Charts Row */}

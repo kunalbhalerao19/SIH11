@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { PageHeader } from '../components/ui';
 import { ShieldAlert, AlertTriangle } from 'lucide-react';
+import { PROJECTS } from '../data/demoData';
+import { formatNumber } from '../lib/utils';
 
 interface DataSourceDef {
   sourceId: string;
@@ -56,7 +58,7 @@ const DATA_SOURCES: DataSourceDef[] = [
     updateFrequency: 'Deterministic Seed',
     connectorModule: 'etl/connectors/demo_generator.py',
     status: 'Active',
-    recordsTracked: '42,318 Works Monitored (Demo)',
+    recordsTracked: `${formatNumber(PROJECTS.length)} Works Monitored (Demo)`,
     notesAndCaveats: 'All row-level works, fund releases, expenditures, and progress reports in this prototype carry the explicit tag: source_report = "DEMO DATA - NOT OFFICIAL MPLADS DATA".'
   },
   {

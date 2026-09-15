@@ -95,7 +95,7 @@ export default function DataExplorer() {
       ]} />
 
       <SectionCard
-        title={`Data Explorer — ${filtered.length} records found (of 42,318 total)`}
+        title={`Data Explorer — ${filtered.length} records found (of ${PROJECTS.length} total)`}
         subtitle="Click column headers to sort. Click a row to view project details."
         actions={
           <div style={{ display: 'flex', gap: 8 }}>

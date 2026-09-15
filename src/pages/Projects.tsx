@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PROJECTS, STATES, SECTORS, FINANCIAL_YEARS } from '../data/demoData';
+import { PROJECTS, STATES, SECTORS, FINANCIAL_YEARS, KPI } from '../data/demoData';
 import { PageHeader, KpiCard, SectionCard, FilterBar, ActionButton, StatusBadge, Pagination } from '../components/ui';
 import { RiskBadge } from '../components/RiskBadge';
-import { truncate } from '../lib/utils';
+import { truncate, formatNumber } from '../lib/utils';
 import { getScoreColor } from '../lib/riskEngine';
-import { Search, Eye, FolderOpen, CheckCircle, AlertTriangle, Activity } from 'lucide-react';
+import { Search, Eye, FolderOpen, CheckCircle, AlertTriangle, Activity, Info } from 'lucide-react';
 
 export default function Projects() {
   const navigate = useNavigate();
@@ -41,13 +41,28 @@ export default function Projects() {
 
   return (
     <div>
+      {/* Demo Banner */}
+      <div style={{
+        background: '#fff7ed', border: '1px solid #fed7aa', borderLeft: '4px solid #FF6B00',
+        borderRadius: 4, padding: '8px 14px', fontSize: 12, color: '#9a3412', marginBottom: 14,
+        display: 'flex', alignItems: 'center', justifyContent: 'between', gap: 8,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <Info size={14} color="#ea580c" />
+          <span><strong>DEMO DATA — NOT OFFICIAL MPLADS DATA</strong> • Prototype for SIH 2026</span>
+        </div>
+        <span style={{ marginLeft: 'auto', fontSize: 11, color: '#9a3412' }}>
+          {PROJECTS.length} total synthetic projects in database
+        </span>
+      </div>
+
       <PageHeader title="MPLAD Projects" subtitle="All works recommended, sanctioned, ongoing and completed" />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
-        <KpiCard title="Total Projects" value="42,318" icon={<FolderOpen size={18} color="#003580" />} color="#003580" />
-        <KpiCard title="Completed Works" value="31,248" icon={<CheckCircle size={18} color="#16a34a" />} color="#16a34a" />
-        <KpiCard title="Ongoing Works" value="6,240" icon={<Activity size={18} color="#d97706" />} color="#d97706" />
-        <KpiCard title="High Risk Projects" value="1,342" icon={<AlertTriangle size={18} color="#dc2626" />} color="#dc2626" />
+        <KpiCard title="Total Projects" value={formatNumber(PROJECTS.length)} subtitle={`${filtered.length} matching filters`} icon={<FolderOpen size={18} color="#003580" />} color="#003580" />
+        <KpiCard title="Completed Works" value={formatNumber(KPI.works_completed)} subtitle={`${((KPI.works_completed / KPI.works_sanctioned) * 100).toFixed(1)}% completion rate`} icon={<CheckCircle size={18} color="#16a34a" />} color="#16a34a" />
+        <KpiCard title="Ongoing Works" value={formatNumber(KPI.ongoing_works)} subtitle="Active on ground" icon={<Activity size={18} color="#d97706" />} color="#d97706" />
+        <KpiCard title="High Risk Projects" value={formatNumber(KPI.high_risk_projects)} subtitle="High & Critical severity" icon={<AlertTriangle size={18} color="#dc2626" />} color="#dc2626" />
       </div>
 
       <FilterBar filters={[
@@ -59,7 +74,7 @@ export default function Projects() {
       ]} />
 
       <SectionCard
-        title={`Projects (${filtered.length} records)`}
+        title={`Projects (${filtered.length} of ${PROJECTS.length} records)`}
         actions={
           <div style={{ display: 'flex', gap: 8 }}>
             <div style={{ position: 'relative' }}>

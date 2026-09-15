@@ -44,10 +44,10 @@ const SEVERITY_COLORS: Record<AlertSeverity, { bg: string; color: string; border
 };
 
 const DONUT_DATA = [
-  { name: 'CRITICAL', value: 48,  fill: '#dc2626' },
-  { name: 'HIGH',     value: 124, fill: '#FF6B00' },
-  { name: 'MEDIUM',   value: 89,  fill: '#d97706' },
-  { name: 'LOW',      value: 26,  fill: '#6b7280' },
+  { name: 'CRITICAL', value: ANOMALIES.filter((a) => a.severity === 'CRITICAL').length, fill: '#dc2626' },
+  { name: 'HIGH',     value: ANOMALIES.filter((a) => a.severity === 'HIGH').length,     fill: '#FF6B00' },
+  { name: 'MEDIUM',   value: ANOMALIES.filter((a) => a.severity === 'MEDIUM').length,   fill: '#d97706' },
+  { name: 'LOW',      value: ANOMALIES.filter((a) => a.severity === 'LOW').length,      fill: '#6b7280' },
 ];
 
 const ALL_ANOMALY_TYPES: AnomalyType[] = [
@@ -277,6 +277,21 @@ export default function AnomalyDetection() {
         Demo environment. Data shown for demonstration purposes only.
       </div>
 
+      {/* Demo Banner */}
+      <div style={{
+        background: '#fff7ed', border: '1px solid #fed7aa', borderLeft: '4px solid #FF6B00',
+        borderRadius: 4, padding: '8px 14px', fontSize: 12, color: '#9a3412', marginBottom: 14,
+        display: 'flex', alignItems: 'center', justifyContent: 'between', gap: 8,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <AlertTriangle size={14} color="#ea580c" />
+          <span><strong>DEMO DATA — NOT OFFICIAL MPLADS DATA</strong> • Prototype for SIH 2026</span>
+        </div>
+        <span style={{ marginLeft: 'auto', fontSize: 11, color: '#9a3412' }}>
+          {ANOMALIES.length} anomalies detected in current monitoring cycle
+        </span>
+      </div>
+
       {/* KPI Cards */}
       <div
         style={{
@@ -288,30 +303,30 @@ export default function AnomalyDetection() {
       >
         <KpiCard
           title="Total Anomalies"
-          value="287"
+          value={String(ANOMALIES.length)}
           subtitle="Across all flagged projects"
           color="#FF6B00"
           icon={<AlertTriangle size={20} color="#FF6B00" />}
         />
         <KpiCard
           title="Critical"
-          value="48"
+          value={String(ANOMALIES.filter((a) => a.severity === 'CRITICAL').length)}
           subtitle="Immediate review required"
           color="#dc2626"
           icon={<AlertTriangle size={20} color="#dc2626" />}
-          trend={{ value: '+6 this week', up: false }}
+          trend={{ value: '+2 this cycle', up: false }}
         />
         <KpiCard
           title="High"
-          value="124"
+          value={String(ANOMALIES.filter((a) => a.severity === 'HIGH').length)}
           subtitle="Escalated for review"
           color="#FF6B00"
           icon={<Filter size={20} color="#FF6B00" />}
-          trend={{ value: '+14 this week', up: false }}
+          trend={{ value: '+5 this cycle', up: false }}
         />
         <KpiCard
           title="Under Review"
-          value="31"
+          value={String(ANOMALIES.filter((a) => a.status === 'Under Review').length)}
           subtitle="Being investigated"
           color="#003580"
           icon={<Eye size={20} color="#003580" />}
@@ -388,7 +403,7 @@ export default function AnomalyDetection() {
                 }}
               >
                 <span>Total</span>
-                <span style={{ fontWeight: 700, color: '#111827' }}>287</span>
+                <span style={{ fontWeight: 700, color: '#111827' }}>{ANOMALIES.length}</span>
               </div>
             </div>
           </div>

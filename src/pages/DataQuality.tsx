@@ -3,6 +3,8 @@ import { PageHeader, SectionCard, KpiCard } from '../components/ui';
 import { ShieldCheck, CheckCircle2, RefreshCw, Activity, Server } from 'lucide-react';
 import { useToast } from '../context/useToast';
 import { checkBackendHealth, API_BASE_URL } from '../lib/api';
+import { PROJECTS } from '../data/demoData';
+import { formatNumber } from '../lib/utils';
 
 interface ExtractionRun {
   runId: string;
@@ -31,9 +33,9 @@ const DEMO_EXTRACTION_RUNS: ExtractionRun[] = [
     runId: 'RUN-20260828-0912',
     connectorName: 'DemoDataGenerator (Synthetic Seed)',
     status: 'COMPLETED',
-    recordsExtracted: 42318,
-    recordsValidated: 42318,
-    recordsLoaded: 42318,
+    recordsExtracted: PROJECTS.length,
+    recordsValidated: PROJECTS.length,
+    recordsLoaded: PROJECTS.length,
     errorsCount: 0,
     startTime: '2026-08-28 09:12:04',
     durationSeconds: 3.42,
@@ -146,7 +148,7 @@ export default function DataQuality() {
     setIsRunningPipeline(true);
     setTimeout(() => {
       setIsRunningPipeline(false);
-      success('ETL Pipeline Completed', 'Ingested, normalized, and validated 42,318 synthetic demo records.');
+      success('ETL Pipeline Completed', `Ingested, normalized, and validated ${formatNumber(PROJECTS.length)} synthetic demo records.`);
     }, 1800);
   };
 

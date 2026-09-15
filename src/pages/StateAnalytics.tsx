@@ -66,8 +66,8 @@ export default function StateAnalytics() {
       <PageHeader title="State Analytics" subtitle="State-wise MPLADS performance, fund utilization and risk analysis" />
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 16 }}>
-        <KpiCard title="States Covered" value="30" icon={<Map size={16} color="#003580" />} color="#003580" />
-        <KpiCard title="Total Funds Released" value={`₹${(totalFunds / 100).toFixed(0)} Cr`} icon={<TrendingUp size={16} color="#16a34a" />} color="#16a34a" />
+        <KpiCard title="States Covered" value={String(STATE_STATS.length)} icon={<Map size={16} color="#003580" />} color="#003580" />
+        <KpiCard title="Total Funds Released" value={`₹${(totalFunds / 100).toFixed(1)} Cr`} icon={<TrendingUp size={16} color="#16a34a" />} color="#16a34a" />
         <KpiCard title="Avg Completion Rate" value={`${avgCompletion.toFixed(1)}%`} color="#1e40af" />
         <KpiCard title="High Risk States" value={`${highRiskStates.length}`} icon={<AlertTriangle size={16} color="#dc2626" />} color="#dc2626" />
       </div>

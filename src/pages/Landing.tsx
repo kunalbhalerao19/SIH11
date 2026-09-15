@@ -13,6 +13,8 @@ import {
   AlertTriangle,
   Globe,
 } from 'lucide-react';
+import { PROJECTS, ANOMALIES, KPI, MPs, STATES } from '../data/demoData';
+import { formatCrore, formatNumber } from '../lib/utils';
 
 const Landing: React.FC = () => {
   const navigate = useNavigate();
@@ -210,10 +212,10 @@ const Landing: React.FC = () => {
             }}
           >
             {[
-              { label: 'Works Monitored', value: '42,318' },
-              { label: '₹ Tracked', value: '₹1,185 Cr' },
-              { label: 'Anomalies Detected', value: '287' },
-              { label: 'MPs Covered', value: '790' },
+              { label: 'Works Monitored', value: formatNumber(PROJECTS.length) },
+              { label: '₹ Tracked', value: formatCrore(KPI.total_funds_released) },
+              { label: 'Anomalies Detected', value: formatNumber(ANOMALIES.length) },
+              { label: 'MPs Covered', value: formatNumber(MPs.length) },
             ].map((stat, i) => (
               <div
                 key={stat.label}
@@ -503,7 +505,7 @@ const Landing: React.FC = () => {
             {/* Feature list */}
             <div>
               {[
-                'Real-time project monitoring across all 790 constituencies',
+                `Real-time project monitoring across all ${MPs.length} constituencies`,
                 'Automated anomaly scoring with ML confidence metrics',
                 'State-wise and district-wise fund utilization dashboards',
                 'PDF report generation for audit and compliance',
@@ -535,11 +537,11 @@ const Landing: React.FC = () => {
             <div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 {[
-                  { label: 'Total States', value: '30', icon: <Users size={20} color="#003580" /> },
-                  { label: 'MPs Covered', value: '790', icon: <Users size={20} color="#FF6B00" /> },
+                  { label: 'Total States', value: String(STATES.length), icon: <Users size={20} color="#003580" /> },
+                  { label: 'MPs Covered', value: formatNumber(MPs.length), icon: <Users size={20} color="#FF6B00" /> },
                   {
                     label: 'Projects Monitored',
-                    value: '42,318',
+                    value: formatNumber(PROJECTS.length),
                     icon: <FileText size={20} color="#16a34a" />,
                   },
                   {

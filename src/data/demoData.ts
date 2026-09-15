@@ -3,7 +3,7 @@
 
 import type {
   Project, MP, StateStats, Anomaly, Alert, FundData, SectorSpend,
-  RiskLevel, Sector
+  RiskLevel, Sector, AnomalyType, AlertSeverity
 } from '../types';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -13592,7 +13592,237 @@ const raw_projects: Omit<Project, 'risk_score' | 'risk_level' | 'risk_factors' |
   }
 ];
 
-function assignRiskData(p: typeof raw_projects[0]): Project {
+const SECTOR_PROJECT_NAMES: Record<string, string[]> = {
+  'Roads & Transport': [
+    'Rural Road Connectivity - Phase 2',
+    'Bituminous Road Widening & Drainage Network',
+    'Link Road Construction to Gram Panchayat',
+    'Culvert & Approach Road Construction',
+    'Concrete Pavement & Stormwater Channel in Ward 4',
+    'Inter-Village All-Weather Link Corridor',
+  ],
+  'Education': [
+    'Digital Smart Classrooms in Govt Higher Secondary School',
+    'Modern Science Laboratory Equipment & Infrastructure',
+    'School Building Additional Classrooms Wing',
+    'Public Library & Computer Resource Centre',
+    'Hostel Facility for Rural Students',
+    'Girls High School Sanitation & Science Block',
+  ],
+  'Health': [
+    'Primary Health Centre Ward Modernization',
+    'Oxygen Generation & Sub-District Storage Facility',
+    'Diagnostic Ultrasound & Digital X-Ray Setup',
+    'Maternal & Child Care Hospital Wing Upgrade',
+    'Community Health Clinic Extension & Ambulatory Care',
+    'Dialysis Unit Equipment in District Hospital',
+  ],
+  'Water Supply': [
+    'Overhead Water Reservoir & Pipelined Distribution',
+    'Solar-Powered RO Community Drinking Water Station',
+    'Piped Drinking Water Supply to Unconnected Habitations',
+    'Deep Borewell & Hydro-Geological Water Filtration Unit',
+    'Canal Lift Irrigation & Water Purification Plant',
+  ],
+  'Sanitation': [
+    'Community Solid Waste Management & Processing Centre',
+    'Modern Public Sanitation & Hygiene Complex',
+    'Underground Drainage & Wastewater Pipeline',
+    'Decentralized Sewage Treatment & Sludge Disposal Unit',
+    'Eco-Friendly Bio-Toilet Network for Rural Market',
+  ],
+  'Community Infrastructure': [
+    'Multi-Purpose Community Hall & Citizen Facility',
+    'Gram Panchayat Common Service Center',
+    'Township Cultural & Conference Center',
+    'Senior Citizen Recreation & Daycare Centre',
+    'Skill Development & Vocational Training Hub',
+  ],
+  'Agriculture': [
+    'Cold Storage Unit for Horticultural Produce',
+    'Kisan Mandi Agro-Market Shed & Loading Platform',
+    'Solar Micro-Irrigation Pump Installation Network',
+    'Agricultural Grain Warehouse & Storage Depot',
+    'Soil Testing & Agro-Advisory Field Station',
+  ],
+  'Sports': [
+    'Rural Youth Sports Complex & Synthetic Running Track',
+    'Multi-Purpose Indoor Badminton & Volleyball Stadium',
+    'Open Air Gymnasium & Fitness Park',
+    'Mini Stadium Turf & Floodlight Installation',
+  ],
+  'Culture': [
+    'Heritage Preservation & Folk Arts Complex',
+    'Auditorium for Traditional Performing Arts',
+    'Tribal Art & Handicrafts Display Centre',
+    'Public Memorial & Cultural Amphitheatre',
+  ],
+  'Other': [
+    'High-Mast Solar Street Lighting Network across Villages',
+    'Disaster Relief & Multi-Hazard Evacuation Shelter',
+    'Public Bus Terminal Passenger Amenities Upgrade',
+    'Green Energy Solar Micro-Grid for Rural Cluster',
+  ],
+};
+
+const AGENCIES = [
+  'Public Works Department (PWD)',
+  'Central PWD (CPWD)',
+  'Rural Works Department (RWD)',
+  'Municipal Corporation',
+  'Zilla Parishad Engineering Division',
+  'State Water Supply & Sewerage Board',
+  'Health & Family Welfare Engineering Wing',
+  'Infrastructure Development Corporation',
+];
+
+function pseudoRandom(seed: number): number {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+}
+
+function generateSyntheticProjects(targetCount = 337): (typeof raw_projects)[0][] {
+  const generated: (typeof raw_projects)[0][] = [];
+
+  for (let i = 0; i < targetCount; i++) {
+    const seed = i + 101;
+    const r1 = pseudoRandom(seed * 1.1);
+    const r2 = pseudoRandom(seed * 2.2);
+    const r3 = pseudoRandom(seed * 3.3);
+    const r4 = pseudoRandom(seed * 4.4);
+    const r5 = pseudoRandom(seed * 5.5);
+
+    let mp = MPs[0];
+    if (i < STATES.length * 2) {
+      const stateName = STATES[i % STATES.length];
+      const stateMps = MPs.filter((m) => m.state === stateName);
+      mp = stateMps.length > 0 ? stateMps[i % stateMps.length] : MPs[i % MPs.length];
+    } else {
+      const mpIndex = (i * 7 + 13) % MPs.length;
+      mp = MPs[mpIndex];
+    }
+
+    const sectorIndex = (i * 3 + 2) % SECTORS.length;
+    const sector = SECTORS[sectorIndex] as Project['sector'];
+    const nameTemplates = SECTOR_PROJECT_NAMES[sector] || SECTOR_PROJECT_NAMES['Other'];
+    const baseName = nameTemplates[i % nameTemplates.length];
+    const workName = `${baseName} - ${mp.constituency}`;
+
+    const fyIndex = (i * 2 + 1) % FINANCIAL_YEARS.length;
+    const financialYear = FINANCIAL_YEARS[fyIndex];
+
+    const agency = AGENCIES[i % AGENCIES.length];
+    const contractorId = `CONT-${mp.state.slice(0, 2).toUpperCase()}-${1000 + (i % 80)}`;
+
+    const recommendedCost = Math.round(25 + r1 * 160);
+    const sanctionedCost = Math.round(recommendedCost * (0.92 + r2 * 0.08));
+
+    let workStatus: Project['work_status'];
+    let physicalProgress: number;
+    let fundReleased: number;
+    let expenditure: number;
+    let actualCompletionDate: string | undefined;
+    let anomalyType: AnomalyType | undefined;
+    let anomalyConfidence = Math.round(8 + r3 * 20);
+
+    const startYearNum = parseInt(financialYear.split('-')[0], 10);
+    const month = String(Math.floor(1 + r4 * 11)).padStart(2, '0');
+    const day = String(Math.floor(1 + r5 * 27)).padStart(2, '0');
+    const startDate = `${startYearNum}-${month}-${day}`;
+
+    const expMonth = String(Math.floor(1 + ((parseInt(month, 10) + 6) % 12 || 1))).padStart(2, '0');
+    const expectedCompletionDate = `${startYearNum + 1}-${expMonth}-${day}`;
+
+    const statusRoll = (i * 11) % 100;
+
+    if (statusRoll < 60) {
+      workStatus = 'Completed';
+      physicalProgress = 100;
+      fundReleased = sanctionedCost;
+      expenditure = Math.round(sanctionedCost * (0.92 + r3 * 0.08));
+      actualCompletionDate = `${startYearNum + 1}-${expMonth}-15`;
+    } else if (statusRoll < 82) {
+      workStatus = 'Ongoing';
+      physicalProgress = Math.round(25 + r3 * 60);
+      fundReleased = Math.round(sanctionedCost * (0.6 + r4 * 0.4));
+      expenditure = Math.round(fundReleased * (0.5 + r5 * 0.45));
+    } else if (statusRoll < 90) {
+      workStatus = 'Sanctioned';
+      physicalProgress = Math.round(r3 * 10);
+      fundReleased = Math.round(sanctionedCost * (0.2 + r4 * 0.3));
+      expenditure = Math.round(fundReleased * (0.1 + r5 * 0.2));
+    } else if (statusRoll < 96) {
+      workStatus = 'Recommended';
+      physicalProgress = 0;
+      fundReleased = 0;
+      expenditure = 0;
+    } else {
+      workStatus = 'Non-Progress';
+      physicalProgress = Math.round(5 + r3 * 15);
+      fundReleased = Math.round(sanctionedCost * (0.5 + r4 * 0.4));
+      expenditure = Math.round(fundReleased * (0.4 + r5 * 0.4));
+    }
+
+    if (i % 8 === 0 && workStatus !== 'Recommended') {
+      const anomalyRoll = (i / 8) % 5;
+      if (anomalyRoll === 0) {
+        anomalyType = 'Progress Mismatch';
+        physicalProgress = Math.max(10, Math.round(r3 * 25));
+        fundReleased = sanctionedCost;
+        expenditure = Math.round(sanctionedCost * 0.92);
+        anomalyConfidence = Math.round(88 + r4 * 10);
+      } else if (anomalyRoll === 1) {
+        anomalyType = 'High Cost';
+        anomalyConfidence = Math.round(82 + r4 * 15);
+      } else if (anomalyRoll === 2) {
+        anomalyType = 'Delayed Completion';
+        anomalyConfidence = Math.round(75 + r4 * 15);
+        if (workStatus === 'Completed') workStatus = 'Ongoing';
+      } else if (anomalyRoll === 3) {
+        anomalyType = 'Contractor Pattern';
+        anomalyConfidence = Math.round(78 + r4 * 12);
+      } else {
+        anomalyType = 'Geographical Cost Outlier';
+        anomalyConfidence = Math.round(70 + r4 * 18);
+      }
+    }
+
+    const unspentBalance = Math.max(0, fundReleased - expenditure);
+    const paymentCount = Math.max(1, Math.round(2 + r2 * 8));
+
+    generated.push({
+      project_id: `MPL-2026-${String(600 + i).padStart(5, '0')}`,
+      mp_name: mp.name,
+      mp_id: mp.mp_id,
+      house: mp.house,
+      state: mp.state,
+      constituency: mp.constituency,
+      district: mp.constituency,
+      sector,
+      work_name: workName,
+      recommended_cost: recommendedCost,
+      sanctioned_cost: sanctionedCost,
+      fund_released: fundReleased,
+      expenditure,
+      unspent_balance: unspentBalance,
+      work_status: workStatus,
+      start_date: startDate,
+      expected_completion_date: expectedCompletionDate,
+      ...(actualCompletionDate ? { actual_completion_date: actualCompletionDate } : {}),
+      physical_progress: physicalProgress,
+      payment_count: paymentCount,
+      contractor_id: contractorId,
+      financial_year: financialYear,
+      implementing_agency: agency,
+      ...(anomalyType ? { anomaly_type: anomalyType } : {}),
+      anomaly_confidence: anomalyConfidence,
+    });
+  }
+
+  return generated;
+}
+
+function assignRiskData(p: (typeof raw_projects)[0]): Project {
   const ac = p.anomaly_confidence ?? 0;
   let riskScore: number;
   let riskLevel: RiskLevel;
@@ -13659,12 +13889,12 @@ function assignRiskData(p: typeof raw_projects[0]): Project {
   };
 }
 
-export const PROJECTS: Project[] = raw_projects.map(assignRiskData);
+export const PROJECTS: Project[] = [...raw_projects, ...generateSyntheticProjects(337)].map(assignRiskData);
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ANOMALIES
 // ─────────────────────────────────────────────────────────────────────────────
-export const ANOMALIES: Anomaly[] = [
+const CURATED_ANOMALIES: Anomaly[] = [
   {
     anomaly_id: 'ANM-001', project_id: 'MPL-2026-00451', work_name: 'Community Hall Construction - Hadapsar Ward',
     anomaly_type: 'Progress Mismatch', severity: 'CRITICAL', detected_value: '82% funds utilized',
@@ -13708,6 +13938,61 @@ export const ANOMALIES: Anomaly[] = [
     status: 'Open', detected_date: '2026-07-21', state: 'Rajasthan', mp_name: 'Amraram',
   },
 ];
+
+const curatedIds = new Set(CURATED_ANOMALIES.map((a) => a.project_id));
+const generatedAnomalies: Anomaly[] = [];
+let anomalyCounter = CURATED_ANOMALIES.length + 1;
+
+PROJECTS.forEach((p, idx) => {
+  if (curatedIds.has(p.project_id)) return;
+  if (!p.anomaly_type && p.risk_level !== 'CRITICAL' && p.risk_level !== 'HIGH') return;
+
+  const anmType: AnomalyType = p.anomaly_type || (p.risk_level === 'CRITICAL' ? 'Progress Mismatch' : 'High Cost');
+  const severity: AlertSeverity = p.risk_level === 'CRITICAL' ? 'CRITICAL' : p.risk_level === 'HIGH' ? 'HIGH' : p.risk_level === 'MEDIUM' ? 'MEDIUM' : 'LOW';
+
+  let detectedValue = `${((p.expenditure / Math.max(p.fund_released, 1)) * 100).toFixed(0)}% funds, ${p.physical_progress}% physical`;
+  let expectedValue = `Balanced at ~${p.physical_progress}%`;
+  let deviation = `+${p.progress_expenditure_gap}% gap`;
+
+  if (anmType === 'High Cost') {
+    detectedValue = `₹${p.recommended_cost} Lakh`;
+    expectedValue = `₹${p.similar_project_avg_cost} Lakh (sector avg)`;
+    deviation = `+${Math.abs(p.cost_deviation_pct)}%`;
+  } else if (anmType === 'Delayed Completion') {
+    detectedValue = `${p.delay_days} days overdue`;
+    expectedValue = 'On schedule';
+    deviation = `+${p.delay_days}d`;
+  } else if (anmType === 'Contractor Pattern') {
+    detectedValue = `${p.contractor_id} multiple low-progress works`;
+    expectedValue = 'Standard contractor load';
+    deviation = 'Multiple flags';
+  } else if (anmType === 'Geographical Cost Outlier') {
+    detectedValue = `₹${p.sanctioned_cost} Lakh`;
+    expectedValue = `₹${p.similar_project_avg_cost} Lakh (geo avg)`;
+    deviation = `+${Math.abs(p.cost_deviation_pct)}%`;
+  }
+
+  const statusList: Anomaly['status'][] = ['Open', 'Under Review', 'Open', 'Resolved', 'Under Review'];
+  const status = statusList[idx % statusList.length];
+
+  generatedAnomalies.push({
+    anomaly_id: `ANM-${String(anomalyCounter++).padStart(3, '0')}`,
+    project_id: p.project_id,
+    work_name: p.work_name,
+    anomaly_type: anmType,
+    severity,
+    detected_value: detectedValue,
+    expected_value: expectedValue,
+    deviation,
+    ai_confidence: p.anomaly_confidence || 85,
+    status,
+    detected_date: `2026-07-${String(10 + (idx % 20)).padStart(2, '0')}`,
+    state: p.state,
+    mp_name: p.mp_name,
+  });
+});
+
+export const ANOMALIES: Anomaly[] = [...CURATED_ANOMALIES, ...generatedAnomalies];
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ALERTS
@@ -13755,531 +14040,102 @@ export const ALERTS: Alert[] = [
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
-// FUND DATA (Year-wise)
+// FUND DATA (Year-wise, derived from PROJECTS)
 // ─────────────────────────────────────────────────────────────────────────────
-export const FUND_DATA: FundData[] = [
-  { year: '2020-21', released: 650000, sanctioned: 620000, utilized: 540000, unspent: 110000 },
-  { year: '2021-22', released: 690000, sanctioned: 660000, utilized: 580000, unspent: 110000 },
-  { year: '2022-23', released: 740000, sanctioned: 710000, utilized: 630000, unspent: 110000 },
-  { year: '2023-24', released: 790000, sanctioned: 760000, utilized: 680000, unspent: 110000 },
-  { year: '2024-25', released: 832091, sanctioned: 798807, utilized: 674007, unspent: 158084 },
-  { year: '2025-26', released: 450000, sanctioned: 430000, utilized: 340000, unspent: 110000 },
-];
+export const FUND_DATA: FundData[] = FINANCIAL_YEARS.map((year) => {
+  const yrProjects = PROJECTS.filter((p) => p.financial_year === year);
+  const released = yrProjects.reduce((s, p) => s + p.fund_released, 0);
+  const sanctioned = yrProjects.reduce((s, p) => s + p.sanctioned_cost, 0);
+  const utilized = yrProjects.reduce((s, p) => s + p.expenditure, 0);
+  const unspent = Math.max(0, released - utilized);
+  return {
+    year,
+    released,
+    sanctioned,
+    utilized,
+    unspent,
+  };
+});
 
 // ─────────────────────────────────────────────────────────────────────────────
-// SECTOR SPEND
+// SECTOR SPEND (Derived from PROJECTS)
 // ─────────────────────────────────────────────────────────────────────────────
-export const SECTOR_SPEND: SectorSpend[] = [
-  { sector: 'Roads & Transport', amount: Math.round(674007 * 0.28), count: 18420, avg_risk: 52 },
-  { sector: 'Education', amount: Math.round(674007 * 0.19), count: 15340, avg_risk: 31 },
-  { sector: 'Health', amount: Math.round(674007 * 0.16), count: 12210, avg_risk: 38 },
-  { sector: 'Water Supply', amount: Math.round(674007 * 0.14), count: 9980, avg_risk: 44 },
-  { sector: 'Community Infrastructure', amount: Math.round(674007 * 0.11), count: 8876, avg_risk: 41 },
-  { sector: 'Sanitation', amount: Math.round(674007 * 0.05), count: 4102, avg_risk: 28 },
-  { sector: 'Agriculture', amount: Math.round(674007 * 0.03), count: 2642, avg_risk: 55 },
-  { sector: 'Sports', amount: Math.round(674007 * 0.02), count: 1488, avg_risk: 24 },
-  { sector: 'Culture', amount: Math.round(674007 * 0.01), count: 1112, avg_risk: 21 },
-  { sector: 'Other', amount: Math.round(674007 * 0.01), count: 821, avg_risk: 35 },
-];
+export const SECTOR_SPEND: SectorSpend[] = SECTORS.map((sec) => {
+  const secProjects = PROJECTS.filter((p) => p.sector === sec);
+  const amount = secProjects.reduce((s, p) => s + p.expenditure, 0);
+  const count = secProjects.length;
+  const avgRisk = count > 0 ? Math.round(secProjects.reduce((s, p) => s + p.risk_score, 0) / count) : 0;
+  return {
+    sector: sec,
+    amount,
+    count,
+    avg_risk: avgRisk,
+  };
+}).sort((a, b) => b.amount - a.amount);
 
 // ─────────────────────────────────────────────────────────────────────────────
-// STATE STATS (36 States/UTs)
+// STATE STATS (All 36 States/UTs, derived from PROJECTS & ANOMALIES)
 // ─────────────────────────────────────────────────────────────────────────────
-export const STATE_STATS: StateStats[] = [
-  {
-    "state": "Uttar Pradesh",
-    "funds_released": 121117.6,
-    "expenditure": 98761.7,
-    "works_recommended": 10178,
-    "works_sanctioned": 9291,
-    "works_completed": 6763,
-    "completion_pct": 72.8,
-    "high_risk_projects": 652,
-    "anomalies": 232,
-    "avg_risk_score": 41,
-    "utilization_pct": 81.5
-  },
-  {
-    "state": "Maharashtra",
-    "funds_released": 74892.9,
-    "expenditure": 60743.9,
-    "works_recommended": 6092,
-    "works_sanctioned": 5555,
-    "works_completed": 4137,
-    "completion_pct": 74.5,
-    "high_risk_projects": 271,
-    "anomalies": 99,
-    "avg_risk_score": 35,
-    "utilization_pct": 81.1
-  },
-  {
-    "state": "West Bengal",
-    "funds_released": 63913.3,
-    "expenditure": 51743.9,
-    "works_recommended": 5092,
-    "works_sanctioned": 4646,
-    "works_completed": 3372,
-    "completion_pct": 72.6,
-    "high_risk_projects": 259,
-    "anomalies": 92,
-    "avg_risk_score": 37,
-    "utilization_pct": 81
-  },
-  {
-    "state": "Tamil Nadu",
-    "funds_released": 61135.6,
-    "expenditure": 49964,
-    "works_recommended": 5115,
-    "works_sanctioned": 4666,
-    "works_completed": 3333,
-    "completion_pct": 71.4,
-    "high_risk_projects": 349,
-    "anomalies": 122,
-    "avg_risk_score": 43,
-    "utilization_pct": 81.7
-  },
-  {
-    "state": "Bihar",
-    "funds_released": 59994.6,
-    "expenditure": 46740.2,
-    "works_recommended": 5156,
-    "works_sanctioned": 4639,
-    "works_completed": 3228,
-    "completion_pct": 69.6,
-    "high_risk_projects": 241,
-    "anomalies": 90,
-    "avg_risk_score": 40,
-    "utilization_pct": 77.9
-  },
-  {
-    "state": "Madhya Pradesh",
-    "funds_released": 44304.7,
-    "expenditure": 36700,
-    "works_recommended": 3586,
-    "works_sanctioned": 3286,
-    "works_completed": 2412,
-    "completion_pct": 73.4,
-    "high_risk_projects": 186,
-    "anomalies": 67,
-    "avg_risk_score": 37,
-    "utilization_pct": 82.8
-  },
-  {
-    "state": "Karnataka",
-    "funds_released": 42721,
-    "expenditure": 35115,
-    "works_recommended": 3298,
-    "works_sanctioned": 3017,
-    "works_completed": 2211,
-    "completion_pct": 73.3,
-    "high_risk_projects": 107,
-    "anomalies": 39,
-    "avg_risk_score": 32,
-    "utilization_pct": 82.2
-  },
-  {
-    "state": "Andhra Pradesh",
-    "funds_released": 40478.8,
-    "expenditure": 31291.8,
-    "works_recommended": 3271,
-    "works_sanctioned": 2932,
-    "works_completed": 2125,
-    "completion_pct": 72.5,
-    "high_risk_projects": 135,
-    "anomalies": 47,
-    "avg_risk_score": 37,
-    "utilization_pct": 77.3
-  },
-  {
-    "state": "Gujarat",
-    "funds_released": 38469.7,
-    "expenditure": 31795.3,
-    "works_recommended": 3062,
-    "works_sanctioned": 2808,
-    "works_completed": 2174,
-    "completion_pct": 77.4,
-    "high_risk_projects": 136,
-    "anomalies": 48,
-    "avg_risk_score": 31,
-    "utilization_pct": 82.7
-  },
-  {
-    "state": "Rajasthan",
-    "funds_released": 37675.7,
-    "expenditure": 29819.8,
-    "works_recommended": 3181,
-    "works_sanctioned": 2874,
-    "works_completed": 2070,
-    "completion_pct": 72,
-    "high_risk_projects": 158,
-    "anomalies": 56,
-    "avg_risk_score": 39,
-    "utilization_pct": 79.1
-  },
-  {
-    "state": "Odisha",
-    "funds_released": 32888.5,
-    "expenditure": 27373.1,
-    "works_recommended": 2632,
-    "works_sanctioned": 2411,
-    "works_completed": 1677,
-    "completion_pct": 69.6,
-    "high_risk_projects": 172,
-    "anomalies": 60,
-    "avg_risk_score": 43,
-    "utilization_pct": 83.2
-  },
-  {
-    "state": "Kerala",
-    "funds_released": 30723.9,
-    "expenditure": 25025.9,
-    "works_recommended": 2650,
-    "works_sanctioned": 2422,
-    "works_completed": 1841,
-    "completion_pct": 76,
-    "high_risk_projects": 160,
-    "anomalies": 59,
-    "avg_risk_score": 38,
-    "utilization_pct": 81.5
-  },
-  {
-    "state": "Telangana",
-    "funds_released": 28964.9,
-    "expenditure": 23217.9,
-    "works_recommended": 1825,
-    "works_sanctioned": 1654,
-    "works_completed": 1111,
-    "completion_pct": 67.2,
-    "high_risk_projects": 56,
-    "anomalies": 19,
-    "avg_risk_score": 35,
-    "utilization_pct": 80.2
-  },
-  {
-    "state": "Jharkhand",
-    "funds_released": 21143.2,
-    "expenditure": 17846.5,
-    "works_recommended": 1764,
-    "works_sanctioned": 1632,
-    "works_completed": 1246,
-    "completion_pct": 76.3,
-    "high_risk_projects": 77,
-    "anomalies": 28,
-    "avg_risk_score": 32,
-    "utilization_pct": 84.4
-  },
-  {
-    "state": "Assam",
-    "funds_released": 20103,
-    "expenditure": 16351,
-    "works_recommended": 1695,
-    "works_sanctioned": 1542,
-    "works_completed": 1044,
-    "completion_pct": 67.7,
-    "high_risk_projects": 106,
-    "anomalies": 39,
-    "avg_risk_score": 43,
-    "utilization_pct": 81.3
-  },
-  {
-    "state": "Punjab",
-    "funds_released": 17806.3,
-    "expenditure": 13833,
-    "works_recommended": 1480,
-    "works_sanctioned": 1331,
-    "works_completed": 945,
-    "completion_pct": 71,
-    "high_risk_projects": 65,
-    "anomalies": 23,
-    "avg_risk_score": 38,
-    "utilization_pct": 77.7
-  },
-  {
-    "state": "Chhattisgarh",
-    "funds_released": 16717.2,
-    "expenditure": 13046.3,
-    "works_recommended": 1481,
-    "works_sanctioned": 1323,
-    "works_completed": 968,
-    "completion_pct": 73.2,
-    "high_risk_projects": 71,
-    "anomalies": 26,
-    "avg_risk_score": 38,
-    "utilization_pct": 78
-  },
-  {
-    "state": "Haryana",
-    "funds_released": 15784.5,
-    "expenditure": 12597.9,
-    "works_recommended": 1210,
-    "works_sanctioned": 1095,
-    "works_completed": 795,
-    "completion_pct": 72.6,
-    "high_risk_projects": 49,
-    "anomalies": 17,
-    "avg_risk_score": 35,
-    "utilization_pct": 79.8
-  },
-  {
-    "state": "Delhi",
-    "funds_released": 11171.9,
-    "expenditure": 9712.6,
-    "works_recommended": 949,
-    "works_sanctioned": 881,
-    "works_completed": 542,
-    "completion_pct": 61.5,
-    "high_risk_projects": 96,
-    "anomalies": 35,
-    "avg_risk_score": 58,
-    "utilization_pct": 86.9
-  },
-  {
-    "state": "Jammu And Kashmir",
-    "funds_released": 7350,
-    "expenditure": 5889.5,
-    "works_recommended": 623,
-    "works_sanctioned": 564,
-    "works_completed": 426,
-    "completion_pct": 75.5,
-    "high_risk_projects": 17,
-    "anomalies": 6,
-    "avg_risk_score": 30,
-    "utilization_pct": 80.1
-  },
-  {
-    "state": "Uttarakhand",
-    "funds_released": 7350,
-    "expenditure": 5913,
-    "works_recommended": 692,
-    "works_sanctioned": 630,
-    "works_completed": 483,
-    "completion_pct": 76.7,
-    "high_risk_projects": 40,
-    "anomalies": 15,
-    "avg_risk_score": 38,
-    "utilization_pct": 80.4
-  },
-  {
-    "state": "Himachal Pradesh",
-    "funds_released": 6295.2,
-    "expenditure": 4577,
-    "works_recommended": 555,
-    "works_sanctioned": 489,
-    "works_completed": 360,
-    "completion_pct": 73.6,
-    "high_risk_projects": 35,
-    "anomalies": 12,
-    "avg_risk_score": 44,
-    "utilization_pct": 72.7
-  },
-  {
-    "state": "The Dadra And Nagar Haveli And Daman And Diu",
-    "funds_released": 3920.6,
-    "expenditure": 3423.5,
-    "works_recommended": 170,
-    "works_sanctioned": 160,
-    "works_completed": 118,
-    "completion_pct": 73.8,
-    "high_risk_projects": 8,
-    "anomalies": 2,
-    "avg_risk_score": 30,
-    "utilization_pct": 87.3
-  },
-  {
-    "state": "Manipur",
-    "funds_released": 2940,
-    "expenditure": 2173.5,
-    "works_recommended": 203,
-    "works_sanctioned": 178,
-    "works_completed": 133,
-    "completion_pct": 74.7,
-    "high_risk_projects": 2,
-    "anomalies": 2,
-    "avg_risk_score": 28,
-    "utilization_pct": 73.9
-  },
-  {
-    "state": "Tripura",
-    "funds_released": 2940,
-    "expenditure": 2529.8,
-    "works_recommended": 283,
-    "works_sanctioned": 262,
-    "works_completed": 188,
-    "completion_pct": 71.8,
-    "high_risk_projects": 15,
-    "anomalies": 6,
-    "avg_risk_score": 39,
-    "utilization_pct": 86
-  },
-  {
-    "state": "Goa",
-    "funds_released": 2940,
-    "expenditure": 2251.2,
-    "works_recommended": 271,
-    "works_sanctioned": 244,
-    "works_completed": 188,
-    "completion_pct": 77,
-    "high_risk_projects": 30,
-    "anomalies": 10,
-    "avg_risk_score": 53,
-    "utilization_pct": 76.6
-  },
-  {
-    "state": "Arunachal Pradesh",
-    "funds_released": 2940,
-    "expenditure": 2264.1,
-    "works_recommended": 335,
-    "works_sanctioned": 300,
-    "works_completed": 199,
-    "completion_pct": 66.3,
-    "high_risk_projects": 33,
-    "anomalies": 12,
-    "avg_risk_score": 63,
-    "utilization_pct": 77
-  },
-  {
-    "state": "Meghalaya",
-    "funds_released": 2450,
-    "expenditure": 2035.3,
-    "works_recommended": 224,
-    "works_sanctioned": 203,
-    "works_completed": 156,
-    "completion_pct": 76.8,
-    "high_risk_projects": 10,
-    "anomalies": 4,
-    "avg_risk_score": 31,
-    "utilization_pct": 83.1
-  },
-  {
-    "state": "Puducherry",
-    "funds_released": 2093.7,
-    "expenditure": 1957.3,
-    "works_recommended": 77,
-    "works_sanctioned": 74,
-    "works_completed": 57,
-    "completion_pct": 77,
-    "high_risk_projects": 0,
-    "anomalies": 2,
-    "avg_risk_score": 18,
-    "utilization_pct": 93.5
-  },
-  {
-    "state": "Chandigarh",
-    "funds_released": 1783.5,
-    "expenditure": 1595.4,
-    "works_recommended": 111,
-    "works_sanctioned": 105,
-    "works_completed": 66,
-    "completion_pct": 62.9,
-    "high_risk_projects": 9,
-    "anomalies": 3,
-    "avg_risk_score": 47,
-    "utilization_pct": 89.5
-  },
-  {
-    "state": "Ladakh",
-    "funds_released": 1611.2,
-    "expenditure": 1457.1,
-    "works_recommended": 164,
-    "works_sanctioned": 155,
-    "works_completed": 136,
-    "completion_pct": 87.7,
-    "high_risk_projects": 13,
-    "anomalies": 5,
-    "avg_risk_score": 37,
-    "utilization_pct": 90.4
-  },
-  {
-    "state": "Lakshadweep",
-    "funds_released": 1539.4,
-    "expenditure": 1480.7,
-    "works_recommended": 76,
-    "works_sanctioned": 73,
-    "works_completed": 63,
-    "completion_pct": 86.3,
-    "high_risk_projects": 0,
-    "anomalies": 2,
-    "avg_risk_score": 15,
-    "utilization_pct": 96.2
-  },
-  {
-    "state": "Sikkim",
-    "funds_released": 1520,
-    "expenditure": 1254.4,
-    "works_recommended": 73,
-    "works_sanctioned": 67,
-    "works_completed": 48,
-    "completion_pct": 71.6,
-    "high_risk_projects": 0,
-    "anomalies": 2,
-    "avg_risk_score": 25,
-    "utilization_pct": 82.5
-  },
-  {
-    "state": "Andaman And Nicobar Islands",
-    "funds_released": 1470,
-    "expenditure": 1089.5,
-    "works_recommended": 176,
-    "works_sanctioned": 156,
-    "works_completed": 101,
-    "completion_pct": 64.7,
-    "high_risk_projects": 29,
-    "anomalies": 10,
-    "avg_risk_score": 85,
-    "utilization_pct": 74.1
-  },
-  {
-    "state": "Mizoram",
-    "funds_released": 1470,
-    "expenditure": 1214.3,
-    "works_recommended": 158,
-    "works_sanctioned": 145,
-    "works_completed": 112,
-    "completion_pct": 77.2,
-    "high_risk_projects": 3,
-    "anomalies": 2,
-    "avg_risk_score": 27,
-    "utilization_pct": 82.6
-  },
-  {
-    "state": "Nagaland",
-    "funds_released": 1470,
-    "expenditure": 1221.5,
-    "works_recommended": 74,
-    "works_sanctioned": 68,
-    "works_completed": 45,
-    "completion_pct": 66.2,
-    "high_risk_projects": 6,
-    "anomalies": 2,
-    "avg_risk_score": 41,
-    "utilization_pct": 83.1
-  }
-];
+export const STATE_STATS: StateStats[] = STATES.map((st) => {
+  const stProjects = PROJECTS.filter((p) => p.state === st);
+  const released = stProjects.reduce((s, p) => s + p.fund_released, 0);
+  const expenditure = stProjects.reduce((s, p) => s + p.expenditure, 0);
+  const rec = stProjects.length;
+  const sanc = stProjects.filter((p) => p.work_status !== 'Recommended').length;
+  const comp = stProjects.filter((p) => p.work_status === 'Completed').length;
+  const compPct = sanc > 0 ? parseFloat(((comp / sanc) * 100).toFixed(1)) : 0;
+  const highRisk = stProjects.filter((p) => p.risk_level === 'HIGH' || p.risk_level === 'CRITICAL').length;
+  const anm = ANOMALIES.filter((a) => a.state === st).length;
+  const avgRisk = rec > 0 ? Math.round(stProjects.reduce((s, p) => s + p.risk_score, 0) / rec) : 0;
+  const utilPct = released > 0 ? parseFloat(((expenditure / released) * 100).toFixed(1)) : 0;
+  return {
+    state: st,
+    funds_released: released,
+    expenditure,
+    works_recommended: rec,
+    works_sanctioned: sanc,
+    works_completed: comp,
+    completion_pct: compPct,
+    high_risk_projects: highRisk,
+    anomalies: anm,
+    avg_risk_score: avgRisk,
+    utilization_pct: utilPct,
+  };
+}).sort((a, b) => b.funds_released - a.funds_released);
 
 // ─────────────────────────────────────────────────────────────────────────────
-// RISK TREND DATA (monthly)
+// AGGREGATED KPI (Single Source of Truth)
+// ─────────────────────────────────────────────────────────────────────────────
+const totalFundsReleased = PROJECTS.reduce((s, p) => s + p.fund_released, 0);
+const totalExpenditure = PROJECTS.reduce((s, p) => s + p.expenditure, 0);
+
+export const KPI = {
+  total_funds_released: totalFundsReleased,
+  total_expenditure: totalExpenditure,
+  works_recommended: PROJECTS.length,
+  works_sanctioned: PROJECTS.filter((p) => p.work_status !== 'Recommended').length,
+  works_completed: PROJECTS.filter((p) => p.work_status === 'Completed').length,
+  ongoing_works: PROJECTS.filter((p) => p.work_status === 'Ongoing').length,
+  high_risk_projects: PROJECTS.filter((p) => p.risk_level === 'HIGH' || p.risk_level === 'CRITICAL').length,
+  anomalies_detected: ANOMALIES.length,
+  financial_irregularities: ANOMALIES.filter((a) => a.severity === 'CRITICAL').length,
+  avg_utilization_pct: parseFloat(
+    ((totalExpenditure / Math.max(totalFundsReleased, 1)) * 100).toFixed(1)
+  ),
+  total_mps: MPs.length,
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RISK TREND DATA (Derived from KPI)
 // ─────────────────────────────────────────────────────────────────────────────
 export const RISK_TREND = [
-  { month: 'Jan 26', high_risk: 182, critical: 38 },
-  { month: 'Feb 26', high_risk: 194, critical: 42 },
-  { month: 'Mar 26', high_risk: 201, critical: 44 },
-  { month: 'Apr 26', high_risk: 188, critical: 41 },
-  { month: 'May 26', high_risk: 214, critical: 51 },
-  { month: 'Jun 26', high_risk: 231, critical: 58 },
-  { month: 'Jul 26', high_risk: 248, critical: 63 },
-  { month: 'Aug 26', high_risk: 242, critical: 61 },
+  { month: 'Jan 26', high_risk: Math.max(1, Math.round(KPI.high_risk_projects * 0.7)), critical: Math.max(1, Math.round(KPI.financial_irregularities * 0.6)) },
+  { month: 'Feb 26', high_risk: Math.max(1, Math.round(KPI.high_risk_projects * 0.75)), critical: Math.max(1, Math.round(KPI.financial_irregularities * 0.7)) },
+  { month: 'Mar 26', high_risk: Math.max(1, Math.round(KPI.high_risk_projects * 0.8)), critical: Math.max(1, Math.round(KPI.financial_irregularities * 0.75)) },
+  { month: 'Apr 26', high_risk: Math.max(1, Math.round(KPI.high_risk_projects * 0.85)), critical: Math.max(1, Math.round(KPI.financial_irregularities * 0.8)) },
+  { month: 'May 26', high_risk: Math.max(1, Math.round(KPI.high_risk_projects * 0.9)), critical: Math.max(1, Math.round(KPI.financial_irregularities * 0.85)) },
+  { month: 'Jun 26', high_risk: Math.max(1, Math.round(KPI.high_risk_projects * 0.95)), critical: Math.max(1, Math.round(KPI.financial_irregularities * 0.9)) },
+  { month: 'Jul 26', high_risk: KPI.high_risk_projects, critical: KPI.financial_irregularities },
+  { month: 'Aug 26', high_risk: KPI.high_risk_projects, critical: KPI.financial_irregularities },
 ];
 
-// Aggregated KPI
-export const KPI = {
-  total_funds_released: 832091, // in lakhs (~₹8320.91 Cr)
-  total_expenditure: 674007,       // in lakhs (~₹6740.07 Cr)
-  works_recommended: 67982,
-  works_sanctioned: 61878,
-  works_completed: 44873,
-  high_risk_projects: 3596,
-  anomalies_detected: 1295,
-  financial_irregularities: 48,
-  avg_utilization_pct: 81.0,
-  total_mps: 543,
-};
